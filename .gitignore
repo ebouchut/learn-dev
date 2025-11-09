@@ -36,7 +36,9 @@ replay_pid*
 *.iml
 *.ipr
 
-### Eclipse ###
+### ~~~~~~~~~~~~~
+###   Eclipse
+### ~~~~~~~~~~~~~
 .apt_generated
 .classpath
 .factorypath
@@ -45,7 +47,9 @@ replay_pid*
 .springBeans
 .sts4-cache
 
-### NetBeans ###
+### ~~~~~~~~~~~~~
+###   NetBeans
+### ~~~~~~~~~~~~~
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -55,8 +59,13 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
+### ~~~~~~~~~~~~~
+###   VS Code
+### ~~~~~~~~~~~~~
 .vscode/
 
-### Mac OS ###
+### ~~~~~~~~~~~~~
+###   Mac OS
+### ~~~~~~~~~~~~~
+
 .DS_Store
