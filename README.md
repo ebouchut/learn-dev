@@ -113,10 +113,10 @@ See [LICENSE](LICENSE) for details.
 
 ## Resources
 
-- [La Plateforme_](https://laplateforme.io)
 - 💙A big thank you to **our instructors** for their involvement and help:
   - [Alejandro Seijo](https://www.linkedin.com/in/alejandro-f-seijo-1541aa189/),
   - [Jean-César Bazin](https://www.linkedin.com/in/jean-c%C3%A9sar-bazin-a7bab9176/),
+  - [Aubry Capitone](https://www.linkedin.com/in/a-capitone/)
   - [Esteban Bare](https://www.linkedin.com/in/esteban-bare-337927284/),
-  - [Aurélie Jonas](https://www.linkedin.com/in/aureliepreaud/).
 - [REAC Developpeur Web et Web mobile](https://www.francecompetences.fr/recherche/rncp/37674/)
+- [La Plateforme_](https://laplateforme.io)
