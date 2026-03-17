@@ -34,7 +34,7 @@ Read the [Prerequisites section of the README](README.md#prerequisites).
 
 #### Code Documentation
 
-The code reference documentation [can be found here](#).
+The code reference documentation is not yet available and will be added to this repository in a future update.
 
 #### Architecture Overview
 
@@ -413,7 +413,7 @@ The **Entity Relationships Diagram** (ERD)
 is available as an [SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/ERD.svg)
 
 > [!NOTE]
-> This diagram uses [Crows's foot notation](https://mermaid.js.org/syntax/entityRelationshipDiagram.html#relationship-syntax)
+> This diagram uses [Crow's foot notation](https://mermaid.js.org/syntax/entityRelationshipDiagram.html#relationship-syntax)
 > for the **cardinality of relationships**, where:
 >
 > - `o|` denotes `0..1` (zero or one)
