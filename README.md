@@ -54,7 +54,7 @@ TODO
 Learn-dev uses a **monorepo structure** which offers the following advantages:
 
 - **Consistent versioning** that applies both to backend and frontend.  
-  A single project for the frontend, backend, and documentation makes it easy to manage all of them.
+- A single project makes it easy to manage all of them.
 
 ```txt
 learn-dev/
@@ -88,9 +88,26 @@ See the [GitHub Project](https://github.com/users/ebouchut/projects/7/views/3) f
 
 ## Contributing
 
-This is a capstone project for educational purposes.   
-While not actively seeking contributions for now,
-feedback and suggestions are welcome through [GitHub issues](https://github.com/ebouchut/learn-dev/issues).
+See the [CONTRIBUTING.md](CONTRIBUTING.md) file for how to help out.    
+It contains detailed guidelines, including:
+
+- Architecture overview
+- Code :
+    - Documentation
+    - Directory structure
+    - Naming conventions
+- Database:
+    - Database schema, ERD (Entity Relationships Diagram)
+    - Running database migrations
+- Git:
+    - Git branching strategy 
+    - Git commit message conventions
+- Dependencies:
+    - Adding dependencies
+    - Installing dependencies
+- Running tests
+- Submitting pull requests
+- ...
 
 
 ## License
