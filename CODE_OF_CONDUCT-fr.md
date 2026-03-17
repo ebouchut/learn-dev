@@ -2,7 +2,7 @@
 # Code de conduite _Contributor Covenant_
 
 Ceci est la version française du code de conduite de ce projet.    
-🇺🇸🇬🇧You will find the [English version here](CODE_OF_CONDUCT.md).
+🇺🇸🇬🇧 You will find the [English version here](CODE_OF_CONDUCT.md).
 
 ## Notre engagement
 

@@ -7,9 +7,9 @@
 This project aims to enable students to learn programming through hands-on practice
 with automated assessment and real-time feedback.
 
-It is also my capstone project for
-the [Web and Web Mobile Developer REAC certification](https://www.francecompetences.fr/recherche/rncp/37674/)
-I am currently undergoing at [La Plateforme_](https://laplateforme.io).
+It is also my capstone project for the [Web and Web Mobile Developer REAC certification](https://www.francecompetences.fr/recherche/rncp/37674/), which I am currently undergoing at [La Plateforme_](https://laplateforme.io).
+
+
 
 
 ## Goals
