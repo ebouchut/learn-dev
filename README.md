@@ -70,7 +70,7 @@ See the [CONTRIBUTING.md](CONTRIBUTING.md) file for how to help out.
 It contains detailed guidelines, including:
 
 - Architecture overview
-- Code :
+- Code:
     - Documentation
     - Directory structure
     - Naming conventions
@@ -78,7 +78,7 @@ It contains detailed guidelines, including:
     - Database schema, ERD (Entity Relationships Diagram)
     - Running database migrations
 - Git:
-    - Git branching strategy 
+    - Git branching strategy
     - Git commit message conventions
 - Dependencies:
     - Adding dependencies
@@ -108,7 +108,7 @@ See [LICENSE](LICENSE) for details.
 
 ## Resources
 
-- 💙A big thank you to **our instructors** for their involvement and help:
+- 💙 A big thank you to **our instructors** for their involvement and help:
   - [Alejandro Seijo](https://www.linkedin.com/in/alejandro-f-seijo-1541aa189/),
   - [Jean-César Bazin](https://www.linkedin.com/in/jean-c%C3%A9sar-bazin-a7bab9176/),
   - [Aubry Capitone](https://www.linkedin.com/in/a-capitone/)
