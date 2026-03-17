@@ -48,27 +48,6 @@ TODO
 - **Swagger**: API documentation
 
 
-## Project Structure
-
-Learn-dev uses a **monorepo structure** which offers the following advantages:
-
-- **Consistent versioning** that applies both to backend and frontend.  
-- A single project makes it easy to manage all of them.
-
-```txt
-learn-dev/
-├── backend/           # Spring Boot application
-│   ├── src/           # Source code
-│   └── pom.xml        # Maven configuration file
-├── frontend/          # React application
-├── docs/              # Project documentation
-│   ├── backend        # Backend documentation
-│   └── frontend       # tonend documentation
-├── README.md          # Project documentation entry point
-└── .github/workflows/ # GitHub Actions workflows
-```
-
-
 ## Getting Started
 
 ### Prerequisites
