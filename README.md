@@ -1,4 +1,4 @@
-# Learn-dev an Interactive Programming Learning Platform
+# Learn-dev: An Interactive Programming Learning Platform
 
 ## Presentation
 
@@ -28,8 +28,7 @@ and [React](https://react.dev/) frontend.
 ### Backend
 
 - Java 21 
-- [Spring Boot](https://spring.io/projects/spring-boot) 3.x: Java Framework used to build (Web) Applications.
-    and REST endpoints
+- [Spring Boot](https://spring.io/projects/spring-boot) 3.x: Java Framework used to build (Web) Applications and REST endpoints.
 - [Spring Security](https://spring.io/projects/spring-security): Authentication and authorization framework
 - [PostgreSQL](https://www.postgresql.org/about/) 15+: Database
 - [Maven](https://maven.apache.org/what-is-maven.html): Build and dependency management tool

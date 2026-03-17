@@ -83,7 +83,7 @@ sequenceDiagram
 
     FE->>API: POST /auth/login<br/>{ email, password }
 
-    API->>API: Validate request body (Joi)
+    API->>API: Validate request body (server-side validation)
     alt Validation fails
         API-->>FE: 400 Bad Request<br/>{ message: [...errors] }
         FE-->>U: Show validation errors
@@ -115,20 +115,20 @@ We use a **monorepo**, that is a Git repository containing mainly both the **fro
 **Using a monorepo offers the following advantages:**
 
 - **Shared code and types:**  
-  The *frontend* and *backend* can share types from a single source of truth, avoiding duplication and keeping 
-- them in sync.
+  The *frontend* and *backend* can share types from a single source of truth, avoiding duplication and keeping them in sync.
 - **Atomic changes:**  
-  A single commit or PR can update the database schema, backend API, and frontend together, 
-- ensuring they stay compatible.
+  A single commit or PR can update the database schema, backend API, and frontend together, ensuring they stay compatible.
 - **Easier code reviews:**  
-  Reviewers can see the full picture of a change (database + backend + frontend) in a single PR 
-- rather than coordinating across multiple repositories.
+  Reviewers can see the full picture of a change (database + backend + frontend) in a single PR rather than coordinating across multiple repositories.
 - **Consistent tooling and configuration:**    
   Linting rules, formatting, CI/CD pipelines, and Git hooks are configured once and apply to all packages.
 
+
+
+
 #### Modules
 
-The project is composed of 2 `modules:
+The project is composed of 2 modules:
 
 - **`backend`**:  Spring Boot app (in `backend/`) 
 - **`frontend`**: React app (in `frontend`).  
@@ -397,7 +397,7 @@ The *learn-dev* platform uses a PostgreSQL relational database to persist entiti
 
 ##### Database Naming Conventions
 
-Here are the naming conventions for the **name** of our database **tables**:T
+Here are the naming conventions for the **name** of our database **tables**:
 
 - All lowercase
 - Plural
@@ -410,7 +410,7 @@ Do not use an underscore as the first character.
 ##### Database ERD Diagram
 
 The **Entity Relationships Diagram** (ERD) 
-is available as an [SVG image](https://raw.githubusercontent.com/ebouchut/learn)dev/dev/docs/ERD.svg)
+is available as an [SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/ERD.svg)
 
 > [!NOTE]
 > This diagram uses [Crows's foot notation](https://mermaid.js.org/syntax/entityRelationshipDiagram.html#relationship-syntax)
@@ -463,12 +463,12 @@ send requests to the backend API directly from [Postman](https://www.postman.com
 
 1. Open Postman.
 2. Click **`Collections`** / **`Import`**.
-3. Select `packages/backend/postman/learndev.collection.json`.
+3. Select `backend/postman/learndev.collection.json`.
 
 #### Import the Postman environment
 
 1. Click **`Environments`** / **`Import`**.
-2. Select `packages/backend/postman/learndev.environment.json`.
+2. Select `backend/postman/learndev.environment.json`.
 3. Select **learnDev – Local** as the active environment (top-right dropdown).
 
 #### Configure the Postman Collection
@@ -721,9 +721,9 @@ to the **frontend**:
 
 ```shell
 cd frontend
-# IMPORTANT: first off run npm
-# Run npm (one-shot) to install the existing project's dependencies
-npm   
+# IMPORTANT: first install dependencies with npm
+# Run npm install (one-shot) to install the existing project's dependencies
+npm install
 
 npm install react react-dom
 npm install -D @types/react
