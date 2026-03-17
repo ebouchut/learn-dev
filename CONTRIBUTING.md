@@ -436,17 +436,62 @@ is available as an [SVG image](https://raw.githubusercontent.com/ebouchut/learn-
 
 ### Reporting Bugs
 
+If you encounter a bug, please [open an issue](https://github.com/ebouchut/learn-dev/issues) and include:
+
+- A clear and descriptive title.
+- Steps to reproduce the problem (code snippets, commands, or screenshots if relevant).
+- What you expected to happen.
+- What actually happened (including any error messages).
+- Your environment details (OS, browser, Node/Python/runtime versions, etc. if applicable).
+
+This information helps maintainers reproduce and fix the issue more quickly.
 
 ### Suggesting Enhancements
 
+We welcome ideas to improve **learn-dev** (new features, UX improvements, performance, documentation, etc.).
+Before opening a feature request, please:
+
+- Check the existing [issues](https://github.com/ebouchut/learn-dev/issues) to see if a similar idea already exists.
+- Add a comment to an existing issue if it matches your idea, rather than opening a duplicate.
+
+If you open a new enhancement issue, try to explain the problem you are trying to solve, not only the solution you have in mind.
+
 #### Feature Request Template
+
+When creating a feature request issue, you can use the following structure:
+
+- **Summary**: A short description of the feature.
+- **Problem**: What problem does this feature solve for users?
+- **Proposed solution**: How you think this feature could work (UI/API/behavior).
+- **Alternatives**: Any alternative solutions or workarounds you have considered.
+- **Additional context**: Screenshots, diagrams, or links that help explain the idea.
 
 ### Finding Issues to Work On (good first issue, help wanted)
 
+If you are new to the project, we recommend starting with issues labeled
+[`good first issue`](https://github.com/ebouchut/learn-dev/labels/good%20first%20issue) or
+[`help wanted`](https://github.com/ebouchut/learn-dev/labels/help%20wanted) on GitHub.
+
+Steps to get started:
+
+- Pick an open issue with one of these labels.
+- Comment on the issue to indicate that you would like to work on it.
+- Wait for a maintainer to confirm or provide additional guidance before investing a lot of time.
+
+If you are unsure where to start, you can also open an issue asking for pointers or clarification.
 
 ## Development Workflow
 
 ### Setting Up Your Development Environment
+
+At a high level, you will usually need to:
+
+- Fork the repository and clone your fork locally.
+- Follow the setup instructions in the project’s README files (for backend, frontend, or other components).
+- Install the required dependencies using the package manager(s) mentioned there.
+- Run the test suite or basic checks to ensure everything works before you start making changes.
+
+For more detailed, component-specific instructions, please refer to the corresponding README files in each subdirectory.
 
 ### Testing the API with Postman
 
