@@ -1,5 +1,0 @@
-paths:
-  exclude:
-    - CONTRIBUTING.md
-    - SECURITY.md
-    - README.md
