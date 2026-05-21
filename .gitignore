@@ -68,4 +68,9 @@ build/
 ###   Mac OS
 ### ~~~~~~~~~~~~~
 
-.DS_Store
+### ~~~~~~~~~~~~~
+### Dotenv Files
+### ~~~~~~~~~~~~~
+.env
+.env.*
+!.env.example
