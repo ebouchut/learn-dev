@@ -23,15 +23,26 @@ It is also my capstone project for the [Web and Web Mobile Developer REAC certif
 ## Tech Stack
 
 This project is built with [Java](https://en.wikipedia.org/wiki/Java_(programming_language))/[Spring Boot](https://spring.io/projects/spring-boot) backend
-and [React](https://react.dev/) frontend.
+and [Thymeleaf](https://en.wikipedia.org/wiki/Thymeleaf) frontend.
+
 
 ### Backend
 
-- Java 21 
-- [Spring Boot](https://spring.io/projects/spring-boot) 3.x: Java Framework used to build (Web) Applications and REST endpoints.
-- [Spring Security](https://spring.io/projects/spring-security): Authentication and authorization framework
-- [PostgreSQL](https://www.postgresql.org/about/) 15+: Database
-- [Maven](https://maven.apache.org/what-is-maven.html): Build and dependency management tool
+- Language: Java 21 
+- Frameworks: 
+  - Java Framework used to build (Web) Applications and REST endpoints.
+    - [Spring Boot](https://spring.io/projects/spring-boot) 3.x:
+    - Thymeleaf
+-  Authentication and authorization framework:
+  - [Spring Security](https://spring.io/projects/spring-security):
+- Database:
+  - [PostgreSQL](https://www.postgresql.org/about/) version 17
+- Build and dependency management tool:
+  - [Maven](https://maven.apache.org/what-is-maven.html)
+- Containerization:
+  - [Podman](https://en.wikipedia.org/wiki/Podman) (preferred over [Docker](https://en.wikipedia.org/wiki/Docker_(software))) 
+    to containerize parts of the application as container images that can run as autonomous containers. 
+
 
 ### Frontend
 
@@ -43,16 +54,18 @@ TODO
 - JetBrains **IntelliJ IDEA**: **IDE** 
 - **Git**: Version control
 - [**Maven**](https://en.wikipedia.org/wiki/Apache_Maven): Build and dependency management
-- **GitHub Actions**: CI/CD pipeline
-- **Docker**: Containerization
+- **Podman**: Containerization
 - **Swagger**: API documentation
 
 
 ## Getting Started
 
+
 ### Prerequisites
 
+
 See the [Tech Stack](#tech-stack) section.
+
 
 ### Installation
 
@@ -114,4 +127,3 @@ See [LICENSE](LICENSE) for details.
   - [Aubry Capitone](https://www.linkedin.com/in/a-capitone/)
   - [Esteban Bare](https://www.linkedin.com/in/esteban-bare-337927284/),
 - [REAC Developpeur Web et Web mobile](https://www.francecompetences.fr/recherche/rncp/37674/)
-- [La Plateforme_](https://laplateforme.io)
