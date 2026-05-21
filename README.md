@@ -71,6 +71,26 @@ See the [Tech Stack](#tech-stack) section.
 
 TODO
 
+#### Docker Setup
+
+From the project root folder.
+
+- Install Docker 
+  - on macOS (read [this for Windows or Linux install](https://docs.docker.com/get-started/get-docker/)):  
+    ```shell
+    brew install docker docker-compose docker-desktop
+    ```
+  - on [Windows and Linux](https://docs.docker.com/get-started/get-docker/)
+- Downloads the Docker images for this application,
+  then runs the containers configured in the  `docker-compose.yaml` configuration file:
+  ```shell
+  docker compose up -d
+  docker compose logs
+  ```
+  A Docker init script creates the application database and user when the `learn-dev-postgres` container 
+  is run for the first time.   
+- Run the application: TODO
+
 
 ## Project Status
 
