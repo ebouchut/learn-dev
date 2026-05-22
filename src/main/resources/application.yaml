@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: learn-dev
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Database Connection Configuration
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  datasource:
+    # url: jdbc:postgresql://127.0.0.1:5433/learndev
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${LEARNDEV_DB_NAME}
+    username: ${LEARNDEV_DB_USER}
+    password: ${LEARNDEV_DB_PASSWORD}
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Hibernate (ORM) Configuration
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  jpa:
+    hibernate.ddl-auto: validate
+    show-sql: false
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Database schema changes Configuration
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  liquibase:
+    enabled: false
+
+# ~~~~~~~~~~~~~~~~~~
+# Logging Level
+# ~~~~~~~~~~~~~~~~~~
+logging:
+  level:
+    org.springframework: INFO
