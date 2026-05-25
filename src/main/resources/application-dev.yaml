@@ -1,0 +1,40 @@
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# application-dev.yaml
+#
+# Application configuration file for the dev profile.
+# Properties defined in this file override the ones defined
+#  in application.yaml.
+#
+# To activate the dev profile:
+# - Add SPRING_PROFILES_ACTIVE=dev to your .env file
+# - or set the environment variable SPRING_PROFILES_ACTIVE=dev
+# - or run: mvn spring-boot:run -Dspring-boot.run.profiles=dev
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+spring:
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Hibernate (ORM) Configuration
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  jpa:
+    show-sql: true
+
+  # Generate DDL and write to file
+  #    properties:
+  #      javax.persistence.schema-generation.scripts:
+  #        action: create
+  #        create-target: schema.sql
+  #        create-source: metadata
+
+# ~~~~~~~~~~~~~~~~~~
+# Logging Level
+# ~~~~~~~~~~~~~~~~~~
+logging:
+  level:
+    # Log Hibernate SQL statements
+    org.hibernate.SQL: DEBUG
+
+    # Log incoming Web request details
+    web: DEBUG
+
+    # App logging level
+    com.ericbouchut.learndev: DEBUG

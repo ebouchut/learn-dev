@@ -1,0 +1,24 @@
+services:
+
+  db:
+    image: postgres:17
+    container_name: learn-dev-postgres
+
+    # Inject database credentials and config (db name, db user,
+    # and host port mapping) into the container.
+    # Reads from the same .env file passed to `docker compose --env-file ...`.
+    env_file:
+      - .env
+
+    volumes:
+      # Init scripts: run once on first container start (empty data dir).
+      - ./docker/init:/docker-entrypoint-initdb.d
+      # Named volume: preserves data across container stop/start cycles.
+      - pgdata:/var/lib/postgresql/data
+
+    ports:
+      # See src/main/resources/.env.example for details
+      - "${POSTGRES_HOST}:${POSTGRES_PORT}:5432"
+
+volumes:
+  pgdata:

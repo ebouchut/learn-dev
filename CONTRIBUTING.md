@@ -230,13 +230,14 @@ learn-dev/
 │   │           │
 │   │           └── audit/
 │   │               └── AuditServiceTest.java
-│   │ 
-│   │ 
-│   └── postman/                            # Contains the Postman requests to test the REST endpoints
-│       ├── learndev.environment.json       # Postman environment file with placeholders (adjust to your local config.) 
-│       └── learndev.collection.json        # Collection of Postman requests, with folders per feature  
-│   
-│   
+│    
+│    
+├── docker/                         # Docker scripts
+│   └── init/
+│       └── 01-create-app-user.sh   # Runs once on first postgres:17 container start to create application database and user 
+└── postman/                        # Contains the Postman requests to test the REST endpoints
+    ├── learndev.environment.json   # Postman environment file with placeholders (adjust to your local config.) 
+    └── learndev.collection.json    # Collection of Postman requests, with folders per feature  
 ```
 
 The table below explains what each folder entails.
@@ -599,7 +600,7 @@ chore(git): Ignore IntelliJ IDEA configuration files
 
 ### Code Style and Formatting
 
-TODO: Document the code style and formatting
+: Document the code style and formatting
 
 
 ### Reset the Development Database
