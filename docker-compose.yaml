@@ -1,24 +1,49 @@
 services:
 
-  db:
+  postgres:
     image: postgres:17
-    container_name: learn-dev-postgres
-
     # Inject database credentials and config (db name, db user,
     # and host port mapping) into the container.
     # Reads from the same .env file passed to `docker compose --env-file ...`.
     env_file:
       - .env
-
     volumes:
       # Init scripts: run once on first container start (empty data dir).
       - ./docker/init:/docker-entrypoint-initdb.d
       # Named volume: preserves data across container stop/start cycles.
       - pgdata:/var/lib/postgresql/data
-
     ports:
       # See src/main/resources/.env.example for details
       - "${POSTGRES_HOST}:${POSTGRES_PORT}:5432"
 
+  mongo:
+    image: mongo:8.0
+    restart: unless-stopped
+    ports:
+      - "${MONGO_HOST}${MONGO_HOST:+:}${MONGO_PORT:-27017}:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE:      ${MONGO_DB_NAME:-learndev}
+    volumes:
+      - mongo_data:/data/db
+      - ./docker/mongo/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - learn-dev-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+networks:
+  learn-dev-net:
+    # A bridge network connects your services together
+    # on an isolated Virtual LAN managed by Docker.
+    driver: bridge
+
+# Named volumes used to preserve data across container stop/start cycles.
 volumes:
   pgdata:
+  mongo_data:

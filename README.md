@@ -69,25 +69,62 @@ See the [Tech Stack](#tech-stack) section.
 
 ### Installation
 
-TODO
+- Clone the `ebouchut/learn-dev` Git Repository
+- Install Docker, Docker Desktop, and Docker Compose
+
+#### Clone the Git repository
+
+```shell
+#
+git clone git@github.com:ebouchut/learn-dev.git
+# git clone https://github.com/ebouchut/learn-dev.git
+
+cd learn-dev
+```
 
 #### Docker Setup
 
 From the project root folder.
+Install _Docker_ and _Docker Compose_:
 
-- Install Docker 
-  - on macOS (read [this for Windows or Linux install](https://docs.docker.com/get-started/get-docker/)):  
-    ```shell
-    brew install docker docker-compose docker-desktop
-    ```
-  - on [Windows and Linux](https://docs.docker.com/get-started/get-docker/)
-- Downloads the Docker images for this application,
-  then runs the containers configured in the  `docker-compose.yaml` configuration file:
+- on macOS (read [this for Windows or Linux install](https://docs.docker.com/get-started/get-docker/)):  
+  ```shell
+  brew install docker docker-compose docker-desktop
+  ```
+- on [Windows and Linux](https://docs.docker.com/get-started/get-docker/)
+
+
+## Configuration
+
+- Edit `.env`
+  - [ ] Set a value for the variables `POSTGRES_PASSWORD`, `LEARNDEV_DB_PASSWORD`, `MONGO_ROOT_PASSWORD`
+
+
+## Run the application
+
+- Start all the Docker containers for the application:  
   ```shell
   docker compose up -d
-  docker compose logs
   ```
-  A Docker init script creates the application database and user when the `learn-dev-postgres` container 
+
+This command downloads the Docker image **for each service** 
+declared in the Docker Compose configuration file 
+(`docker-compose.yaml`), and starts a Docker container based on this image.
+
+- postgres
+- mongo
+
+
+### Run Postgres
+
+- Install the Docker images for this application,
+  then runs the services/containers as configured in the  `docker-compose.yaml`:
+  ```shell
+  docker compose up -d postgres
+  docker compose ps
+  docker compose logs postgres
+  ```
+  A Docker init script creates the application database and user when the `postgres` service 
   is run for the first time.   
 - Run the application: TODO
 
