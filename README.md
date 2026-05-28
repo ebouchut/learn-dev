@@ -116,6 +116,15 @@ declared in the *Docker Compose* configuration file
 2. stores the downloaded image in the local Docker image cache,
 3. starts a Docker container based on this image (if it is not already running).
 
+## Stop the Application
+
+This stops all the Docker services for the application:
+
+  ```shell
+  docker compose down
+  ```
+
+
 ### Docker Terminology
 
 I use ** Docker Compose** (a CLI tool) to describe and handle the lifecycle of services that comprise my application.
@@ -129,15 +138,15 @@ A Docker image is pre-packaged piece of software that can work as a standalone o
 
 ### Postgres Service
 
-#### Run Postgres
+#### Start Postgres
 
 Running the app using `docker compose up -d` 
-starts **all** the application services (`postgres` and `mongo`).
+starts **all** the application services, including `postgres`.
 
-To only start the `potsgres` service:
+To only start the `postgres` service:
 
 ```shell
-docker compose up -d postgres
+docker compose start -d postgres
 docker compose logs postgres
 ```  
 > [!NOTE]
@@ -150,7 +159,7 @@ docker compose logs postgres
 > A Docker init script automatically **creates the database user and the application database**
 > when the **`postgres`** service is run **for the first time**.
 
-Now, check that it is running:
+Now, check that `postgres` is running:
 
 ```shell
 docker compose ps | grep postgres
@@ -163,21 +172,22 @@ docker compose ps | grep postgres
 #### Stop Postgres
 
 ```shell
-docker compose down postgres
+docker compose stop postgres
 ```
 
 #### Remove all Postgres Databases
 
+Stops and remove the `postgres` container and its data volume.
+
 > [!CAUTION]
-> This **destructive command** will **remove all the databases (structure and content)**
-> created by Postgres running in the container.
+> This is a **destructive command** that will **remove all the databases 
+> (structure and content)** created by Postgres running in the container.
 
 ```shell
-docker compose down -v postgres
+docker compose stop postgres  # Stop the container
+docker rm           postgres  # Remove the container
+docker volume rm    pg_data   # Remove the named volume 
 ```
-
-The `v` option is the key here, it asks Docker to **remove** the **volume** of the `postgres` service. 
-This volume persists the postgres data outside the container, on the host **OS**.
 
 
 ### Mongo Service
@@ -185,25 +195,32 @@ This volume persists the postgres data outside the container, on the host **OS**
 #### Start MongoDB
 
 ```shell
-docker compose up mongo
+docker compose start mongo
+```
+
+Now, check that `mongo` is running:
+
+```shell
+docker compose ps | grep mongo
 ```
 
 #### Stop MongoDB
 
 ```shell
-docker compose down mongo
+docker compose stop mongo
 ```
 
 #### Remove MongoDB and its Databases
 
 > [!CAUTION]
-> This **destructive command** will **remove MongoDB and all its databases**
-> created by MongoDB running in the container.
+> This **destructive command** will stop and remove the container, then **remove** its data **volume** 
+> (all the databases created by MongoDB running in the container).
 
 ```shell
-docker compose down -v mongo
+docker compose stop mongo # Stop container
+docker  rm          mongo # Remove the stopped container
+docker volume rm    learn-dev_mongo_data # Remove the named volume   
 ```
- 
 
 
 ## Project Status
