@@ -5,10 +5,10 @@ spring:
   data:
     mongodb:
       # uri: mongodb://admin:admin_password@127.0.0.1:27018/learndev?authSource=admin
-      uri: mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@${MONGO_HOST}${MONGO_HOST:+:}${MONGO_PORT}/${MONGO_DB_NAME}?authSource=admin
+      uri: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${LEARNDEV_MONGO_DB_NAME}?authSource=admin
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # Database Connection Configuration No. Done
+  # Database Connection Configuration
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   datasource:
     # url: jdbc:postgresql://127.0.0.1:5433/learndev
