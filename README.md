@@ -102,31 +102,108 @@ Install _Docker_ and _Docker Compose_:
 
 ## Run the application
 
-- Start all the Docker containers for the application:  
+This starts all the Docker services for the application:
+
   ```shell
   docker compose up -d
   ```
 
-This command downloads the Docker image **for each service** 
-declared in the Docker Compose configuration file 
-(`docker-compose.yaml`), and starts a Docker container based on this image.
+**For each service** (`postgres`, `mongo`)
+declared in the *Docker Compose* configuration file
+(`docker-compose.yaml`), *Docker Compose*:
 
-- postgres
-- mongo
+1. downloads the Docker image (if not cached yet) from the Docker Hub registry,
+2. stores the downloaded image in the local Docker image cache,
+3. starts a Docker container based on this image (if it is not already running).
+
+### Docker Terminology
+
+I use ** Docker Compose** (a CLI tool) to describe and handle the lifecycle of services that comprise my application.
+
+A **service** is basically a component of the application packaged as a Docker container.
+It specifies the Docker image and version, configuration, and the network and Docker volume(s) if any.
+
+A Docker image is pre-packaged piece of software that can work as a standalone on Linux. 
+**Docker Hub** is a  public registry that hosts and serves public Docker images.
 
 
-### Run Postgres
+### Postgres Service
 
-- Install the Docker images for this application,
-  then runs the services/containers as configured in the  `docker-compose.yaml`:
-  ```shell
-  docker compose up -d postgres
-  docker compose ps
-  docker compose logs postgres
-  ```
-  A Docker init script creates the application database and user when the `postgres` service 
-  is run for the first time.   
-- Run the application: TODO
+#### Run Postgres
+
+Running the app using `docker compose up -d` 
+starts **all** the application services (`postgres` and `mongo`).
+
+To only start the `potsgres` service:
+
+```shell
+docker compose up -d postgres
+docker compose logs postgres
+```  
+> [!NOTE]
+> 
+> The above command downloads, installs the `postgres` Docker image
+> specified by the `postgres` service in `docker-compose.yaml`.
+> Then it runs a Docker container with this image.
+
+> [!NOTE]  
+> A Docker init script automatically **creates the database user and the application database**
+> when the **`postgres`** service is run **for the first time**.
+
+Now, check that it is running:
+
+```shell
+docker compose ps | grep postgres
+```
+
+> To recreate the database, and start from scratch you need to stop the `postgres` container 
+> and remove the (data) volumes.   
+> See the `Remove all Posgres Databases` section for details.    
+
+#### Stop Postgres
+
+```shell
+docker compose down postgres
+```
+
+#### Remove all Postgres Databases
+
+> [!CAUTION]
+> This **destructive command** will **remove all the databases (structure and content)**
+> created by Postgres running in the container.
+
+```shell
+docker compose down -v postgres
+```
+
+The `v` option is the key here, it asks Docker to **remove** the **volume** of the `postgres` service. 
+This volume persists the postgres data outside the container, on the host **OS**.
+
+
+### Mongo Service
+
+#### Start MongoDB
+
+```shell
+docker compose up mongo
+```
+
+#### Stop MongoDB
+
+```shell
+docker compose down mongo
+```
+
+#### Remove MongoDB and its Databases
+
+> [!CAUTION]
+> This **destructive command** will **remove MongoDB and all its databases**
+> created by MongoDB running in the container.
+
+```shell
+docker compose down -v mongo
+```
+ 
 
 
 ## Project Status
