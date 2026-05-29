@@ -251,11 +251,28 @@ The table below explains what each folder entails.
 | `backend/src/main/java/…/learndev/role/`   | Role and permission management                                                           |
 | `backend/src/main/java/…/learndev/audit/`  | Security audit trail (internal use — no public controller)                               |
 
+#### Feature-based Package Layout
+
+ 
+The project uses a **feature-based layout** for **packages**,
+as you can see in the directory structure above,
+
+The main advantages in my opinion are:
+- **Navigability**:     
+  When you open one package (such as `user`),
+  you see all the classes related to the *user feature*. 
+- **Encapsulation**  
+  In **layer-based**, every class must be `public` 
+  because the `controller` package needs to reach the `service` package, 
+  which needs the `repository` package.   
+  In **feature-based**, the controller, service, and repository 
+  are in the same package, so you can use package-private 
+  visibility to hide internals. 
+  Only the few classes that genuinely cross feature boundaries need to be `public`.
 
 > [!NOTE]
-> Each backend feature folder (e.g. `auth/`, `user/`, `role/`) follows the same internal layout:
-> a controller, a service, an entity, a repository, DTOs, and an exceptions sub-package.
-
+> Each backend feature folder (e.g. `auth/`, `user/`, `role/`) follows the same layout:
+> controller and service classes, and the following sub-packages `entity`,`repository`, `dto/`, and `exception`.
 
 
 #### File Naming Convention
@@ -310,7 +327,6 @@ The table below explains what each folder entails.
 
 This section describes how the database is structured.
 The *learn-dev* platform uses a PostgreSQL relational database to persist entities.
-
 
 
 ##### Database Naming Conventions
@@ -384,7 +400,7 @@ When creating a feature request issue, you can use the following structure:
 - **Alternatives**: Any alternative solutions or workarounds you have considered.
 - **Additional context**: Screenshots, diagrams, or links that help explain the idea.
 
-### Finding Issues to Work On (good first issue, help wanted)
+### Finding Issues to Work on (good first issue, help wanted)
 
 If you are new to the project, we recommend starting with issues labeled
 [`good first issue`](https://github.com/ebouchut/learn-dev/labels/good%20first%20issue) or
