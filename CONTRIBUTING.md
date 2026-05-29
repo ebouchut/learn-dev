@@ -340,6 +340,21 @@ Here are the naming conventions for the **name** of our database **tables**:
 
 Do not use an underscore as the first character.
 
+##### Database MCD Diagram
+
+*MCD* stands for 🇫🇷 **Modèle Conceptuel de Données** (in the Merise methodology).
+This is a diagram that shows the *Conceptual Data Model* with entities and relationships.  
+
+![MCD](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mcd/learn-dev.svg).
+
+The MCD is available as an 
+[SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mcd/learn-dev.svg).
+
+
+##### Database MPD Diagram
+
+TODO: Add MPD diagram and link
+
 
 ##### Database ERD Diagram
 

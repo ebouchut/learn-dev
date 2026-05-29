@@ -1,0 +1,28 @@
+% learn-dev MCD (Modele Conceptuel des Données).
+% This text file uses Mocodo-syntax to describe the MCD.
+%
+% See:
+% - GitHub Repository: https://github.com/laowantong/mocodo
+% - Syntax:            https://laowantong.github.io/mocodo/doc/fr_refman.html#Syntaxe-de-description-d'un-MCD
+% Usage:
+%   mocodo --input docs/database/mcd/learn-dev.mcd --output_dir docs/database/mcd --colors brewer+1
+
+:
+Email Token: token_id, token, expires_at, used_at
+Audit Log: log_id, action_type, entity_type, entity_id, description, ip_address, user_agent, was_successful, error_message, metadata
+:
+
+Reset Token: token_id, token, expires_at, used_at, ip_address
+Receives, 11 Email Token, 0N User
+Performs, 01 Audit Log, 0N User
+:
+
+Requests, 11 Reset Token, 0N User
+User: user_id, username, email, password, first_name, last_name, is_active, is_verified, is_locked, failed_login_attempts, last_login_at, password_changed_at
+Holds, 0N User, 0N Role : assigned_at, assigned_by
+Role: role_id, role_name, description, is_active
+
+:
+Owns, 11 Refresh Token, 0N User
+Refresh Token: token_id, token, expires_at, revoked_at, revoked_reason, ip_address, user_agent, last_used_at
+:
