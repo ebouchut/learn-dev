@@ -307,13 +307,7 @@ The main advantages in my opinion are:
             `client` (adapter for an external service)
           - `extension` refers to the file extension such as `ts`
 
-> [!TIP]
-> **FRONTEND** naming convention:
->
-> If the file's default export is a **React component** — use **[PascalCase](http://c2.com/cgi/wiki?PascalCase)**.    
-> For everything else — use **[camelCase](https://wiki.c2.com/?CamelCase)**.
-
-
+    
 > [!NOTE]
 > **What are `PascalCase` and `camelCase`?**
 >
@@ -388,15 +382,13 @@ the business.
 
 #### MPD Diagram
 
-*MPD* stands for Modèle Physique des Données (Physical Data Model).
+*MPD* stands for 🇫🇷*Modèle Physique des Données* (Physical Data Model).
 
 This diagram is exhaustive and database-specific.
 It contains all the tables, fields, keys,
-database-specific data types, and constraints...
-
+database-specific data types, and constraints...  
 It is aimed at database administrators and application developers.
 It can be used to implement the data model in the database.
-
 Database administrators use it to create the migration scripts.
 
 **Learn-dev MPD Diagram**:
