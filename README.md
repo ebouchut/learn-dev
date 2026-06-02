@@ -93,6 +93,45 @@ Install _Docker_ and _Docker Compose_:
   ```
 - on [Windows and Linux](https://docs.docker.com/get-started/get-docker/)
 
+### Python Setup
+
+This is **optional** if you only need **to run the application**.
+
+This is necessary in order to regenerate the MERISE database diagrams 
+(MCD, MLD and MPD) after any changes have been made to the database design.  
+
+You will need to install *Python* and:
+- **`mocodo`**: a CLI tool to generate the MCD and MLD database diagrams 
+  from a text-file description of the conceptual data model.
+- **`tbls`**: a CLI tool to reverse engineer the live database to generate the MPD. 
+
+Here is the procedure:
+
+- [ ] Install Python
+    - Install Python on macOS  
+      ```shell
+      brew install python@3.14
+      ```
+    - Install Python on other OSes:  
+      https://docs.python-guide.org/en/latest/starting/installation/
+- [ ] Create a Python Virtual Environment:
+  ```shell
+  # cd to the folder where you cloned the repository
+  python3 -m venv venv       # Do it once
+  source venv/bin/activate  # Run this line each time you open a new shell/terminal/window/tab
+  ```
+- [ ] Install **[mocodo](https://laowantong.github.io/mocodo/doc/fr_refman.html#Installation-et-lancement-du-programme)**
+  ```shell
+  pip install 'mocodo[svg,clipboard]'
+  ```
+- [ ] Install **[tbls](https://github.com/k1LoW/tbls#install)**
+  ```shell
+  # On macOS
+  brew install tbls
+  
+  # or any OS with Go installed
+   go install github.com/k1LoW/tbls@latest
+  ```
 
 ## Configuration
 

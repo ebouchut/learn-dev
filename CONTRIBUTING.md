@@ -307,29 +307,27 @@ The main advantages in my opinion are:
             `client` (adapter for an external service)
           - `extension` refers to the file extension such as `ts`
 
-> [!TIP]
-> **FRONTEND** naming convention:
->
-> If the file's default export is a **React component** — use **[PascalCase](http://c2.com/cgi/wiki?PascalCase)**.    
-> For everything else — use **[camelCase](https://wiki.c2.com/?CamelCase)**.
-
-
+    
 > [!NOTE]
-> **What are `PascalCase` and `camelCase`?**
+> **What are `PascalCase`, `snake_case`, and `camelCase`?**
 >
 > - **[PascalCase](http://c2.com/cgi/wiki?PascalCase)** is a naming convention where the first letter of every word
-    >   is capitalized, with no spaces or underscores between words: `YouTubeEmbed`.
-> - **[camelCase](https://wiki.c2.com/?CamelCase)** is a naming convention where the first word starts with a lowercase
-    >   letter and each subsequent word begins with an uppercase letter, with no spaces or underscores: `useJuryVote`.
+    >   is capitalized, with no spaces or underscores between words such as `YouTubeEmbed`.
+> - **[snake_case](https://en.wikipedia.org/wiki/Snake_case)** 
+>   is a naming convention where words are lowercase and separated 
+>   with underscores (`_`), such as `first_name`. 
+> - **[camelCase](https://wiki.c2.com/?CamelCase)** is a naming convention 
+>   where the first word starts with a lowercase letter and each subsequent 
+>   word begins with an uppercase letter, with no spaces or underscores 
+>   such as `useJuryVote`.
 
 
-#### Database Schema
+#### Database
 
-This section describes how the database is structured.
-The *learn-dev* platform uses a PostgreSQL relational database to persist entities.
+The *learn-dev* platform uses a **PostgreSQL** relational database to persist entities.
 
 
-##### Database Naming Conventions
+#### Database Naming Conventions
 
 Here are the naming conventions for the **name** of our database **tables**:
 
@@ -341,10 +339,72 @@ Here are the naming conventions for the **name** of our database **tables**:
 Do not use an underscore as the first character.
 
 
-##### Database ERD Diagram
+#### Database Schema
 
-The **Entity Relationships Diagram** (ERD) 
-is available as an [SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/ERD.svg)
+This section describes the data model using the progressive 3 diagrams
+(MCD, MLD, and MPD) from the Merise methodology.
+This gives a view from high-level conceptual model (MCD), logical model (MLD) to 
+physical model (MPD) with all the database details.
+
+
+#### MCD Diagram
+
+*MCD* stands for 🇫🇷 **Modèle Conceptuel de Données** (Conceptual Data Model).
+The *MCD diagram* is part of the *Merise* methodology and shows the entities 
+and relationships without the (database) technical details.
+
+It is a high-level **business-domain** oriented diagram  
+that shows the **data (entities)**, their **relationships** and **cardinalities**,
+with **NO technical and implementation details**.
+
+**Learn-dev MCD Diagram**:
+
+> ![MCD](docs/database/mcd/learn-dev.svg)
+
+
+#### MLD Diagram
+
+*MLD* stands for 🇫🇷 **Modèle Logique de Données** (Logical Data Model).
+The **MLD diagram** is part of the _Merise_ methodology and shows 
+the *Logical Data Model*.
+
+It shows the relational structure in a database-agnostic way.
+It is a transformed version of the MCD where:
+- entities become tables, 
+- `1..N` relationships become foreign keys,
+- `N..N` relationships become junction tables,
+- `1..1` relationships become foreign keys.      
+
+The *MLD* is shared with domain experts and application developers.  
+*Domain experts* can verify that the relational structure accurately reflects 
+the business.       
+*Application developers* can then start creating the entities.
+
+**Learn-dev MLD Diagram**:
+
+> ![MLD](docs/database/mld/learn-dev_mld.svg)
+
+
+#### MPD Diagram
+
+*MPD* stands for 🇫🇷*Modèle Physique des Données* (Physical Data Model).
+
+This diagram is exhaustive and database-specific.
+It contains all the tables, fields, keys,
+database-specific data types, and constraints...  
+It is aimed at database administrators and application developers.
+It can be used to implement the data model in the database.
+Database administrators use it to create the migration scripts.
+
+**Learn-dev MPD Diagram**:
+
+> TODO: ![MPD](docs/database/mpd/learn-dev_mpd.svg)
+
+
+#### ERD Diagram
+
+> TODO: ![ERD Diagram](docs/database/mpd/ERD.svg)
+
 
 > [!NOTE]
 > This diagram uses [Crow's foot notation](https://mermaid.js.org/syntax/entityRelationshipDiagram.html#relationship-syntax)
