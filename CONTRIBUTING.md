@@ -356,9 +356,11 @@ Do not use an underscore as the first character.
 The *MCD diagram* is part of the *Merise* methodology and shows the entities 
 and relationships without the (database) technical details.
 
-This is a high-level **business-domain** oriented diagram  
+It is a high-level **business-domain** oriented diagram  
 that shows the **data (entities)**, their **relationships** and **cardinalities**,
 with **NO technical and implementation details**.
+
+**Learn-dev MCD Diagram**:
 
 > ![MCD](docs/database/mcd/learn-dev.svg)
 
@@ -376,25 +378,31 @@ It is a transformed version of the MCD where:
 - `N..N` relationships become junction tables,
 - `1..1` relationship become foreign key.      
 
-The *MLD* is shared domain experts, database administrators,
+The *MLD* is shared by domain experts, database administrators,
 and application developers.  
-*Domain experts* can check that the relational structure captures the business correctly.       
-*Application developers* can start creating the entities (and database admins)
-can create the migration scripts.
+*Domain experts* can verify that the relational structure accurately reflects 
+the business.       
+*Application developers* can then start creating the entities 
+while database adminstrators can create the migration scripts.
+
+**Learn-dev MLD Diagram**:
 
 > ![MLD](docs/database/mld/learn-dev_mld.svg)
 
 
 #### MPD Diagram
 
-*MPD* stands for The *MPD* diagram 
-> ![MPD](docs/database/mpd/learn-dev_mpd.svg)
+*MPD* stands for Modèle Physique des Données (Physical Data Model).
+
+**Learn-dev MPD Diagram**:
+
+> TODO: ![MPD](docs/database/mpd/learn-dev_mpd.svg)
 
 
 
 #### ERD Diagram
 
-> ![ERD Diagram](docs/database/mpd/ERD.svg)
+> TODO: ![ERD Diagram](docs/database/mpd/ERD.svg)
 
 
 > [!NOTE]
