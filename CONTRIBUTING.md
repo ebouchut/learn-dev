@@ -379,7 +379,7 @@ Relative Link to MCD
 > ![MCD](docs/database/mcd/learn-dev.svg)
 
 
-#### MLD Diagram
+##### MLD Diagram
 
 *MLD* stands for 🇫🇷 **Modèle Logique de Données** (Logical Data Model).
 The MLD diagram is part of the _Merise_ methodologyand is  used to display 
@@ -399,7 +399,7 @@ Relative Link to MLD:
 TODO: Add MPD diagram and link
 
 
-##### Database ERD Diagram
+##### ERD Diagram
 
 The **Entity Relationships Diagram** (ERD) 
 is available as an [SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/mpd/ERD.svg)

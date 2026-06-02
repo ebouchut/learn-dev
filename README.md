@@ -113,11 +113,11 @@ Here is the procedure:
       brew install python@3.14
       ```
     - Install Python on other OSes:  
-      http://docs.python-guide.org/en/latest/starting/installation/
+      https://docs.python-guide.org/en/latest/starting/installation/
 - [ ] Create a Python Virtual Environment:
   ```shell
   # cd to the folder where you cloned the repository
-  python -m venv venv       # Do it once
+  python3 -m venv venv       # Do it once
   source venv/bin/activate  # Run this line each time you open a new shell/terminal/window/tab
   ```
 - [ ] Install **[mocodo](https://laowantong.github.io/mocodo/doc/fr_refman.html#Installation-et-lancement-du-programme)**

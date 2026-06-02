@@ -1,5 +1,5 @@
 # Ignore existing files with the same name as phony targets
-.PHONY: diagrams mcd mld mpd ddl clean
+.PHONY: help diagrams mcd mld mpd ddl clean
 
 # Default make target used if none specified
 .DEFAULT_GOAL := help
@@ -37,6 +37,7 @@ mld:
 # Generate MPD from the PostgreSQL database
 mpd:
 	@echo "Generating MPD from PostgreSQL Database..."
+	@mkdir -p docs/database/mpd
 	tbls docs/database/mpd --force
 	@echo "MPD generated in docs/database/mpd/"
 
@@ -44,6 +45,7 @@ mpd:
 # (with Postgres DDL syntax)
 ddl:
 	@echo "Generating DDL (Postgres SQL syntax)..."
+	@mkdir -p docs/database/ddl
 	mocodo --input docs/database/mcd/learn-dev.mcd --output_dir docs/database/ddl -t postgres
 	@echo "DDL generated in docs/database/ddl/"
 
