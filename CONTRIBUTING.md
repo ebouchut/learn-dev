@@ -323,10 +323,33 @@ The main advantages in my opinion are:
     >   letter and each subsequent word begins with an uppercase letter, with no spaces or underscores: `useJuryVote`.
 
 
-#### Database Schema
+#### Database
+
+The *learn-dev* platform uses a **PostgreSQL** relational database to persist entities.
+
+##### Database Schema
 
 This section describes how the database is structured.
-The *learn-dev* platform uses a PostgreSQL relational database to persist entities.
+
+The data model (entities and relationships...) are described 
+using 3 diagrams from the Merise methodology: MCD, MLD, and MPD.
+This is a 3-step progressive approach from conceptual, logical to physical:
+- **MCD** (Conceptual Data Model): This high-level **business-domain** oriented diagram  
+  that shows the **data (entities), their **relationships** and **cardinalities**,
+  with **NO technical details**.
+- **MLD** (Logical Data Model): This diagram shows the relational structure 
+  in a database agnostic way. It is a transformed version of the MCD where:
+  entities become tables, `1..N` relationships become foreign keys, 
+  `N..N` relationships become junction tables, `1..1` relationship become foreign key.      
+  The *MLD* is shared domain experts, database administrators, 
+  and application developers.      
+  Domain experts can check that the relational structure captures the business correctly.     
+  Application developers can start creating the entities (and database admins) 
+  can create the migration scripts.
+- **MPD**: This diagram is aimed at database administrators and application developers.
+  It is exhaustive and database-specific. It contains all the tables, fields, keys, 
+  database-specific data types, and constraints... 
+  It can be used to implement the data model in the database.  
 
 
 ##### Database Naming Conventions
@@ -342,13 +365,27 @@ Do not use an underscore as the first character.
 
 ##### Database MCD Diagram
 
-*MCD* stands for 🇫🇷 **Modèle Conceptuel de Données** (in the Merise methodology).
-This is a diagram that shows the *Conceptual Data Model* with entities and relationships.  
+*MCD* stands for 🇫🇷 **Modèle Conceptuel de Données**.
+This diagram from the MERISE methodology shows the *Conceptual Data Model*: 
+entities and relationships without the (database) technical details. 
+It is aimed at the business owners. 
 
-![MCD](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mcd/learn-dev.svg).
+> ![MCD](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mcd/learn-dev.svg).
 
-The MCD is available as an 
-[SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mcd/learn-dev.svg).
+To view the MCD in full screen, you can also open it in a new window:  
+[MCD as an SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mcd/learn-dev.svg).
+
+
+#### Database MLD
+
+*MLD* stands for 🇫🇷 **Modèle Logique de Données** (Logical Data Model).
+The MLD diagram is part of the _Merise_ methodology.   
+It is used to display the *Logical Data Model*.
+
+> ![MLD](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mld/learn-dev_mld.svg).
+
+To view the MLD in full screen, you can also open it in a new window:  
+[MLD as an SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mld/learn-dev_mld.svg).
 
 
 ##### Database MPD Diagram
