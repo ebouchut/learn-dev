@@ -331,11 +331,11 @@ The *learn-dev* platform uses a **PostgreSQL** relational database to persist en
 
 This section describes how the database is structured.
 
-The data model (entities and relationships...) are described 
+The data model (entities and relationships...) is described 
 using 3 diagrams from the Merise methodology: MCD, MLD, and MPD.
 This is a 3-step progressive approach from conceptual, logical to physical:
 - **MCD** (Conceptual Data Model): This high-level **business-domain** oriented diagram  
-  that shows the **data (entities), their **relationships** and **cardinalities**,
+  that shows the **data (entities)**, their **relationships** and **cardinalities**,
   with **NO technical details**.
 - **MLD** (Logical Data Model): This diagram shows the relational structure 
   in a database agnostic way. It is a transformed version of the MCD where:
@@ -363,32 +363,61 @@ Here are the naming conventions for the **name** of our database **tables**:
 
 Do not use an underscore as the first character.
 
-##### Database MCD Diagram
+##### MCD Diagram
 
 *MCD* stands for 🇫🇷 **Modèle Conceptuel de Données**.
-This diagram from the MERISE methodology shows the *Conceptual Data Model*: 
-entities and relationships without the (database) technical details. 
+The MCD diagram is part of the MERISE methodology and shows the *Conceptual Data Model*, 
+that is entities and relationships without the (database) technical details. 
 It is aimed at the business owners. 
 
+<<<<<<< New base: docs: Fix brolen links to Merise data model diagrams
 > ![MCD](docs/database/mcd/learn-dev.svg)
+||||||| Common ancestor
+> ![MCD](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mcd/learn-dev.svg).
+=======
+> ![MCD](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/database/mcd/learn-dev.svg).
+
+---
+Relative Link to MCD
+
+> ![MCD](docs/database/mcd/learn-dev.svg).
+>>>>>>> Current commit: docs: Fix brolen links to Merise data model diagrams
 
 To view the MCD in full screen, you can also open it in a new window:  
+<<<<<<< New base: docs: Fix brolen links to Merise data model diagrams
 [MCD as an SVG image](docs/database/mcd/learn-dev.svg)
+||||||| Common ancestor
+[MCD as an SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mcd/learn-dev.svg).
+=======
+[MCD as an SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/database/mcd/learn-dev.svg).
+>>>>>>> Current commit: docs: Fix brolen links to Merise data model diagrams
 
 
-#### Database MLD
+#### MLD Diagram
 
 *MLD* stands for 🇫🇷 **Modèle Logique de Données** (Logical Data Model).
 The MLD diagram is part of the _Merise_ methodology.   
 It is used to display the *Logical Data Model*.
 
+<<<<<<< New base: docs: Fix brolen links to Merise data model diagrams
 > ![MLD](docs/database/mld/learn-dev_mld.svg)
+||||||| Common ancestor
+> ![MLD](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mld/learn-dev_mld.svg).
+=======
+> ![MLD](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/database/mld/learn-dev_mld.svg).
+>>>>>>> Current commit: docs: Fix brolen links to Merise data model diagrams
 
 To view the MLD in full screen, you can also open it in a new window:  
+<<<<<<< New base: docs: Fix brolen links to Merise data model diagrams
 [MLD as an SVG image](docs/database/mld/learn-dev_mld.svg)
+||||||| Common ancestor
+[MLD as an SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mld/learn-dev_mld.svg).
+=======
+[MLD as an SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/database/mld/learn-dev_mld.svg).
+>>>>>>> Current commit: docs: Fix brolen links to Merise data model diagrams
 
 
-##### Database MPD Diagram
+##### MPD Diagram
 
 TODO: Add MPD diagram and link
 
@@ -396,7 +425,7 @@ TODO: Add MPD diagram and link
 ##### Database ERD Diagram
 
 The **Entity Relationships Diagram** (ERD) 
-is available as an [SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/ERD.svg)
+is available as an [SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/mpd/ERD.svg)
 
 > [!NOTE]
 > This diagram uses [Crow's foot notation](https://mermaid.js.org/syntax/entityRelationshipDiagram.html#relationship-syntax)

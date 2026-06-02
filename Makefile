@@ -9,6 +9,7 @@ help:
 	@echo "Available targets:"
 	@echo "  make diagrams  — generate MCD, MLD, and MPD"
 	@echo "  make mcd       — generate MCD"
+	@echo "  make mld       — generate MLD"
 	@echo "  make mpd       — generate MPD"
 	@echo "  make ddl       — regenerate DDL (SQL with Postgres database structure)"
 	@echo "  make clean     — remove generated diagrams"
@@ -46,7 +47,7 @@ ddl:
 	mocodo --input docs/database/mcd/learn-dev.mcd --output_dir docs/database/ddl -t postgres
 	@echo "DDL generated in docs/database/ddl/"
 
-# Clean up generated diagram files (keep source files)
+# Clean up generated diagram files
 clean:
 	@echo "Cleaning up generated diagrams..."
 	rm -f docs/database/mcd/learn-dev.svg

@@ -117,10 +117,10 @@ Here is the procedure:
 - [ ] Create a Python Virtual Environment:
   ```shell
   # cd to the folder where you cloned the repository
-  python -m pip pip venv venv # Do it once
-  source venv/bin/activate     # Run this line each time you open a new shell/terminal/window/tab
+  python -m venv venv       # Do it once
+  source venv/bin/activate  # Run this line each time you open a new shell/terminal/window/tab
   ```
-- [ ] Install **[mocodo](https://laowantong.github.io/mocodo/doc/fr_refman.html#Installation-et-lancement-du-programme)
+- [ ] Install **[mocodo](https://laowantong.github.io/mocodo/doc/fr_refman.html#Installation-et-lancement-du-programme)**
   ```shell
   pip install 'mocodo[svg,clipboard]'
   ```
