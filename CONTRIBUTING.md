@@ -370,51 +370,28 @@ The MCD diagram is part of the MERISE methodology and shows the *Conceptual Data
 that is entities and relationships without the (database) technical details. 
 It is aimed at the business owners. 
 
-<<<<<<< New base: docs: Fix brolen links to Merise data model diagrams
-> ![MCD](docs/database/mcd/learn-dev.svg)
-||||||| Common ancestor
-> ![MCD](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mcd/learn-dev.svg).
-=======
 > ![MCD](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/database/mcd/learn-dev.svg).
 
----
-Relative Link to MCD
-
-> ![MCD](docs/database/mcd/learn-dev.svg).
->>>>>>> Current commit: docs: Fix brolen links to Merise data model diagrams
-
 To view the MCD in full screen, you can also open it in a new window:  
-<<<<<<< New base: docs: Fix brolen links to Merise data model diagrams
-[MCD as an SVG image](docs/database/mcd/learn-dev.svg)
-||||||| Common ancestor
-[MCD as an SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mcd/learn-dev.svg).
-=======
 [MCD as an SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/database/mcd/learn-dev.svg).
->>>>>>> Current commit: docs: Fix brolen links to Merise data model diagrams
+
+Relative Link to MCD
+> ![MCD](docs/database/mcd/learn-dev.svg)
 
 
 #### MLD Diagram
 
 *MLD* stands for 🇫🇷 **Modèle Logique de Données** (Logical Data Model).
-The MLD diagram is part of the _Merise_ methodology.   
-It is used to display the *Logical Data Model*.
+The MLD diagram is part of the _Merise_ methodologyand is  used to display 
+the *Logical Data Model*.
 
-<<<<<<< New base: docs: Fix brolen links to Merise data model diagrams
-> ![MLD](docs/database/mld/learn-dev_mld.svg)
-||||||| Common ancestor
-> ![MLD](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mld/learn-dev_mld.svg).
-=======
 > ![MLD](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/database/mld/learn-dev_mld.svg).
->>>>>>> Current commit: docs: Fix brolen links to Merise data model diagrams
 
 To view the MLD in full screen, you can also open it in a new window:  
-<<<<<<< New base: docs: Fix brolen links to Merise data model diagrams
-[MLD as an SVG image](docs/database/mld/learn-dev_mld.svg)
-||||||| Common ancestor
-[MLD as an SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mld/learn-dev_mld.svg).
-=======
-[MLD as an SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/database/mld/learn-dev_mld.svg).
->>>>>>> Current commit: docs: Fix brolen links to Merise data model diagrams
+[MLD](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/database/mld/learn-dev_mld.svg).
+
+Relative Link to MLD:
+> ![MLD as an SVG image](docs/database/mld/learn-dev_mld.svg)
 
 
 ##### MPD Diagram
