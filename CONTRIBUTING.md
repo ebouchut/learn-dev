@@ -370,10 +370,10 @@ This diagram from the MERISE methodology shows the *Conceptual Data Model*:
 entities and relationships without the (database) technical details. 
 It is aimed at the business owners. 
 
-> ![MCD](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mcd/learn-dev.svg).
+> ![MCD](docs/database/mcd/learn-dev.svg).
 
 To view the MCD in full screen, you can also open it in a new window:  
-[MCD as an SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mcd/learn-dev.svg).
+[MCD as an SVG image](docs/database/mcd/learn-dev.svg).
 
 
 #### Database MLD
@@ -382,10 +382,10 @@ To view the MCD in full screen, you can also open it in a new window:
 The MLD diagram is part of the _Merise_ methodology.   
 It is used to display the *Logical Data Model*.
 
-> ![MLD](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mld/learn-dev_mld.svg).
+> ![MLD](docs/database/mld/learn-dev_mld.svg).
 
 To view the MLD in full screen, you can also open it in a new window:  
-[MLD as an SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/docs/database/mld/learn-dev_mld.svg).
+[MLD as an SVG image](docs/database/mld/learn-dev_mld.svg).
 
 
 ##### Database MPD Diagram
