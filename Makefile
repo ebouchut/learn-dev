@@ -38,7 +38,8 @@ mld:
 mpd:
 	@echo "Generating MPD from PostgreSQL Database..."
 	@mkdir -p docs/database/mpd
-	tbls docs/database/mpd --force
+	@test -n "$(TBLS_DSN)" || (echo "TBLS_DSN is required (e.g., postgres://user:pass@host:5432/dbname)" >&2; exit 1)
+    tbls doc "$(TBLS_DSN)" docs/database/mpd --force
 	@echo "MPD generated in docs/database/mpd/"
 
 # Generate a SQL file to create the database structure (tables, associations)

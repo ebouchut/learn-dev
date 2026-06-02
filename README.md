@@ -100,10 +100,10 @@ This is **optional** if you only need **to run the application**.
 This is necessary in order to regenerate the MERISE database diagrams 
 (MCD, MLD and MPD) after any changes have been made to the database design.  
 
-You will need to install *Python* and some additional Python packages (i.e., libraries and tools):
-- `mocodo`: a CLI tool to generate the MCD and MLD database diagrams 
+You will need to install *Python* and:
+- **`mocodo`**: a CLI tool to generate the MCD and MLD database diagrams 
   from a text-file description of the conceptual data model.
-- `tbls`: a CLI tool to reverse engineer the live database to generate the MPD. 
+- **`tbls`**: a CLI tool to reverse engineer the live database to generate the MPD. 
 
 Here is the procedure:
 
@@ -126,7 +126,11 @@ Here is the procedure:
   ```
 - [ ] Install **[tbls](https://github.com/k1LoW/tbls#install)**
   ```shell
-  pip install tbls
+  # On macOS
+  brew install tbls
+  
+  # or any OS with Go installed
+   go install github.com/k1LoW/tbls@latest
   ```
 
 ## Configuration
