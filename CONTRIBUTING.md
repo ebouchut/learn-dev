@@ -378,12 +378,10 @@ It is a transformed version of the MCD where:
 - `N..N` relationships become junction tables,
 - `1..1` relationship become foreign key.      
 
-The *MLD* is shared by domain experts, database administrators,
-and application developers.  
+The *MLD* is shared by domain experts and application developers.  
 *Domain experts* can verify that the relational structure accurately reflects 
 the business.       
-*Application developers* can then start creating the entities 
-while database adminstrators can create the migration scripts.
+*Application developers* can then start creating the entities.
 
 **Learn-dev MLD Diagram**:
 
@@ -393,6 +391,8 @@ while database adminstrators can create the migration scripts.
 #### MPD Diagram
 
 *MPD* stands for Modèle Physique des Données (Physical Data Model).
+
+Database administrators use it to create the migration scripts.
 
 **Learn-dev MPD Diagram**:
 
