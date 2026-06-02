@@ -327,17 +327,6 @@ The main advantages in my opinion are:
 
 The *learn-dev* platform uses a **PostgreSQL** relational database to persist entities.
 
-#### Database Schema
-
-This section describes the data model using the progressive 3 diagrams
-(MCD, MLD, and MPD) from the Merise methodology.
-This gives a view from high-level conceptual (MCD), logical (MLD) to 
-physical (MPD) with all the database details.
-- **MPD**: This diagram is aimed at database administrators and application developers.
-  It is exhaustive and database-specific. It contains all the tables, fields, keys, 
-  database-specific data types, and constraints... 
-  It can be used to implement the data model in the database.  
-
 
 #### Database Naming Conventions
 
@@ -349,6 +338,15 @@ Here are the naming conventions for the **name** of our database **tables**:
 - Less than 64 characters (remnant of a MySQL constraint, just in case ;-)
 
 Do not use an underscore as the first character.
+
+
+#### Database Schema
+
+This section describes the data model using the progressive 3 diagrams
+(MCD, MLD, and MPD) from the Merise methodology.
+This gives a view from high-level conceptual (MCD), logical (MLD) to 
+physical (MPD) with all the database details.
+
 
 #### MCD Diagram
 
@@ -392,12 +390,18 @@ the business.
 
 *MPD* stands for Modèle Physique des Données (Physical Data Model).
 
+This diagram is exhaustive and database-specific.
+It contains all the tables, fields, keys,
+database-specific data types, and constraints...
+
+It is aimed at database administrators and application developers.
+It can be used to implement the data model in the database.
+
 Database administrators use it to create the migration scripts.
 
 **Learn-dev MPD Diagram**:
 
 > TODO: ![MPD](docs/database/mpd/learn-dev_mpd.svg)
-
 
 
 #### ERD Diagram
