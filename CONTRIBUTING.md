@@ -343,8 +343,8 @@ Do not use an underscore as the first character.
 
 This section describes the data model using the progressive 3 diagrams
 (MCD, MLD, and MPD) from the Merise methodology.
-This gives a view from high-level conceptual (MCD), logical (MLD) to 
-physical (MPD) with all the database details.
+This gives a view from high-level conceptual model (MCD), logical model (MLD) to 
+physical model (MPD) with all the database details.
 
 
 #### MCD Diagram
@@ -373,9 +373,9 @@ It is a transformed version of the MCD where:
 - entities become tables, 
 - `1..N` relationships become foreign keys,
 - `N..N` relationships become junction tables,
-- `1..1` relationship become foreign key.      
+- `1..1` relationships become foreign keys.      
 
-The *MLD* is shared by domain experts and application developers.  
+The *MLD* is shared with domain experts and application developers.  
 *Domain experts* can verify that the relational structure accurately reflects 
 the business.       
 *Application developers* can then start creating the entities.
