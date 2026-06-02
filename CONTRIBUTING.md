@@ -327,7 +327,7 @@ The main advantages in my opinion are:
 
 The *learn-dev* platform uses a **PostgreSQL** relational database to persist entities.
 
-##### Database Schema
+#### Database Schema
 
 This section describes the data model using the progressive 3 diagrams
 (MCD, MLD, and MPD) from the Merise methodology.
@@ -339,7 +339,7 @@ physical (MPD) with all the database details.
   It can be used to implement the data model in the database.  
 
 
-##### Database Naming Conventions
+#### Database Naming Conventions
 
 Here are the naming conventions for the **name** of our database **tables**:
 
@@ -350,7 +350,7 @@ Here are the naming conventions for the **name** of our database **tables**:
 
 Do not use an underscore as the first character.
 
-##### MCD Diagram
+#### MCD Diagram
 
 *MCD* stands for 🇫🇷 **Modèle Conceptuel de Données** (Conceptual Data Model).
 The *MCD diagram* is part of the *Merise* methodology and shows the entities 
@@ -363,7 +363,7 @@ with **NO technical and implementation details**.
 > ![MCD](docs/database/mcd/learn-dev.svg)
 
 
-##### MLD Diagram
+#### MLD Diagram
 
 *MLD* stands for 🇫🇷 **Modèle Logique de Données** (Logical Data Model).
 The **MLD diagram** is part of the _Merise_ methodology and shows 
@@ -385,14 +385,14 @@ can create the migration scripts.
 > ![MLD](docs/database/mld/learn-dev_mld.svg)
 
 
-##### MPD Diagram
+#### MPD Diagram
 
 *MPD* stands for The *MPD* diagram 
 > ![MPD](docs/database/mpd/learn-dev_mpd.svg)
 
 
 
-##### ERD Diagram
+#### ERD Diagram
 
 > ![ERD Diagram](docs/database/mpd/ERD.svg)
 
