@@ -329,23 +329,10 @@ The *learn-dev* platform uses a **PostgreSQL** relational database to persist en
 
 ##### Database Schema
 
-This section describes how the database is structured.
-
-The data model (entities and relationships...) is described 
-using 3 diagrams from the Merise methodology: MCD, MLD, and MPD.
-This is a 3-step progressive approach from conceptual, logical to physical:
-- **MCD** (Conceptual Data Model): This high-level **business-domain** oriented diagram  
-  that shows the **data (entities)**, their **relationships** and **cardinalities**,
-  with **NO technical details**.
-- **MLD** (Logical Data Model): This diagram shows the relational structure 
-  in a database agnostic way. It is a transformed version of the MCD where:
-  entities become tables, `1..N` relationships become foreign keys, 
-  `N..N` relationships become junction tables, `1..1` relationship become foreign key.      
-  The *MLD* is shared domain experts, database administrators, 
-  and application developers.      
-  Domain experts can check that the relational structure captures the business correctly.     
-  Application developers can start creating the entities (and database admins) 
-  can create the migration scripts.
+This section describes the data model using the progressive 3 diagrams
+(MCD, MLD, and MPD) from the Merise methodology.
+This gives a view from high-level conceptual (MCD), logical (MLD) to 
+physical (MPD) with all the database details.
 - **MPD**: This diagram is aimed at database administrators and application developers.
   It is exhaustive and database-specific. It contains all the tables, fields, keys, 
   database-specific data types, and constraints... 
@@ -365,44 +352,50 @@ Do not use an underscore as the first character.
 
 ##### MCD Diagram
 
-*MCD* stands for 🇫🇷 **Modèle Conceptuel de Données**.
-The MCD diagram is part of the MERISE methodology and shows the *Conceptual Data Model*, 
-that is entities and relationships without the (database) technical details. 
-It is aimed at the business owners. 
+*MCD* stands for 🇫🇷 **Modèle Conceptuel de Données** (Conceptual Data Model).
+The *MCD diagram* is part of the *Merise* methodology and shows the entities 
+and relationships without the (database) technical details.
 
-> ![MCD](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/database/mcd/learn-dev.svg).
+This is a high-level **business-domain** oriented diagram  
+that shows the **data (entities)**, their **relationships** and **cardinalities**,
+with **NO technical and implementation details**.
 
-To view the MCD in full screen, you can also open it in a new window:  
-[MCD as an SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/database/mcd/learn-dev.svg).
-
-Relative Link to MCD
 > ![MCD](docs/database/mcd/learn-dev.svg)
 
 
 ##### MLD Diagram
 
 *MLD* stands for 🇫🇷 **Modèle Logique de Données** (Logical Data Model).
-The MLD diagram is part of the _Merise_ methodologyand is  used to display 
+The **MLD diagram** is part of the _Merise_ methodology and shows 
 the *Logical Data Model*.
 
-> ![MLD](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/database/mld/learn-dev_mld.svg).
+It shows the relational structure in a database-agnostic way.
+It is a transformed version of the MCD where:
+- entities become tables, 
+- `1..N` relationships become foreign keys,
+- `N..N` relationships become junction tables,
+- `1..1` relationship become foreign key.      
 
-To view the MLD in full screen, you can also open it in a new window:  
-[MLD](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/database/mld/learn-dev_mld.svg).
+The *MLD* is shared domain experts, database administrators,
+and application developers.  
+*Domain experts* can check that the relational structure captures the business correctly.       
+*Application developers* can start creating the entities (and database admins)
+can create the migration scripts.
 
-Relative Link to MLD:
-> ![MLD as an SVG image](docs/database/mld/learn-dev_mld.svg)
+> ![MLD](docs/database/mld/learn-dev_mld.svg)
 
 
 ##### MPD Diagram
 
-TODO: Add MPD diagram and link
+*MPD* stands for The *MPD* diagram 
+> ![MPD](docs/database/mpd/learn-dev_mpd.svg)
+
 
 
 ##### ERD Diagram
 
-The **Entity Relationships Diagram** (ERD) 
-is available as an [SVG image](https://raw.githubusercontent.com/ebouchut/learn-dev/dev/docs/mpd/ERD.svg)
+> ![ERD Diagram](docs/database/mpd/ERD.svg)
+
 
 > [!NOTE]
 > This diagram uses [Crow's foot notation](https://mermaid.js.org/syntax/entityRelationshipDiagram.html#relationship-syntax)
