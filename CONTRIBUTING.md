@@ -309,12 +309,17 @@ The main advantages in my opinion are:
 
     
 > [!NOTE]
-> **What are `PascalCase` and `camelCase`?**
+> **What are `PascalCase`, `snake_case`, and `camelCase`?**
 >
 > - **[PascalCase](http://c2.com/cgi/wiki?PascalCase)** is a naming convention where the first letter of every word
-    >   is capitalized, with no spaces or underscores between words: `YouTubeEmbed`.
-> - **[camelCase](https://wiki.c2.com/?CamelCase)** is a naming convention where the first word starts with a lowercase
-    >   letter and each subsequent word begins with an uppercase letter, with no spaces or underscores: `useJuryVote`.
+    >   is capitalized, with no spaces or underscores between words such as `YouTubeEmbed`.
+> - **[snake_case](https://en.wikipedia.org/wiki/Snake_case)** 
+>   is a naming convention where words are lowercase and separated 
+>   with underscores (`_`), such as `first_name`. 
+> - **[camelCase](https://wiki.c2.com/?CamelCase)** is a naming convention 
+>   where the first word starts with a lowercase letter and each subsequent 
+>   word begins with an uppercase letter, with no spaces or underscores 
+>   such as `useJuryVote`.
 
 
 #### Database
