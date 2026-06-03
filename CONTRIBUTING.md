@@ -359,7 +359,7 @@ with **NO technical and implementation details**.
 
 **Learn-dev MCD Diagram**:
 
-> ![MCD](docs/database/mcd/learn-dev.svg)
+> ![MCD](docs/database/merise/learn-dev.svg)
 
 
 #### MLD Diagram
@@ -382,7 +382,7 @@ the business.
 
 **Learn-dev MLD Diagram**:
 
-> ![MLD](docs/database/mld/learn-dev_mld.svg)
+> ![MLD](docs/database/merise/learn-dev_mld.svg)
 
 
 #### MPD Diagram
@@ -398,12 +398,12 @@ Database administrators use it to create the migration scripts.
 
 **Learn-dev MPD Diagram**:
 
-> TODO: ![MPD](docs/database/mpd/learn-dev_mpd.svg)
+> TODO: ![MPD](docs/database/merise/learn-dev_mpd.svg)
 
 
 #### ERD Diagram
 
-> TODO: ![ERD Diagram](docs/database/mpd/ERD.svg)
+> TODO: ![ERD Diagram](docs/database/erd/learn-dev-erd.svg)
 
 
 > [!NOTE]
