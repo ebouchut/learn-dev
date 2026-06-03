@@ -203,7 +203,7 @@ learn-dev/
 │   │   │   │           └── AuditLogRepository.java
 │   │   │   │
 │   │   │   └── resources/
-│   │   │       ├── application.yml                       # Main config (active profile, app name)
+│   │   │       ├── application.yaml                      # Main config (active profile, app name)
 │   │   │       ├── application-dev.yml                   # Dev profile (local DB, debug logging)
 │   │   │       ├── application-prod.yml                  # Prod profile (external DB, stricter security)
 │   │   │       └── db/
@@ -271,8 +271,9 @@ The main advantages in my opinion are:
   Only the few classes that genuinely cross feature boundaries need to be `public`.
 
 > [!NOTE]
-> Each backend feature folder (e.g. `auth/`, `user/`, `role/`) follows the same layout:
-> controller and service classes, and the following sub-packages `entity`,`repository`, `dto/`, and `exception`.
+> Each **backend feature package** (e.g. `auth`, `user`, `role`...) follows the same layout.
+> A feature package contains the controller and service classes, 
+> and the following sub-packages `entity`,`repository`, `dto`, and `exception`.
 
 
 #### File Naming Convention
