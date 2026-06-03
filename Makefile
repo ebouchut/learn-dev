@@ -29,7 +29,7 @@ mcd:
 # - Render the MLD source
 mld:
 	@echo "Generating MLD..."
-	mocodo --input docs/database/merise/learn-dev.mcd     --output_dir docs/database/merise --transform mld diagram
+	mocodo --input docs/database/merise/learn-dev.mcd     --output_dir docs/database/merise --transform mld --colors brewer+1
 	mocodo --input docs/database/merise/learn-dev_mld.mcd --output_dir docs/database/merise --colors ocean
 	@echo "MLD generated: docs/database/merise/learn-dev_mld.svg"
 
