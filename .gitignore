@@ -74,3 +74,15 @@ build/
 .env
 .env.*
 !.env.example
+
+### ~~~~~~~~~~~~~
+### Mocodo
+### ~~~~~~~~~~~~~
+docs/database/merise/learn-dev_mld.md
+docs/database/merise/learn-dev_geo.json
+docs/database/merise/learn-dev_mld_geo.json
+
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Python Virtual Environment
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~
+venv/
