@@ -38,3 +38,6 @@ logging:
 
     # App logging level
     com.ericbouchut.learndev: DEBUG
+
+liquibase:
+  contexts: dev

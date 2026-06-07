@@ -338,6 +338,26 @@ The main advantages in my opinion are:
 The *learn-dev* platform uses a **PostgreSQL** relational database to persist entities.
 
 
+#### Database Migrations (Liquibase)
+
+The database schema is managed with **Liquibase**. Migrations live in
+`src/main/resources/db/changelog/`:
+
+- `db.changelog-master.yaml` includes every change file via `includeAll` on the
+  `changes/` directory (applied in filename order).
+- Change files use **formatted SQL** and are named with a timestamp prefix:
+
+  ```
+  VYYYYMMDDHHMMSS-short-description.sql
+  ```
+
+  e.g. `V20260608161836-create-core-schema.sql`. The `V` + UTC timestamp keeps
+  files ordered chronologically and avoids numbering collisions when branches
+  add migrations in parallel.
+- Migrations are **append-only**: never edit a changeset that has already run on
+  a shared database — add a new one. Each changeset has a `--rollback`.
+
+
 #### Database Naming Conventions
 
 Here are the naming conventions for the **name** of our database **tables**:
