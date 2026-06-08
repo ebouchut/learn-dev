@@ -351,9 +351,14 @@ The database schema is managed with **Liquibase**. Migrations live in
   VYYYYMMDDHHMMSS-short-description.sql
   ```
 
-  e.g. `V20260608161836-create-core-schema.sql`. The `V` + UTC timestamp keeps
-  files ordered chronologically and avoids numbering collisions when branches
-  add migrations in parallel.
+  e.g. `V20260608161842-create-idx-user-roles-role-id.sql`. The `V` + UTC
+  timestamp keeps files ordered chronologically and avoids numbering collisions
+  when branches add migrations in parallel.
+- **One changeset per file** (atomic): each file contains a single
+  `--changeset` so it can be rolled back independently.
+- The **changeset id equals the filename's timestamp**, e.g.
+  `--changeset ebouchut:V20260608161842`. This keeps the id globally unique and
+  trivially traceable to its file.
 - Migrations are **append-only**: never edit a changeset that has already run on
   a shared database — add a new one. Each changeset has a `--rollback`.
 
