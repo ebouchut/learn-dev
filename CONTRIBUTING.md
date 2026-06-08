@@ -216,7 +216,9 @@ learn-dev/
 │   │   │       ├── application-prod.yml                  # Prod profile (external DB, stricter security)
 │   │   │       └── db/
 │   │   │           └── changelog/                        # Liquibase migration files (when introduced)
-│   │   │               └── db.changelog-master.yaml
+│   │   │               ├── db.changelog-master.yaml
+│   │   │               ├── changes/
+│   │   │                   └── V20260608161836-create-users-table.sql # Database migration file
 │   │   │
 │   │   │
 │   │   └── test/
