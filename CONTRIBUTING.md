@@ -3,8 +3,7 @@
 
 ## Welcome
 
-Thank you for your interest in contributing to **learn-dev**, a learning platform
-that uses hands-on practice, automated assessment and real-time feedback to teach programming.
+Thank you for your interest in contributing to **learn-dev**, a learning platform to teach programming.
 
 Whether you're fixing a bug, proposing a new feature, improving documentation,
 or writing tests, every contribution helps make this project better.

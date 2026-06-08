@@ -2,10 +2,9 @@
 
 ## Presentation
 
-> An interactive programming learning platform with automated assessment and hands-on practice.  
+> An interactive programming learning platform.  
 
-This project aims to enable students to learn programming through hands-on practice
-with automated assessment and real-time feedback.
+This project aims to enable students to learn programming.
 
 It is also my capstone project for the [Web and Web Mobile Developer REAC certification](https://www.francecompetences.fr/recherche/rncp/37674/), which I am currently undergoing at [La Plateforme_](https://laplateforme.io).
 
@@ -15,7 +14,6 @@ It is also my capstone project for the [Web and Web Mobile Developer REAC certif
 ## Goals
 
 - Provide an interactive environment for learning programming concepts
-- Implement automated code assessment and feedback
 - Support multiple user roles (such as Student, Instructor, Admin)
 - Demonstrate full-stack development skills using industry standards
 
