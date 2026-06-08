@@ -86,3 +86,9 @@ docs/database/merise/learn-dev_mld_geo.json
 ### Python Virtual Environment
 ### ~~~~~~~~~~~~~~~~~~~~~~~~~~
 venv/
+
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Claude
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Do not impose my own Claude tooling configuration to the team
+.mcp.json
