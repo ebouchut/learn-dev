@@ -78,9 +78,17 @@ build/
 ### ~~~~~~~~~~~~~
 ### Mocodo
 ### ~~~~~~~~~~~~~
-docs/database/merise/learn-dev_mld.md
+### Generated from the single source of truth: learn-dev.mcd (via `make mld`).
+### Committed: learn-dev.mcd (source) + the MCD and MLD .svg diagrams (rendered on GitHub).
 docs/database/merise/learn-dev_geo.json
+
+docs/database/merise/learn-dev_mld.mcd
+docs/database/merise/learn-dev_mld.md
 docs/database/merise/learn-dev_mld_geo.json
+
+docs/database/ddl/learn-dev_geo.json
+docs/database/ddl/learn-dev.mcd
+docs/database/ddl/learn-dev.svg
 
 ### ~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Python Virtual Environment

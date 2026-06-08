@@ -21,8 +21,3 @@ Requests, 11 Reset Token, 0N User
 User: user_id, username, email, password, first_name, last_name, is_active, is_verified, is_locked, failed_login_attempts, last_login_at, password_changed_at
 Holds, 0N User, 0N Role : assigned_at, assigned_by
 Role: role_id, role_name, description, is_active
-
-:
-Owns, 11 Refresh Token, 0N User
-Refresh Token: token_id, token, expires_at, revoked_at, revoked_reason, ip_address, user_agent, last_used_at
-:

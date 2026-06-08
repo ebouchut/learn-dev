@@ -384,6 +384,14 @@ the business.
 
 > ![MLD](docs/database/merise/learn-dev_mld.svg)
 
+> [!NOTE]
+> **Regenerating the MLD:** the single source of truth is the conceptual MCD
+> (`learn-dev.mcd`). Run `make mld`: it auto-derives the logical model
+> (`learn-dev_mld.mcd`, via mocodo's `-t diagram`), emits the relational schema
+> as Markdown (`learn-dev_mld.md`, via `-t mld`), and renders the diagram
+> (`learn-dev_mld.svg`). The `learn-dev_mld.*` files are **generated artifacts —
+> do not edit them by hand**; edit only `learn-dev.mcd`.
+
 
 #### MPD Diagram
 
