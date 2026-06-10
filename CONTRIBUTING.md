@@ -211,7 +211,7 @@ learn-dev/
 │   │   │   │           └── AuditLogRepository.java
 │   │   │   │
 │   │   │   └── resources/
-│   │   │       ├── application.yml                       # Main config (active profile, app name)
+│   │   │       ├── application.yaml                      # Main config (active profile, app name)
 │   │   │       ├── application-dev.yml                   # Dev profile (local DB, debug logging)
 │   │   │       ├── application-prod.yml                  # Prod profile (external DB, stricter security)
 │   │   │       └── db/
@@ -279,8 +279,9 @@ The main advantages in my opinion are:
   Only the few classes that genuinely cross feature boundaries need to be `public`.
 
 > [!NOTE]
-> Each backend feature folder (e.g. `auth/`, `user/`, `role/`) follows the same layout:
-> controller and service classes, and the following sub-packages `entity`,`repository`, `dto/`, and `exception`.
+> Each **backend feature package** (e.g. `auth`, `user`, `role`...) follows the same layout.
+> A feature package contains the controller and service classes, 
+> and the following sub-packages `entity`,`repository`, `dto`, and `exception`.
 
 
 #### File Naming Convention
@@ -391,6 +392,14 @@ the business.
 **Learn-dev MLD Diagram**:
 
 > ![MLD](docs/database/merise/learn-dev_mld.svg)
+
+> [!NOTE]
+> **Regenerating the MLD:** the single source of truth is the conceptual MCD
+> (`learn-dev.mcd`). Run `make mld`: it auto-derives the logical model
+> (`learn-dev_mld.mcd`, via mocodo's `-t diagram`), emits the relational schema
+> as Markdown (`learn-dev_mld.md`, via `-t mld`), and renders the diagram
+> (`learn-dev_mld.svg`). The `learn-dev_mld.*` files are **generated artifacts —
+> do not edit them by hand**; edit only `learn-dev.mcd`.
 
 
 #### MPD Diagram

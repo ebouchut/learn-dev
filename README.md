@@ -120,7 +120,8 @@ Here is the procedure:
   ```
 - [ ] Install **[mocodo](https://laowantong.github.io/mocodo/doc/fr_refman.html#Installation-et-lancement-du-programme)**
   ```shell
-  pip install 'mocodo[svg,clipboard]'
+  # mocodo >= 4.3.3 is required (the `make mld` target relies on its `-t diagram` template)
+  pip install 'mocodo[svg,clipboard]>=4.3.3'
   ```
 - [ ] Install **[tbls](https://github.com/k1LoW/tbls#install)**
   ```shell
