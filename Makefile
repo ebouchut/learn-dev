@@ -1,5 +1,5 @@
 # Ignore existing files with the same name as phony targets
-.PHONY: help diagrams mcd mld mpd ddl clean
+.PHONY: help diagrams mcd mld mpd clean
 
 # Default make target used if none specified
 .DEFAULT_GOAL := help
