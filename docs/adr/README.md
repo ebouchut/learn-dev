@@ -1,0 +1,37 @@
+# Architecture Decision Records (ADR)
+
+This directory holds the **Architecture Decision Records** for learn-dev.
+
+An ADR is a short, dated document that captures one significant architectural or
+design decision — its context, the choice made, and its consequences. ADRs are
+an **append-only, numbered log**: a decision is never silently rewritten; when a
+choice changes, a new ADR *supersedes* the old one, preserving the history of
+*why* the system is the way it is.
+
+## Format
+
+All ADRs use the **MADR** (Markdown Any Decision Records) short form.
+Copy [`template.md`](template.md) when writing a new one.
+
+## Naming convention
+
+```
+NNNN-short-title-in-kebab-case.md
+```
+
+- `NNNN` — 4-digit zero-padded, sequential (`0001`, `0002`, …). Never reused.
+- Title — kebab-case, concise, topic-first.
+- Files are never deleted; a superseded ADR stays and its **Status** is updated.
+
+## Status values
+
+`proposed` · `accepted` · `superseded by ADR-NNNN` · `deprecated`
+
+## Index
+
+| ADR | Title | Status |
+|-----|-------|--------|
+| [0001](0001-use-server-side-sessions-over-jwt.md) | Use server-side sessions instead of JWT for user authentication | accepted |
+| [0002](0002-service-to-service-auth-via-service-token.md) | Authenticate service-to-service calls with a service token | proposed |
+| [0003](0003-uuid-pk-for-users-bigint-elsewhere.md) | Use a UUID primary key for users, BIGINT identity elsewhere | accepted |
+| [0004](0004-use-mailpit-as-local-smtp-catcher.md) | Use Mailpit as the local fake SMTP catcher | accepted |

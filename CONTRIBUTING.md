@@ -3,8 +3,7 @@
 
 ## Welcome
 
-Thank you for your interest in contributing to **learn-dev**, a learning platform
-that uses hands-on practice, automated assessment and real-time feedback to teach programming.
+Thank you for your interest in contributing to **learn-dev**, a learning platform to teach programming.
 
 Whether you're fixing a bug, proposing a new feature, improving documentation,
 or writing tests, every contribution helps make this project better.
@@ -35,6 +34,15 @@ Read the [Prerequisites section of the README](README.md#prerequisites).
 #### Code Documentation
 
 The code reference documentation is not yet available and will be added to this repository in a future update.
+
+#### Architecture Decision Records (ADR)
+
+Significant architectural and design decisions are recorded as **ADRs** under
+[`docs/adr/`](docs/adr/), using the **MADR** short form. ADRs are an
+append-only, numbered log: a decision is never rewritten; a new ADR supersedes
+an old one. Files are named `NNNN-short-title-in-kebab-case.md` (4-digit
+zero-padded sequence). To add one, copy [`docs/adr/template.md`](docs/adr/template.md)
+and add it to the index in [`docs/adr/README.md`](docs/adr/README.md).
 
 #### Architecture Overview
 
