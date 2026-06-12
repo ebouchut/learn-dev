@@ -1,4 +1,5 @@
 databaseChangeLog:
   - includeAll:
-      path: db/changelog/changes/
       relativeToChangelogFile: true
+      # `path` (where Liquibase reads migration files) is relative to `db.changelog-master.yaml`
+      path: changes/
