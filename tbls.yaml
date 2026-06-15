@@ -1,0 +1,42 @@
+# ~~~ Database name of the document
+#
+name: learn-dev
+
+# ~~~ Database description
+#
+desc: Learn-dev MPD (Physical Data Model)
+
+# ~~~ Do not generate JSON schema file
+#
+disableOutputSchema: true
+
+# ~~~ Hide Liquibase tables
+#
+exclude: [databasechangelog, databasechangeloglock]
+
+# ~~~ Relations
+# Help tbls infer the self-reference on user_roles.assigned_by,
+# which it cannot detect from foreign keys alone.
+#
+relations:
+  - table: user_roles
+    columns:
+      - assigned_by
+    parentTable: users
+    parentColumns:
+      - user_id
+    def: admin who assigned the role
+
+er:
+  # ER diagram image format (`png`, `jpg`, `svg`, `mermaid`)
+  # Default is `svg`
+  format: svg
+  # Add table/column comment to ER diagram
+  # Default is false
+  comment: true
+  # Hide relation definition from ER diagram
+  # Default is false
+  hideDef: true
+  # Distance between tables that display relations in the ER
+  # Default is 1 (only directly-related tables appear in each table's diagram)
+  distance: 1
