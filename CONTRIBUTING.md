@@ -216,7 +216,9 @@ learn-dev/
 │   │   │       ├── application-prod.yml                  # Prod profile (external DB, stricter security)
 │   │   │       └── db/
 │   │   │           └── changelog/                        # Liquibase migration files (when introduced)
-│   │   │               └── db.changelog-master.yaml
+│   │   │               ├── db.changelog-master.yaml
+│   │   │               ├── changes/
+│   │   │                   └── V20260608161836-create-users-table.sql # Database migration file
 │   │   │
 │   │   │
 │   │   └── test/
@@ -334,6 +336,35 @@ The main advantages in my opinion are:
 #### Database
 
 The *learn-dev* platform uses a **PostgreSQL** relational database to persist entities.
+
+
+#### Database Migrations (Liquibase)
+
+The database schema is managed with **Liquibase**. Migrations live in
+`src/main/resources/db/changelog/`:
+
+- `db.changelog-master.yaml` includes every change file via `includeAll` on the
+  `changes/` directory (applied in filename order).
+- Change files use **formatted SQL** and are named with a timestamp prefix:
+
+  ```
+  VYYYYMMDDHHMMSS-short-description.sql
+  ```
+
+  e.g. `V20260608161842-create-idx-user-roles-role-id.sql`. The `V` + UTC
+  timestamp keeps files ordered chronologically and avoids numbering collisions
+  when branches add migrations in parallel.
+- **One changeset per file** (atomic): each file contains a single
+  `--changeset` so it can be rolled back independently.
+- The **changeset id equals the filename's timestamp**, e.g.
+  `--changeset ebouchut:V20260608161842`. This keeps the id globally unique and
+  trivially traceable to its file.
+- Migrations are **append-only**: never edit a changeset that has already run on
+  a shared database — add a new one. Each changeset has a `--rollback`.
+- After adding or removing a column, update the MCD diagram source
+  (`docs/database/merise/learn-dev.mcd`) to match, then run
+  `make check-schema-drift` to verify every table column is represented in the
+  diagram. CI runs this check too.
 
 
 #### Database Naming Conventions

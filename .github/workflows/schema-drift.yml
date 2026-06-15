@@ -1,0 +1,31 @@
+name: Schema drift check
+
+# Check if the MCD source file and the database schema (DDL) are in sync.
+# Fail the build if a Liquibase table column is missing from the Merise MCD
+# diagram source. The check is pure-stdlib Python, so no project build is needed.
+# Runs only when the database schema, the MCD diagram source, or the check script change.
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - "src/main/resources/db/changelog/changes/**"
+      - "docs/database/merise/learn-dev.mcd"
+      - "scripts/check_schema_drift.py"
+  push:
+    branches: [dev, main]
+    paths:
+      - "src/main/resources/db/changelog/changes/**"
+      - "docs/database/merise/learn-dev.mcd"
+      - "scripts/check_schema_drift.py"
+
+jobs:
+  schema-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Check MCD vs Liquibase column drift
+        run: python3 scripts/check_schema_drift.py

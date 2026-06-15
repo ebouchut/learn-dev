@@ -1,5 +1,5 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# application-dev.yaml
+# application-prod.yaml
 #
 # Application configuration file for the dev profile.
 # Properties defined in this file override the ones defined
@@ -16,7 +16,7 @@ spring:
   # Hibernate (ORM) Configuration
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   jpa:
-    show-sql: true
+    show-sql: false
 
   # Generate DDL and write to file
   #    properties:
@@ -29,7 +29,7 @@ spring:
   # Set the execution context for Liquibase changeset
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   liquibase:
-    contexts: dev
+    contexts: prod
 
 
 # ~~~~~~~~~~~~~~~~~~
@@ -38,10 +38,10 @@ spring:
 logging:
   level:
     # Log Hibernate SQL statements
-    org.hibernate.SQL: DEBUG
+    org.hibernate.SQL: WARN
 
     # Log incoming Web request details
-    web: DEBUG
+    web: WARN
 
     # App logging level
-    com.ericbouchut.learndev: DEBUG
+    com.ericbouchut.learndev: WARN
