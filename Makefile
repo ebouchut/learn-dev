@@ -1,5 +1,5 @@
 # Ignore existing files with the same name as phony targets
-.PHONY: help diagrams mcd mld mpd clean
+.PHONY: help diagrams mcd mld mpd clean check-schema-drift
 
 # Default make target used if none specified
 .DEFAULT_GOAL := help
@@ -12,10 +12,16 @@ help:
 	@echo "  make mld       — generate MLD"
 	@echo "  make mpd       — generate MPD"
 	@echo "  make clean     — remove generated diagrams"
+	@echo "  make check-schema-drift — fail if a Liquibase column is missing from the MCD"
 
 # Generate all database diagrams (MCD, MLD, MPD)
 diagrams: mcd mld mpd
 	@echo "All diagrams generated (MCD, MLD, MPD)"
+
+# Fail if a Liquibase table column is missing from the MCD diagram source.
+# Heuristic (column-name presence only); CI-friendly (non-zero exit on drift).
+check-schema-drift:
+	python3 scripts/check_schema_drift.py
 
 # Generate MCD from Mocodo source
 mcd:

@@ -361,6 +361,10 @@ The database schema is managed with **Liquibase**. Migrations live in
   trivially traceable to its file.
 - Migrations are **append-only**: never edit a changeset that has already run on
   a shared database — add a new one. Each changeset has a `--rollback`.
+- After adding or removing a column, update the MCD diagram source
+  (`docs/database/merise/learn-dev.mcd`) to match, then run
+  `make check-schema-drift` to verify every table column is represented in the
+  diagram. CI runs this check too.
 
 
 #### Database Naming Conventions
