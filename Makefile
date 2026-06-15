@@ -7,7 +7,7 @@
 # Display the syntax with available targets
 help:
 	@echo "Available targets:"
-	@echo "  make diagrams  — generate MCD, MLD, and MPD"
+	@echo "  make diagrams  — generate Merise MCD, MLD, and MPD diagrams"
 	@echo "  make mcd       — generate MCD"
 	@echo "  make mld       — generate MLD"
 	@echo "  make mpd       — generate MPD"
@@ -41,12 +41,25 @@ mld:
 	mocodo --input docs/database/merise/learn-dev_mld.mcd --output_dir docs/database/merise --colors ocean
 	@echo "MLD generated: docs/database/merise/learn-dev_mld.svg"
 
-# Generate MPD from the PostgreSQL database
+# Generate MPD from the PostgreSQL database.
+# Percent-encode the password because it may contain URL-reserved characters.
 mpd:
 	@echo "Generating MPD from PostgreSQL Database..."
-	@test -n "$(TBLS_DSN)" || (echo "TBLS_DSN is required (e.g., postgres://user:pass@host:5432/dbname)" >&2; exit 1)
-	tbls doc "$(TBLS_DSN)" docs/database/merise --force
-	@echo "MPD generated in docs/database/merise/"
+	@if [ -e .env ]; then \
+	  while IFS= read -r line; do \
+	    case "$$line" in [A-Za-z_]*=*) export "$$line";; esac; \
+	  done < .env; \
+	fi; \
+	if [ -n "$$TBLS_DSN" ]; then \
+	  DSN="$$TBLS_DSN"; \
+	elif [ -n "$$LEARNDEV_DB_USER" ]; then \
+	  ENC_LEARNDEV_DB_PASSWORD=$$(printf '%s' "$$LEARNDEV_DB_PASSWORD" | python3 -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.stdin.read(), safe=""))'); \
+	  DSN="postgres://$$LEARNDEV_DB_USER:$$ENC_LEARNDEV_DB_PASSWORD@$$POSTGRES_HOST:$$POSTGRES_PORT/$$LEARNDEV_DB_NAME?sslmode=disable"; \
+	else \
+	  echo "TBLS_DSN is required (or define LEARNDEV_DB_* / POSTGRES_* in .env)" >&2; exit 1; \
+	fi; \
+	tbls doc "$$DSN" docs/database/merise/mpd --force
+	@echo "MPD generated in docs/database/merise/mpd/"
 
 # Clean up generated diagram files
 clean:

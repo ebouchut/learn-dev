@@ -9,7 +9,7 @@
 
 :
 Email Token: token_id, token, expires_at, used_at
-Audit Log: log_id, action_type, entity_type, entity_id, description, ip_address, user_agent, was_successful, error_message, metadata
+Audit Log: log_id, action_type, entity_type, entity_id, description, ip_address, user_agent, was_successful, error_message, metadata, created_at
 :
 
 Reset Token: token_id, token, expires_at, used_at, ip_address
