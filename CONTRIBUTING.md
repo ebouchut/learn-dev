@@ -437,7 +437,7 @@ This gives a view from high-level conceptual model (MCD), logical model (MLD) to
 physical model (MPD) with all the database details.
 
 
-#### MCD Diagram
+##### MCD Diagram
 
 *MCD* stands for 🇫🇷 **Modèle Conceptuel de Données** (Conceptual Data Model).
 The *MCD diagram* is part of the *Merise* methodology and shows the entities 
@@ -452,7 +452,7 @@ with **NO technical and implementation details**.
 > ![MCD](docs/database/merise/learn-dev.svg)
 
 
-#### MLD Diagram
+##### MLD Diagram
 
 *MLD* stands for 🇫🇷 **Modèle Logique de Données** (Logical Data Model).
 The **MLD diagram** is part of the _Merise_ methodology and shows 
@@ -483,7 +483,7 @@ the business.
 > do not edit them by hand**; edit only `learn-dev.mcd`.
 
 
-#### MPD Diagram
+##### MPD Diagram
 
 *MPD* stands for 🇫🇷*Modèle Physique des Données* (Physical Data Model).
 
@@ -515,7 +515,7 @@ PostgreSQL database** (not from the MCD), so it always reflects the real schema.
 Run `make mpd` to regenerate it.
 
 
-#### ERD Diagram
+##### ERD Diagram
 
 ```mermaid
 erDiagram
