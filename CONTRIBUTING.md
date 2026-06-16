@@ -447,8 +447,6 @@ It is a high-level **business-domain** oriented diagram
 that shows the **data (entities)**, their **relationships** and **cardinalities**,
 with **NO technical and implementation details**.
 
-**Learn-dev MCD Diagram**:
-
 > ![MCD](docs/database/merise/learn-dev.svg)
 
 
@@ -469,8 +467,6 @@ The *MLD* is shared with domain experts and application developers.
 *Domain experts* can verify that the relational structure accurately reflects 
 the business.       
 *Application developers* can then start creating the entities.
-
-**Learn-dev MLD Diagram**:
 
 > ![MLD](docs/database/merise/learn-dev_mld.svg)
 
