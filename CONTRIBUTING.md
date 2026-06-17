@@ -281,7 +281,7 @@ The main advantages in my opinion are:
   Only the few classes that genuinely cross feature boundaries need to be `public`.
 
 > [!NOTE]
-> Each **backend feature package** (e.g. `auth`, `user`, `role`...) follows the same layout.
+> Each **backend feature package** (e.g. `auth`, `user`, `role`...) follows the same layout.  
 > A feature package contains the controller and service classes, 
 > and the following sub-packages `entity`,`repository`, `dto`, and `exception`.
 
@@ -323,48 +323,98 @@ The main advantages in my opinion are:
 > **What are `PascalCase`, `snake_case`, and `camelCase`?**
 >
 > - **[PascalCase](http://c2.com/cgi/wiki?PascalCase)** is a naming convention where the first letter of every word
-    >   is capitalized, with no spaces or underscores between words such as `YouTubeEmbed`.
+>   is capitalized, with no spaces or underscores between words,  
+>   e.g.: **`LearnDevApplication`**
 > - **[snake_case](https://en.wikipedia.org/wiki/Snake_case)** 
 >   is a naming convention where words are lowercase and separated 
->   with underscores (`_`), such as `first_name`. 
+>   with underscores (`_`),   
+>   e.g.: **`learn_dev_application`**
 > - **[camelCase](https://wiki.c2.com/?CamelCase)** is a naming convention 
 >   where the first word starts with a lowercase letter and each subsequent 
->   word begins with an uppercase letter, with no spaces or underscores 
->   such as `useJuryVote`.
+>   word begins with an uppercase letter, with no spaces or underscores,    
+>   e.g.: **`learnDevApplication`**
 
 
 #### Database
 
-The *learn-dev* platform uses a **PostgreSQL** relational database to persist entities.
+The *learn-dev* platform uses a **[PostgreSQL](https://www.postgresql.org/)** relational database to persist entities.
 
 
 #### Database Migrations (Liquibase)
 
-The database schema is managed with **Liquibase**. Migrations live in
-`src/main/resources/db/changelog/`:
+We use **[Liquibase](https://www.liquibase.com/)** to manage the database schema.  
+Migrations live in `src/main/resources/db/changelog/`.    
+Liquibase uses:
 
-- `db.changelog-master.yaml` includes every change file via `includeAll` on the
-  `changes/` directory (applied in filename order).
-- Change files use **formatted SQL** and are named with a timestamp prefix:
+- **`src/main/resources/db/changelog/db.changelog-master.yaml`**:  
+  a **configuration file** that defines the format and the order of migrations to apply.
+  It lists every change file via `includeAll` on the `changes/` directory (applied in filename order).
+- `changes/VYYYYMMDDHHMMSS-short-description.sql`  
+  a **migration file** (called **change file**) to apply.  
+  Each change file contains a pair of directives (specially crafted SQL comments):
+  the changeset to apply to the database structure and how to roll it back.
+  It contains DDL (Data Definition Language) **SQL**. 
+and are named with a timestamp prefix:
 
+- The Change files have a naming convention of:  
   ```
   VYYYYMMDDHHMMSS-short-description.sql
   ```
+  e.g. `V20260608161842-create-idx-user-roles-role-id.sql`.  
 
-  e.g. `V20260608161842-create-idx-user-roles-role-id.sql`. The `V` + UTC
-  timestamp keeps files ordered chronologically and avoids numbering collisions
-  when branches add migrations in parallel.
-- **One changeset per file** (atomic): each file contains a single
-  `--changeset` so it can be rolled back independently.
-- The **changeset id equals the filename's timestamp**, e.g.
-  `--changeset ebouchut:V20260608161842`. This keeps the id globally unique and
-  trivially traceable to its file.
-- Migrations are **append-only**: never edit a changeset that has already run on
-  a shared database — add a new one. Each changeset has a `--rollback`.
-- After adding or removing a column, update the MCD diagram source
-  (`docs/database/merise/learn-dev.mcd`) to match, then run
-  `make check-schema-drift` to verify every table column is represented in the
-  diagram. CI runs this check too.
+`V` + UTC timestamp keeps files ordered chronologically 
+and avoids numbering collisions  when branches add migrations in parallel.
+
+
+**Example:**  `src/main/resources/db/changelog/changes/V20260608161836-add-users.sql`
+
+```sql
+--liquibase formatted sql
+
+-- users: application accounts. UUID PK — non-enumerable and future-API-safe (ADR-0003).
+--changeset ebouchut:V20260608161836
+CREATE TABLE users (
+    user_id               UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+    username              VARCHAR(50)  NOT NULL UNIQUE,
+    email                 VARCHAR(255) NOT NULL UNIQUE,
+    password              VARCHAR(255) NOT NULL,          -- bcrypt/argon2 hash, never plaintext
+    first_name            VARCHAR(100),
+    last_name             VARCHAR(100),
+    is_active             BOOLEAN      NOT NULL DEFAULT TRUE,
+    is_verified           BOOLEAN      NOT NULL DEFAULT FALSE,
+    is_locked             BOOLEAN      NOT NULL DEFAULT FALSE,
+    failed_login_attempts INTEGER      NOT NULL DEFAULT 0,
+    last_login_at         TIMESTAMPTZ,
+    password_changed_at   TIMESTAMPTZ
+);
+--rollback DROP TABLE users;
+```
+
+Where:
+- **`--liquibase formatted sql`**  
+  This special SQL comment indicates that this file is a Liquibase migration in SQL format.
+- **`--changeset ebouchut:V20260608161836`**  
+  This comment should be located **before** the SQL changeset to update the database structure 
+  (here add the `users`table). It contains : `author:id`.
+- **`--rollback DROP TABLE users;`**  
+  this SQL statement to rollback the change should be prefixed with `--rollback ` (on the same line). 
+
+
+> [!IMPORTANT]
+> - Each file should contain **a single changeset per file** prefixed with
+>   `--changeset author:id`
+> - The **changeset id equals the filename's timestamp**, e.g.
+    >  `--changeset ebouchut:V20260608161842`. This keeps the id globally unique.
+> - Migrations are **append-only**: never edit a changeset that has already run on
+>   a shared database — add a new one. 
+> - Each changeset should have a `--rollback` section.
+> - After adding or removing a column, update the MCD diagram source
+    (`docs/database/merise/learn-dev.mcd`) to match, then run
+>   ```shell
+>   make check-schema-drift && make diagrams
+>   ```
+>   `scheck-schema-drift` verifies every table column is represented in the
+diagram.  [CI](.github/workflows/schema-drift.yml) runs this check too.
 
 
 #### Database Naming Conventions
@@ -387,7 +437,7 @@ This gives a view from high-level conceptual model (MCD), logical model (MLD) to
 physical model (MPD) with all the database details.
 
 
-#### MCD Diagram
+##### MCD Diagram
 
 *MCD* stands for 🇫🇷 **Modèle Conceptuel de Données** (Conceptual Data Model).
 The *MCD diagram* is part of the *Merise* methodology and shows the entities 
@@ -397,12 +447,10 @@ It is a high-level **business-domain** oriented diagram
 that shows the **data (entities)**, their **relationships** and **cardinalities**,
 with **NO technical and implementation details**.
 
-**Learn-dev MCD Diagram**:
-
 > ![MCD](docs/database/merise/learn-dev.svg)
 
 
-#### MLD Diagram
+##### MLD Diagram
 
 *MLD* stands for 🇫🇷 **Modèle Logique de Données** (Logical Data Model).
 The **MLD diagram** is part of the _Merise_ methodology and shows 
@@ -420,8 +468,6 @@ The *MLD* is shared with domain experts and application developers.
 the business.       
 *Application developers* can then start creating the entities.
 
-**Learn-dev MLD Diagram**:
-
 > ![MLD](docs/database/merise/learn-dev_mld.svg)
 
 > [!NOTE]
@@ -433,37 +479,39 @@ the business.
 > do not edit them by hand**; edit only `learn-dev.mcd`.
 
 
-#### MPD Diagram
+##### MPD Diagram
 
 *MPD* stands for 🇫🇷*Modèle Physique des Données* (Physical Data Model).
 
-This diagram is exhaustive and database-specific.
-It contains all the tables, fields, keys,
-database-specific data types, and constraints...  
-It is aimed at database administrators and application developers.
-It can be used to implement the data model in the database.
-Database administrators use it to create the migration scripts.
+This diagram is **exhaustive** and **database-specific**.  
+It contains all the tables, fields, keys, database-specific data types,
+and constraints.
+It is aimed at database administrators and application developers:
+
+- Developers use it to implement the data model in the app.  
+- Database administrators use it to create the migration scripts.
 
 
 > ![MPD](docs/database/merise/mpd/schema.svg)
 
-**Full MPD documentation (Markdown) :**
-[docs/database/merise/mpd/README.md](docs/database/merise/mpd/README.md)
+The **[full MPD documentation (in Markdown)](docs/database/merise/mpd/README.md)** 
+contains what is missing from the above diagram due to space limitations.    
+This is why the **SVG** and the **full MPD documentation) work together**.
+Use the SVG to navigate and the Markdown to look up specifics:
 
-The MPD is generated by [`tbls`](https://github.com/k1LoW/tbls) from the **live
-PostgreSQL database** (not from the MCD), so it always reflects the real schema.  
-Run `make mpd` to regenerate it.
-
-The **SVG and the Markdown work hand in hand**.  
-- The **SVG** above gives a visual *overview* of every table, column, and foreign-key relationship at a glance.  
+- The **SVG** above gives a visual *overview* of every table, column, and foreign key relationship at a glance.
 - The **Markdown** is the *exhaustive reference* (with all constraints).  
   For each table, `docs/database/merise/mpd/public.<table>.md` lists every column's type, default,
-  and nullability, plus the full constraints (primary keys, foreign keys, unique)
-  and indexes — detail a diagram cannot convey. Use the SVG to navigate and the
-  Markdown to look up specifics.
+  and nullability, plus the full constraints (primary keys, foreign keys, and uniqueness)
+  and indexes — details that a diagram cannot convey. 
+
+> [!NOTE]
+> The MPD is generated by [`tbls`](https://github.com/k1LoW/tbls) from the **live
+PostgreSQL database** (not from the MCD), so it always reflects the real schema.    
+Run `make mpd` to regenerate it.
 
 
-#### ERD Diagram
+##### ERD Diagram
 
 ```mermaid
 erDiagram
