@@ -35,3 +35,4 @@ NNNN-short-title-in-kebab-case.md
 | [0002](0002-service-to-service-auth-via-service-token.md) | Authenticate service-to-service calls with a service token | proposed |
 | [0003](0003-uuid-pk-for-users-bigint-elsewhere.md) | Use a UUID primary key for users, BIGINT identity elsewhere | accepted |
 | [0004](0004-use-mailpit-as-local-smtp-catcher.md) | Use Mailpit as the local fake SMTP catcher | accepted |
+| [0005](0005-handwrite-liquibase-migrations-over-mcd-ddl.md) | Hand-write the schema as Liquibase migrations, not generated from the MCD | accepted |
