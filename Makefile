@@ -1,5 +1,5 @@
 # Ignore existing files with the same name as phony targets
-.PHONY: help diagrams mcd mld mpd clean check-schema-drift
+.PHONY: help diagrams mcd mld mpd clean check-schema-drift test
 
 # Default make target used if none specified
 .DEFAULT_GOAL := help
@@ -13,10 +13,24 @@ help:
 	@echo "  make mpd       — generate MPD"
 	@echo "  make clean     — remove generated diagrams"
 	@echo "  make check-schema-drift — fail if a Liquibase column is missing from the MCD"
+	@echo "  make test      — run the test suite via Testcontainers"
 
 # Generate all database diagrams (MCD, MLD, MPD)
 diagrams: mcd mld mpd
 	@echo "All diagrams generated (MCD, MLD, MPD)"
+
+# Run the test suite. Tests use Testcontainers (a real PostgreSQL), so a
+# container engine must be running. Under Podman, point Testcontainers at the
+# Podman socket and disable Ryuk. Under Docker, run the Maven wrapper directly.
+test:
+	@echo "Running tests..."
+	@SOCK=$$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}' 2>/dev/null); \
+	if [ -n "$$SOCK" ]; then \
+	  echo "Podman detected, socket: $$SOCK"; \
+	  DOCKER_HOST="unix://$$SOCK" TESTCONTAINERS_RYUK_DISABLED=true ./mvnw test; \
+	else \
+	  ./mvnw test; \
+	fi
 
 # Fail if a Liquibase table column is missing from the MCD diagram source.
 # Heuristic (column-name presence only); CI-friendly (non-zero exit on drift).
