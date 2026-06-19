@@ -925,11 +925,39 @@ TODO: Explain how to write tests, what naming convention and best practices
 
 ### Running Tests
 
-TODO:
+Repository and integration tests run against a **real PostgreSQL** started by
+[Testcontainers](https://testcontainers.com/) (see ADR-0006), so a container
+engine must be running. This project uses **Podman**.
 
 #### Run All Tests
 
-TODO: Explain how to run tests
+The simplest way is the Makefile target, which configures Testcontainers for
+Podman automatically:
+
+```bash
+make test
+```
+
+It is equivalent to `./mvnw test` plus the Podman wiring described below.
+
+#### Podman setup for Testcontainers
+
+Testcontainers looks for a Docker socket at `/var/run/docker.sock`, which does
+not exist under Podman. Two environment variables make it work:
+
+```bash
+# Point Testcontainers at the Podman socket (resolved dynamically):
+export DOCKER_HOST="unix://$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')"
+# Ryuk (the Testcontainers reaper) misbehaves under rootless Podman, so disable it:
+export TESTCONTAINERS_RYUK_DISABLED=true
+```
+
+Add these to your shell profile (for example `~/.zshrc`) to run `./mvnw test`
+directly, or just use `make test`, which sets them for you. Make sure the Podman
+machine is started first: `podman machine start`.
+
+> On real Docker (for example in CI) neither variable is needed; `make test`
+> falls back to a plain `./mvnw test`.
 
 
 ### Generating the Documentation
