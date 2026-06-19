@@ -37,3 +37,4 @@ NNNN-short-title-in-kebab-case.md
 | [0004](0004-use-mailpit-as-local-smtp-catcher.md) | Use Mailpit as the local fake SMTP catcher | accepted |
 | [0005](0005-handwrite-liquibase-migrations-over-mcd-ddl.md) | Hand-write the schema as Liquibase migrations, not generated from the MCD | accepted |
 | [0006](0006-test-against-real-postgres-testcontainers.md) | Test the persistence layer against a real PostgreSQL (Testcontainers), not H2 | accepted |
+| [0007](0007-use-postgresql-over-mysql.md) | Use PostgreSQL as the relational database, not MySQL | accepted |
