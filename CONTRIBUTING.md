@@ -37,12 +37,14 @@ The code reference documentation is not yet available and will be added to this 
 
 #### Architecture Decision Records (ADR)
 
-Significant architectural and design decisions are recorded as **ADRs** under
-[`docs/adr/`](docs/adr/), using the **MADR** short form. ADRs are an
-append-only, numbered log: a decision is never rewritten; a new ADR supersedes
-an old one. Files are named `NNNN-short-title-in-kebab-case.md` (4-digit
-zero-padded sequence). To add one, copy [`docs/adr/template.md`](docs/adr/template.md)
-and add it to the index in [`docs/adr/README.md`](docs/adr/README.md).
+Significant Architectural and design Decisions are Recorded as **ADRs** under
+[`docs/adr/`](docs/adr/), as Markdown files using the **[MADR](https://adr.github.io/madr/)** structure. 
+ADRs are an append-only, numbered log: a decision is never rewritten.  
+A new ADR supersedes an old one.   
+Files are named `NNNN-short-title-in-kebab-case.md` (4-digit zero-padded sequence).
+
+When creating an ADR use [`docs/adr/template.md`](docs/adr/template.md) as a template,
+then add a link to the new ADR to the index in [`docs/adr/README.md`](docs/adr/README.md).
 
 #### Architecture Overview
 
