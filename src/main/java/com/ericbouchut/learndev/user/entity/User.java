@@ -20,8 +20,13 @@ public class User {
 
     /**
      * The user's primary key.
-     * I chose UUID instead of an BIGINT because I expose the user id outside of the database
-     * as the subject in the session today and in the JWT in the next major release.
+     * The user id is exposed outside the database,
+     * as the subject in the server session today
+     * and in the JWT in the next major release.
+     * <p>Using UUID instead of an BIGINT because this mitigates IDOR
+     * (Insecure Direct Object Reference) where the app trusts
+     * a client-supplied user id reference without checking the user
+     * is authorized to access it.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
