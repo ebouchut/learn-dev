@@ -337,6 +337,17 @@ The main advantages in my opinion are:
 >   e.g.: **`learnDevApplication`**
 
 
+#### URL / Routing Conventions
+
+- **Authentication endpoints are grouped under the `/auth/` prefix**:
+  `/auth/login`, `/auth/register`, `/auth/logout` (and future `/auth/reset-password`).
+  This centralizes everything related to authentication and mirrors the
+  feature-based package layout (the `auth` package owns `/auth/**`).
+- **Application pages stay at the root or under their own feature prefix**
+  (for example `/dashboard`, `/courses/**`), not under `/auth/`, since they are
+  not authentication actions.
+
+
 #### Database
 
 The *learn-dev* platform uses a **[PostgreSQL](https://www.postgresql.org/)** relational database to persist entities.
