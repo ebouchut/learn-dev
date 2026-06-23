@@ -38,3 +38,4 @@ NNNN-short-title-in-kebab-case.md
 | [0005](0005-handwrite-liquibase-migrations-over-mcd-ddl.md) | Hand-write the schema as Liquibase migrations, not generated from the MCD | accepted |
 | [0006](0006-test-against-real-postgres-testcontainers.md) | Test the persistence layer against a real PostgreSQL (Testcontainers), not H2 | accepted |
 | [0007](0007-use-postgresql-over-mysql.md) | Use PostgreSQL as the relational database, not MySQL | accepted |
+| [0008](0008-share-singleton-testcontainers-postgres.md) | Share one Testcontainers PostgreSQL as a static singleton, not @Container | accepted |
