@@ -148,7 +148,7 @@ This starts all the Docker services for the application:
 
 **For each service** (`postgres`, `mongo`)
 declared in the *Docker Compose* configuration file
-(`docker-compose.yaml`), *Docker Compose*:
+(`[docker-compose.yaml](docker-compose.yaml)`), *Docker Compose*:
 
 1. downloads the Docker image (if not cached yet) from the Docker Hub registry,
 2. stores the downloaded image in the local Docker image cache,
@@ -165,7 +165,7 @@ This stops all the Docker services for the application:
 
 ### Docker Terminology
 
-I use ** Docker Compose** (a CLI tool) to describe and handle the lifecycle of services that comprise my application.
+I use **Docker Compose** (a CLI tool) to describe and handle the lifecycle of services that comprise my application.
 
 A **service** is basically a component of the application packaged as a Docker container.
 It specifies the Docker image and version, configuration, and the network and Docker volume(s) if any.
@@ -268,25 +268,26 @@ See the [GitHub Project](https://github.com/users/ebouchut/projects/7/views/3) f
 
 ## Contributing
 
-See the [CONTRIBUTING.md](CONTRIBUTING.md) file for how to help out.    
-It contains detailed guidelines, including:
+**[CONTRIBUTING.md](CONTRIBUTING.md)** contains:
+
+- How to help
 
 - Architecture overview
 - Code:
     - Documentation
-    - Directory structure
-    - Naming conventions
+    - **Directory structure**
+    - Class and file **naming conventions**
 - Database:
-    - Database schema, ERD (Entity Relationships Diagram)
+    - **Database schema (MCD, MLD, MPD, ERD)**
     - Running database migrations
 - Git:
-    - Git branching strategy
-    - Git commit message conventions
+    - **Git branching strategy**
+    - Git **commit message convention**
 - Dependencies:
     - Adding dependencies
     - Installing dependencies
 - Running tests
-- Submitting pull requests
+- Submitting Pull Requests
 - ...
 
 
