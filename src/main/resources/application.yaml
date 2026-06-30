@@ -35,6 +35,18 @@ spring:
     drop-first: false
 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# HTTP session cookie hardening
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true   # JS cannot read the cookie (mitigates XSS session theft)
+        same-site: lax    # cookie withheld on cross-site requests (CSRF defense in depth)
+        # secure: true    # enable once served over HTTPS (cookie sent only over TLS)
+
+
 # ~~~~~~~~~~~~~~~~~~
 # Logging Level
 # ~~~~~~~~~~~~~~~~~~
