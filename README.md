@@ -271,18 +271,26 @@ See the [GitHub Project](https://github.com/users/ebouchut/projects/7/views/3) f
 **[CONTRIBUTING.md](CONTRIBUTING.md)** contains:
 
 - How to help
-
-- Architecture overview
-- Code:
+- [Code of Conduct](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#code-of-conduct)
+- [Architecture overview](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#architecture-overview)
+- [Architexture Decision Records](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#architecture-decision-records-adr) (ADRs)
+- Codebase:
     - Documentation
-    - **Directory structure**
-    - Class and file **naming conventions**
+    - [MonoRepo](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#monorepo)
+    - [Directory structure](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#directory-structure)
+    - [Feature-based package layout](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#feature-based-package-layout)
+    - [File naming conventions](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#file-naming-convention)
 - Database:
-    - **Database schema (MCD, MLD, MPD, ERD)**
-    - Running database migrations
+    - [Database Naming Conventions](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#database-naming-conventions)
+    - **Database schema**:
+      - [MCD](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#mcd-diagram),
+      - [MLD](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#mld-diagram), 
+      - [MPD](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#mpd-diagram), 
+      - [ERD](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#erd-diagram).
+    - [Database migrations](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#database-migrations-liquibase)
 - Git:
-    - **Git branching strategy**
-    - Git **commit message convention**
+    - Git [branching strategy](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#git-branching-strategy)
+    - Git [commit message convention](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#git-commit-message-convention)
 - Dependencies:
     - Adding dependencies
     - Installing dependencies
