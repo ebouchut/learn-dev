@@ -61,7 +61,7 @@ src/test/java/com/ericbouchut/learndev/
 **Files:**
 - Modify: `pom.xml` (inside `<dependencies>`)
 
-- [ ] **Step 1: Add the dependencies**
+- [x] **Step 1: Add the dependencies**
 
 Add these inside `<dependencies>` in `pom.xml`:
 
@@ -87,12 +87,12 @@ Add these inside `<dependencies>` in `pom.xml`:
 </dependency>
 ```
 
-- [ ] **Step 2: Verify resolution**
+- [x] **Step 2: Verify resolution**
 
 Run: `mvn -q dependency:resolve`
 Expected: BUILD SUCCESS (versions come from the Spring Boot parent BOM; no explicit versions needed).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add pom.xml
@@ -106,7 +106,7 @@ git commit -m "chore(deps): add validation and Testcontainers for auth feature"
 **Files:**
 - Create: `src/test/java/com/ericbouchut/learndev/support/AbstractPostgresIT.java`
 
-- [ ] **Step 1: Write the base class**
+- [x] **Step 1: Write the base class**
 
 ```java
 package com.ericbouchut.learndev.support;
@@ -131,7 +131,7 @@ public abstract class AbstractPostgresIT {
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add src/test/java/com/ericbouchut/learndev/support/AbstractPostgresIT.java
@@ -147,7 +147,7 @@ git commit -m "test: add Testcontainers PostgreSQL base class"
 - Create: `src/main/java/com/ericbouchut/learndev/role/repository/RoleRepository.java`
 - Test: `src/test/java/com/ericbouchut/learndev/role/repository/RoleRepositoryTest.java`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```java
 package com.ericbouchut.learndev.role.repository;
@@ -182,7 +182,7 @@ class RoleRepositoryTest extends AbstractPostgresIT {
 > Note: the seed rows come from the Liquibase migration created in Task 5; running
 > this test before Task 5 fails on the assertion, which is the expected red state.
 
-- [ ] **Step 2: Write the entity**
+- [x] **Step 2: Write the entity**
 
 ```java
 package com.ericbouchut.learndev.role.entity;
@@ -215,7 +215,7 @@ public class Role {
 }
 ```
 
-- [ ] **Step 3: Write the repository**
+- [x] **Step 3: Write the repository**
 
 ```java
 package com.ericbouchut.learndev.role.repository;
@@ -230,12 +230,12 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
 }
 ```
 
-- [ ] **Step 4: Run the test (will pass after Task 5 seeds roles)**
+- [x] **Step 4: Run the test (will pass after Task 5 seeds roles)**
 
 Run: `mvn -q -Dtest=RoleRepositoryTest test`
 Expected after Task 5: PASS. (If run now: FAIL on `isPresent()` — proceed to Task 5.)
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/main/java/com/ericbouchut/learndev/role
@@ -252,7 +252,7 @@ git commit -m "feat(role): add Role entity and repository"
 - Create: `src/main/java/com/ericbouchut/learndev/user/repository/UserRepository.java`
 - Test: `src/test/java/com/ericbouchut/learndev/user/repository/UserRepositoryTest.java`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```java
 package com.ericbouchut.learndev.user.repository;
@@ -289,12 +289,12 @@ class UserRepositoryTest extends AbstractPostgresIT {
 }
 ```
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Run the test to verify it fails**
 
 Run: `mvn -q -Dtest=UserRepositoryTest test`
 Expected: FAIL (compilation error: `User` / `UserRepository` do not exist).
 
-- [ ] **Step 3: Write the entity**
+- [x] **Step 3: Write the entity**
 
 ```java
 package com.ericbouchut.learndev.user.entity;
@@ -366,7 +366,7 @@ public class User {
 }
 ```
 
-- [ ] **Step 4: Write the repository**
+- [x] **Step 4: Write the repository**
 
 ```java
 package com.ericbouchut.learndev.user.repository;
@@ -385,12 +385,12 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 }
 ```
 
-- [ ] **Step 5: Run the test to verify it passes**
+- [x] **Step 5: Run the test to verify it passes**
 
 Run: `mvn -q -Dtest=UserRepositoryTest test`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/main/java/com/ericbouchut/learndev/user
@@ -405,7 +405,7 @@ git commit -m "feat(user): add User entity and repository"
 **Files:**
 - Create: `src/main/resources/db/changelog/changes/V20260616090000-seed-roles.sql`
 
-- [ ] **Step 1: Write the migration**
+- [x] **Step 1: Write the migration**
 
 ```sql
 --liquibase formatted sql
@@ -419,7 +419,7 @@ INSERT INTO roles (role_name, description) VALUES
 --rollback DELETE FROM roles WHERE role_name IN ('STUDENT', 'INSTRUCTOR', 'ADMIN');
 ```
 
-- [ ] **Step 2: Apply to the running dev DB and verify**
+- [x] **Step 2: Apply to the running dev DB and verify**
 
 Run:
 ```bash
@@ -432,12 +432,12 @@ docker exec learn-dev-postgres-1 psql -U postgres -d learndev -At -c "SELECT rol
 ```
 Expected: `ADMIN`, `INSTRUCTOR`, `STUDENT`.
 
-- [ ] **Step 3: Run the Role test (now green)**
+- [x] **Step 3: Run the Role test (now green)**
 
 Run: `mvn -q -Dtest=RoleRepositoryTest test`
 Expected: PASS.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/main/resources/db/changelog/changes/V20260616090000-seed-roles.sql
@@ -451,7 +451,7 @@ git commit -m "feat(role): seed STUDENT, INSTRUCTOR, ADMIN roles"
 **Files:**
 - Create: `src/main/java/com/ericbouchut/learndev/common/config/SecurityConfig.java`
 
-- [ ] **Step 1: Write the config**
+- [x] **Step 1: Write the config**
 
 ```java
 package com.ericbouchut.learndev.common.config;
@@ -492,12 +492,12 @@ public class SecurityConfig {
 }
 ```
 
-- [ ] **Step 2: Build to verify it compiles**
+- [x] **Step 2: Build to verify it compiles**
 
 Run: `mvn -q -DskipTests compile`
 Expected: BUILD SUCCESS.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/main/java/com/ericbouchut/learndev/common/config/SecurityConfig.java
@@ -512,7 +512,7 @@ git commit -m "feat(security): session form-login filter chain and BCrypt encode
 - Create: `src/main/java/com/ericbouchut/learndev/auth/CustomUserDetailsService.java`
 - Test: `src/test/java/com/ericbouchut/learndev/auth/CustomUserDetailsServiceTest.java`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```java
 package com.ericbouchut.learndev.auth;
@@ -564,12 +564,12 @@ class CustomUserDetailsServiceTest {
 }
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `mvn -q -Dtest=CustomUserDetailsServiceTest test`
 Expected: FAIL (compilation: `CustomUserDetailsService` does not exist).
 
-- [ ] **Step 3: Write the service**
+- [x] **Step 3: Write the service**
 
 ```java
 package com.ericbouchut.learndev.auth;
@@ -612,12 +612,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 }
 ```
 
-- [ ] **Step 4: Run to verify it passes**
+- [x] **Step 4: Run to verify it passes**
 
 Run: `mvn -q -Dtest=CustomUserDetailsServiceTest test`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/main/java/com/ericbouchut/learndev/auth/CustomUserDetailsService.java
@@ -636,7 +636,7 @@ git commit -m "feat(auth): load users into Spring Security via CustomUserDetails
 - Create: `src/main/java/com/ericbouchut/learndev/auth/RegistrationService.java`
 - Test: `src/test/java/com/ericbouchut/learndev/auth/RegistrationServiceTest.java`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```java
 package com.ericbouchut.learndev.auth;
@@ -695,12 +695,12 @@ class RegistrationServiceTest {
 }
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `mvn -q -Dtest=RegistrationServiceTest test`
 Expected: FAIL (compilation: types do not exist).
 
-- [ ] **Step 3: Write the DTO**
+- [x] **Step 3: Write the DTO**
 
 ```java
 package com.ericbouchut.learndev.auth.dto;
@@ -716,7 +716,7 @@ public record RegisterForm(
 }
 ```
 
-- [ ] **Step 4: Write the exceptions**
+- [x] **Step 4: Write the exceptions**
 
 ```java
 package com.ericbouchut.learndev.auth.exception;
@@ -738,7 +738,7 @@ public class DuplicateEmailException extends RuntimeException {
 }
 ```
 
-- [ ] **Step 5: Write the service**
+- [x] **Step 5: Write the service**
 
 ```java
 package com.ericbouchut.learndev.auth;
@@ -788,12 +788,12 @@ public class RegistrationService {
 }
 ```
 
-- [ ] **Step 6: Run to verify it passes**
+- [x] **Step 6: Run to verify it passes**
 
 Run: `mvn -q -Dtest=RegistrationServiceTest test`
 Expected: PASS.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/main/java/com/ericbouchut/learndev/auth
@@ -812,7 +812,7 @@ git commit -m "feat(auth): registration service with hashing, default role, dupl
 - Create: `src/main/resources/templates/register.html`
 - Create: `src/main/resources/templates/dashboard.html`
 
-- [ ] **Step 1: Write the controller**
+- [x] **Step 1: Write the controller**
 
 ```java
 package com.ericbouchut.learndev.auth;
@@ -878,7 +878,7 @@ public class AuthController {
 }
 ```
 
-- [ ] **Step 2: Write `home.html`**
+- [x] **Step 2: Write `home.html`**
 
 ```html
 <!DOCTYPE html>
@@ -891,7 +891,7 @@ public class AuthController {
 </html>
 ```
 
-- [ ] **Step 3: Write `login.html`**
+- [x] **Step 3: Write `login.html`**
 
 ```html
 <!DOCTYPE html>
@@ -912,7 +912,7 @@ public class AuthController {
 </html>
 ```
 
-- [ ] **Step 4: Write `register.html`**
+- [x] **Step 4: Write `register.html`**
 
 ```html
 <!DOCTYPE html>
@@ -934,7 +934,7 @@ public class AuthController {
 </html>
 ```
 
-- [ ] **Step 5: Write `dashboard.html`**
+- [x] **Step 5: Write `dashboard.html`**
 
 ```html
 <!DOCTYPE html>
@@ -951,12 +951,12 @@ public class AuthController {
 </html>
 ```
 
-- [ ] **Step 6: Compile**
+- [x] **Step 6: Compile**
 
 Run: `mvn -q -DskipTests compile`
 Expected: BUILD SUCCESS.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/main/java/com/ericbouchut/learndev/auth/AuthController.java
@@ -971,7 +971,7 @@ git commit -m "feat(auth): registration/login/dashboard pages and controller"
 **Files:**
 - Create: `src/test/java/com/ericbouchut/learndev/auth/AuthFlowIT.java`
 
-- [ ] **Step 1: Write the integration test**
+- [x] **Step 1: Write the integration test**
 
 ```java
 package com.ericbouchut.learndev.auth;
@@ -1028,12 +1028,12 @@ class AuthFlowIT extends AbstractPostgresIT {
 }
 ```
 
-- [ ] **Step 2: Run the test**
+- [x] **Step 2: Run the test**
 
 Run: `mvn -q -Dtest=AuthFlowIT test`
 Expected: PASS.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/test/java/com/ericbouchut/learndev/auth/AuthFlowIT.java
@@ -1047,7 +1047,7 @@ git commit -m "test(auth): end-to-end register, login, protected-page flow"
 **Files:**
 - Modify: `src/main/resources/application.yaml` (add under `server:` at the root level)
 
-- [ ] **Step 1: Add session-cookie hardening**
+- [x] **Step 1: Add session-cookie hardening**
 
 Append to `application.yaml` (top-level key, sibling of `spring:`):
 
@@ -1061,12 +1061,12 @@ server:
         # secure: true   # enable once served over HTTPS
 ```
 
-- [ ] **Step 2: Run the whole suite**
+- [x] **Step 2: Run the whole suite**
 
 Run: `mvn -q test`
 Expected: BUILD SUCCESS, all tests green.
 
-- [ ] **Step 3: Manual smoke test**
+- [ ] **Step 3: Manual smoke test** _(not yet performed — run `make run` and click through in a browser)_
 
 Run:
 ```bash
@@ -1075,7 +1075,7 @@ mvn spring-boot:run
 ```
 Then in a browser: visit `http://localhost:8080/` → Register → log in → land on `/dashboard` → Log out. Confirm `/dashboard` redirects to `/login` when logged out.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/main/resources/application.yaml
