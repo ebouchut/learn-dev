@@ -140,19 +140,42 @@ Here is the procedure:
 
 ## Run the application
 
-This starts all the Docker services for the application:
 
   ```shell
+  # Make sure the required versions of Java and Maven are active for this shell
+  sdk env 
+  
+  # Ensure the Podman "machine" is up and running 
+  podman info >/dev/null 2>&1 || podman machine start
+  
+  # Start the "Docker" services for the application 
   docker compose up -d
+  
+  # Run the app from the project root
+  ./mvnw spring-boot:run
   ```
 
-**For each service** (`postgres`, `mongo`)
-declared in the *Docker Compose* configuration file
-(`[docker-compose.yaml](docker-compose.yaml)`), *Docker Compose*:
+The first command starts the Podman machine if it is not running yet.  
+Then `docker compoose up -d`  starts all the application Docker services 
+ (`postgres`, `mongo`) as declared in `[docker-compose.yaml](docker-compose.yaml)`
+(the *Docker Compose* configuration file), like tis:
 
-1. downloads the Docker image (if not cached yet) from the Docker Hub registry,
-2. stores the downloaded image in the local Docker image cache,
-3. starts a Docker container based on this image (if it is not already running).
+1. Download the Docker image (if not cached locally yet) 
+  from the [Docker Hub](https://hub.docker.com/) public registry.
+2. Store the downloaded image in the local Docker image cache.
+3. Start a Docker container (if it is not already running) based on this image 
+  and the configuration in `docker-compose.yaml`.
+
+> [!NOTE]
+> For Docker or Podman to run on macOS and Windows they need a Linux OS.  
+> 
+> **Why?**  
+> Containers rely on Linux kernel features (*namespaces* and *cgroups*).  
+> Windows and macOS do not have a *Linux* kernel.  
+> This is why Docker Desktop and Podman run a lightweight *Linux* VM 
+> behind the scenes.
+> The containers run inside that hidden *VM*, not directly on macOS/Windows.
+
 
 ## Stop the Application
 
@@ -181,12 +204,13 @@ A Docker image is pre-packaged piece of software that can work as a standalone o
 Running the app using `docker compose up -d` 
 starts **all** the application services, including `postgres`.
 
-To only start the `postgres` service:
+To start the `postgres` service only:
 
 ```shell
 docker compose start -d postgres
 docker compose logs postgres
 ```  
+
 > [!NOTE]
 > 
 > The above command downloads, installs the `postgres` Docker image
@@ -196,6 +220,7 @@ docker compose logs postgres
 > [!NOTE]  
 > A Docker init script automatically **creates the database user and the application database**
 > when the **`postgres`** service is run **for the first time**.
+> It does not create the database structure or populate the database.
 
 Now, check that `postgres` is running:
 
@@ -264,6 +289,14 @@ docker volume rm    learn-dev_mongo_data # Remove the named volume
 ## Project Status
 
 See the [GitHub Project](https://github.com/users/ebouchut/projects/7/views/3) for up-to-date information.
+
+
+## Documentation
+
+- [ARCHITECTURE.md](ARCHITECTURE.md) — how the pieces fit together (layers, request flow, auth, data, testing).
+- [docs/tech-stacks.md](docs/tech-stacks.md) — catalogue of tools, languages, and frameworks with versions.
+- [GLOSSARY.md](GLOSSARY.md) — definitions of the domain and technical terms used across the project.
+- [Architecture Decision Records](docs/adr/README.md) — the numbered log of design decisions and their trade-offs.
 
 
 ## Contributing
