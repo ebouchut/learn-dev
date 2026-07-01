@@ -899,10 +899,7 @@ TODO: Explain how and where to update the database schema
 
 ### Add a Dependency
 
-We use different package/dependencies managers on the backend and the frontend:
-
-- `Maven` on the backend
-- `npm` on the frontend 
+We use `Maven` as a packages/dependencies manager on the backend.
 
 
 ### Add a Backend Dependency
@@ -928,13 +925,20 @@ We use different package/dependencies managers on the backend and the frontend:
 5. Verify the dependency resolves correctly:
 
    ```shell
-   cd backend && mvn dependency:resolve
+   mvn dependency:resolve
    ```
 
 
 ### Writing Tests
 
 TODO: Explain how to write tests, what naming convention and best practices
+
+#### Test Naming Conventions
+
+- The file name of a test class should end in `Test`.
+  Although this is counterintuitive and the opposite of the standard Java
+  method naming convention, it makes the test output easier to read.
+
 
 ### Running Tests
 
@@ -944,8 +948,8 @@ engine must be running. This project uses **Podman**.
 
 #### Run All Tests
 
-The simplest way is the Makefile target, which configures Testcontainers for
-Podman automatically:
+The simplest way is to use ` make test`, which configures *Testcontainers* for
+*Podman* automatically:
 
 ```bash
 make test
@@ -955,22 +959,26 @@ It is equivalent to `./mvnw test` plus the Podman wiring described below.
 
 #### Podman setup for Testcontainers
 
-Testcontainers looks for a Docker socket at `/var/run/docker.sock`, which does
-not exist under Podman. Two environment variables make it work:
+*Testcontainers* looks for a _Docker_ socket at `/var/run/docker.sock`, 
+which does not exist under _Podman_. 
+
+The workaround is to define two environment variables:
 
 ```bash
 # Point Testcontainers at the Podman socket (resolved dynamically):
 export DOCKER_HOST="unix://$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')"
+
 # Ryuk (the Testcontainers reaper) misbehaves under rootless Podman, so disable it:
 export TESTCONTAINERS_RYUK_DISABLED=true
 ```
 
-Add these to your shell profile (for example `~/.zshrc`) to run `./mvnw test`
-directly, or just use `make test`, which sets them for you. Make sure the Podman
-machine is started first: `podman machine start`.
+Add these to your shell profile (for example `~/.zshrc`), 
+source it, then run `./mvnw test` directly, or just use `make test`, 
+which sets them for you.   
+Make sure the Podman machine is started first: `podman machine start`.
 
-> On real Docker (for example in CI) neither variable is needed; `make test`
-> falls back to a plain `./mvnw test`.
+On real Docker (for example in CI) neither variable is needed; `make test`
+falls back to a plain `./mvnw test`.
 
 
 ### Generating the Documentation
