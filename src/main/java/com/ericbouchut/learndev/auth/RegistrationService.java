@@ -7,6 +7,8 @@ import com.ericbouchut.learndev.role.entity.Role;
 import com.ericbouchut.learndev.role.repository.RoleRepository;
 import com.ericbouchut.learndev.user.entity.User;
 import com.ericbouchut.learndev.user.repository.UserRepository;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +56,38 @@ public class RegistrationService {
         user.setPassword(encoder.encode(form.password()));
         user.getRoles().add(student);
 
-        return users.save(user);
+        // The existsBy* pre-checks above race under concurrency: two requests can
+        // both pass them, and the loser hits the users_username_key/users_email_key
+        // UNIQUE constraint. Flush inside this method (saveAndFlush, not save) so
+        // the violation is catchable here, and map it back to the domain exception
+        // by constraint name: after a failed statement PostgreSQL aborts the
+        // transaction, so re-querying existsBy* in the catch would also fail.
+        try {
+            return users.saveAndFlush(user);
+        } catch (DataIntegrityViolationException e) {
+            String constraint = constraintName(e);
+            if ("users_username_key".equalsIgnoreCase(constraint)) {
+                throw new DuplicateUsernameException(form.username());
+            }
+            if ("users_email_key".equalsIgnoreCase(constraint)) {
+                throw new DuplicateEmailException(form.email());
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * Extracts the database constraint name from a data-integrity failure, or
+     * {@code null} when the cause chain has no {@link ConstraintViolationException}.
+     * @param e a data integrity violation exception
+     * @return the name of violated constraint name if any or null otherwise.
+     */
+    private static String constraintName(DataIntegrityViolationException e) {
+        for (Throwable cause = e.getCause(); cause != null; cause = cause.getCause()) {
+            if (cause instanceof ConstraintViolationException violation) {
+                return violation.getConstraintName();
+            }
+        }
+        return null;
     }
 }
