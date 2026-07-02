@@ -68,7 +68,9 @@ public class User {
 
     // Plain many-to-many: Hibernate inserts (user_id, role_id); the extra
     // user_roles columns (assigned_at) are populated by their DB defaults.
-    @ManyToMany(fetch = FetchType.EAGER)
+    // LAZY (the @ManyToMany default): callers that need the roles fetch them
+    // per query, e.g. the @EntityGraph on UserRepository.findByUsername.
+    @ManyToMany
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
