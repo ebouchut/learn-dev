@@ -37,12 +37,14 @@ The code reference documentation is not yet available and will be added to this 
 
 #### Architecture Decision Records (ADR)
 
-Significant architectural and design decisions are recorded as **ADRs** under
-[`docs/adr/`](docs/adr/), using the **MADR** short form. ADRs are an
-append-only, numbered log: a decision is never rewritten; a new ADR supersedes
-an old one. Files are named `NNNN-short-title-in-kebab-case.md` (4-digit
-zero-padded sequence). To add one, copy [`docs/adr/template.md`](docs/adr/template.md)
-and add it to the index in [`docs/adr/README.md`](docs/adr/README.md).
+Significant Architectural and design Decisions are Recorded as **ADRs** under
+[`docs/adr/`](docs/adr/), as Markdown files using the **[MADR](https://adr.github.io/madr/)** structure. 
+ADRs are an append-only, numbered log: a decision is never rewritten.  
+A new ADR supersedes an old one.   
+Files are named `NNNN-short-title-in-kebab-case.md` (4-digit zero-padded sequence).
+
+When creating an ADR use [`docs/adr/template.md`](docs/adr/template.md) as a template,
+then add a link to the new ADR to the index in [`docs/adr/README.md`](docs/adr/README.md).
 
 #### Architecture Overview
 
@@ -333,6 +335,17 @@ The main advantages in my opinion are:
 >   where the first word starts with a lowercase letter and each subsequent 
 >   word begins with an uppercase letter, with no spaces or underscores,    
 >   e.g.: **`learnDevApplication`**
+
+
+#### URL / Routing Conventions
+
+- **Authentication endpoints are grouped under the `/auth/` prefix**:
+  `/auth/login`, `/auth/register`, `/auth/logout` (and future `/auth/reset-password`).
+  This centralizes everything related to authentication and mirrors the
+  feature-based package layout (the `auth` package owns `/auth/**`).
+- **Application pages stay at the root or under their own feature prefix**
+  (for example `/dashboard`, `/courses/**`), not under `/auth/`, since they are
+  not authentication actions.
 
 
 #### Database
@@ -886,10 +899,7 @@ TODO: Explain how and where to update the database schema
 
 ### Add a Dependency
 
-We use different package/dependencies managers on the backend and the frontend:
-
-- `Maven` on the backend
-- `npm` on the frontend 
+We use `Maven` as a packages/dependencies manager on the backend.
 
 
 ### Add a Backend Dependency
@@ -915,7 +925,7 @@ We use different package/dependencies managers on the backend and the frontend:
 5. Verify the dependency resolves correctly:
 
    ```shell
-   cd backend && mvn dependency:resolve
+   mvn dependency:resolve
    ```
 
 
@@ -923,13 +933,52 @@ We use different package/dependencies managers on the backend and the frontend:
 
 TODO: Explain how to write tests, what naming convention and best practices
 
+#### Test Naming Conventions
+
+- The file name of a test class should end in `Test`.
+  Although this is counterintuitive and the opposite of the standard Java
+  method naming convention, it makes the test output easier to read.
+
+
 ### Running Tests
 
-TODO:
+Repository and integration tests run against a **real PostgreSQL** started by
+[Testcontainers](https://testcontainers.com/) (see ADR-0006), so a container
+engine must be running. This project uses **Podman**.
 
 #### Run All Tests
 
-TODO: Explain how to run tests
+The simplest way is to use ` make test`, which configures *Testcontainers* for
+*Podman* automatically:
+
+```bash
+make test
+```
+
+It is equivalent to `./mvnw test` plus the Podman wiring described below.
+
+#### Podman setup for Testcontainers
+
+*Testcontainers* looks for a _Docker_ socket at `/var/run/docker.sock`, 
+which does not exist under _Podman_. 
+
+The workaround is to define two environment variables:
+
+```bash
+# Point Testcontainers at the Podman socket (resolved dynamically):
+export DOCKER_HOST="unix://$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')"
+
+# Ryuk (the Testcontainers reaper) misbehaves under rootless Podman, so disable it:
+export TESTCONTAINERS_RYUK_DISABLED=true
+```
+
+Add these to your shell profile (for example `~/.zshrc`), 
+source it, then run `./mvnw test` directly, or just use `make test`, 
+which sets them for you.   
+Make sure the Podman machine is started first: `podman machine start`.
+
+On real Docker (for example in CI) neither variable is needed; `make test`
+falls back to a plain `./mvnw test`.
 
 
 ### Generating the Documentation

@@ -1,5 +1,5 @@
 # Ignore existing files with the same name as phony targets
-.PHONY: help diagrams mcd mld mpd clean check-schema-drift
+.PHONY: help diagrams mcd mld mpd clean check-schema-drift test run
 
 # Default make target used if none specified
 .DEFAULT_GOAL := help
@@ -13,15 +13,46 @@ help:
 	@echo "  make mpd       — generate MPD"
 	@echo "  make clean     — remove generated diagrams"
 	@echo "  make check-schema-drift — fail if a Liquibase column is missing from the MCD"
+	@echo "  make test      — run the test suite via Testcontainers"
+	@echo "  make run       — start the databases and run the Spring Boot app"
 
 # Generate all database diagrams (MCD, MLD, MPD)
 diagrams: mcd mld mpd
 	@echo "All diagrams generated (MCD, MLD, MPD)"
 
+# Run the test suite. Tests use Testcontainers (a real PostgreSQL), so a
+# container engine must be running. Under Podman, point Testcontainers at the
+# Podman socket and disable Ryuk. Under Docker, run the Maven wrapper directly.
+test:
+	@echo "Running tests..."
+	@SOCK=""; \
+	if command -v podman >/dev/null 2>&1; then \
+		SOCK=$$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}' 2>/dev/null); \
+	fi; \
+	if [ -n "$$SOCK" ]; then \
+	  echo "Podman detected, socket: $$SOCK"; \
+	  DOCKER_HOST="unix://$$SOCK" TESTCONTAINERS_RYUK_DISABLED=true ./mvnw test; \
+	else \
+	  ./mvnw test; \
+	fi
+
 # Fail if a Liquibase table column is missing from the MCD diagram source.
 # Heuristic (column-name presence only); CI-friendly (non-zero exit on drift).
 check-schema-drift:
 	python3 scripts/check_schema_drift.py
+
+# Run the Spring Boot app locally. Container-engine agnostic: if Podman is
+# installed, start its machine when the socket is unreachable; otherwise assume
+# Docker. Then bring up the Postgres + Mongo containers and run the app in the
+# foreground (Ctrl+C to stop). Run from the project root to load the ./.env file.
+run:
+	@if command -v podman >/dev/null 2>&1; then \
+	  podman info >/dev/null 2>&1 || podman machine start; \
+	fi
+	@echo "Starting databases..."
+	docker compose up -d
+	@echo "Starting the app (http://localhost:8080/ , Ctrl+C to stop)..."
+	./mvnw spring-boot:run
 
 # Generate MCD from Mocodo source
 mcd:

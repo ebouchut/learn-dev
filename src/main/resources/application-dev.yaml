@@ -26,11 +26,18 @@ spring:
   #        create-source: metadata
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # Set the execution context for Liquibase changeset
+  # Liquibase Database Migrations
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   liquibase:
+    # Set the execution context for Liquibase changeset
     contexts: dev
 
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Thymeleaf: Server-Side Rendering Engine
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  thymeleaf:
+    # Disable caching during development for hot reload
+    cache: false
 
 # ~~~~~~~~~~~~~~~~~~
 # Logging Level

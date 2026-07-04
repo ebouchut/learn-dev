@@ -140,23 +140,58 @@ Here is the procedure:
 
 ## Run the application
 
-This starts all the Docker services for the application:
 
   ```shell
+  # Make sure the required versions of Java and Maven are active for this shell
+  sdk env 
+  
+  # Ensure the Podman "machine" is up and running 
+  podman info >/dev/null 2>&1 || podman machine start
+  
+  # Start the "Docker" services for the application 
   docker compose up -d
+  
+  # Run the app from the project root
+  ./mvnw spring-boot:run
   ```
 
-**For each service** (`postgres`, `mongo`)
-declared in the *Docker Compose* configuration file
-(`docker-compose.yaml`), *Docker Compose*:
+The first command starts the Podman machine if it is not already running.  
+Then `docker compoose up -d`  starts all the application Docker services 
+ as declared in [docker-compose.yaml](docker-compose.yaml)
+(the *Docker Compose* configuration file), like this.
+For each service (`postgres` and `mongo`):
 
-1. downloads the Docker image (if not cached yet) from the Docker Hub registry,
-2. stores the downloaded image in the local Docker image cache,
-3. starts a Docker container based on this image (if it is not already running).
+1. Download the Docker image for this service as specified in `docker-compose.yaml` 
+  from the [Docker Hub](https://hub.docker.com/) public registry, only if the Docker
+  image is not already cached locally.
+2. Store the downloaded image in the local Docker image cache.
+3. Start a Docker container (if it is not already running) based on this image 
+  and the configuration in `docker-compose.yaml`.
+
+
+> [!NOTE]  
+> A Docker init script automatically **creates the database user and the application database**
+> when the **`postgres`** service is run **for the first time**.
+> It does not create the database structure or populate the database.
+
+> [!NOTE]
+> TODO: Explain how the database is created in MongoDB and when. 
+
+> [!NOTE]
+> For Docker or Podman to run on macOS and Windows they need a Linux OS.  
+> 
+> **Why?**  
+> Containers rely on Linux kernel features (*namespaces* and *cgroups*).  
+> Windows and macOS do not have a *Linux* kernel.  
+> This is why Docker Desktop and Podman run a lightweight *Linux* VM 
+> behind the scenes.
+> The containers run inside that hidden *VM*, not directly on macOS/Windows.
+
 
 ## Stop the Application
 
-This stops all the Docker services for the application:
+This command stops all the application services containers 
+declared in the Docker Compose file (`docker-compose.yaml`):
 
   ```shell
   docker compose down
@@ -165,37 +200,41 @@ This stops all the Docker services for the application:
 
 ### Docker Terminology
 
-I use ** Docker Compose** (a CLI tool) to describe and handle the lifecycle of services that comprise my application.
+I use **Docker Compose** (a CLI tool) to describe and handle the lifecycle of services that comprise my application.
 
 A **service** is basically a component of the application packaged as a Docker container.
 It specifies the Docker image and version, configuration, and the network and Docker volume(s) if any.
 
-A Docker image is pre-packaged piece of software that can work as a standalone on Linux. 
+A **Docker image** is pre-packaged piece of software that can work as a standalone on Linux. 
 **Docker Hub** is a  public registry that hosts and serves public Docker images.
 
 
 ### Postgres Service
 
-#### Start Postgres
+Once the `postgres` service container and its named data volume 
+have been created with `docker compose up -d`,
+you can stop then restart the `postgres` service container individually.
 
-Running the app using `docker compose up -d` 
-starts **all** the application services, including `postgres`.
 
-To only start the `postgres` service:
+#### Stop Postgres
+
 
 ```shell
-docker compose start -d postgres
-docker compose logs postgres
-```  
-> [!NOTE]
-> 
-> The above command downloads, installs the `postgres` Docker image
-> specified by the `postgres` service in `docker-compose.yaml`.
-> Then it runs a Docker container with this image.
+docker compose stop postgres
+```
 
-> [!NOTE]  
-> A Docker init script automatically **creates the database user and the application database**
-> when the **`postgres`** service is run **for the first time**.
+This command stops the `postgres` service container.
+It does NOT remove its data volume (its databases).
+
+#### Start Postgres
+
+This command **restarts the existing stopped** `postgres` service container.  
+If the service container does not already exist, use `docker compose up -d` to create it.
+
+```shell
+docker compose start postgres
+```  
+
 
 Now, check that `postgres` is running:
 
@@ -207,30 +246,41 @@ docker compose ps | grep postgres
 > and remove the (data) volumes.   
 > See the `Remove all Posgres Databases` section for details.    
 
-#### Stop Postgres
 
-```shell
-docker compose stop postgres
-```
+#### Remove the Postgres Databases
 
-#### Remove all Postgres Databases
-
-Stops and remove the `postgres` container and its data volume.
+Stops and **remove** the `postgres` service **container and its data volumes** (meaning all its databases).
 
 > [!CAUTION]
-> This is a **destructive command** that will **remove all the databases 
-> (structure and content)** created by Postgres running in the container.
+> This **destructive command** will:
+> - stop and remove the `postgres` service container, 
+> - **remove ALL its databases: structure and content**,
+>   (i.e., everything created by Postgres running in the container).
 
 ```shell
-docker compose stop postgres  # Stop the container
-docker rm           postgres  # Remove the container
-docker volume rm    pg_data   # Remove the named volume 
+docker compose down -v postgres
 ```
 
 
 ### Mongo Service
 
+Once the `mongo`service container has been created with `docker compose up -d`,
+you can stop then restart the `mongo` service container individually.
+
+
+#### Stop MongoDB
+
+```shell
+docker compose down mongo
+```
+This command stops the `mongo` service container.
+It does NOT remove its data volume (i.e., the MongoDB databases created in this container).
+
+
 #### Start MongoDB
+
+This command **restarts the existing stopped** `mongo` service container.  
+If the service container does not already exist, use `docker compose up -d` to create it.
 
 ```shell
 docker compose start mongo
@@ -242,52 +292,67 @@ Now, check that `mongo` is running:
 docker compose ps | grep mongo
 ```
 
-#### Stop MongoDB
-
-```shell
-docker compose stop mongo
-```
 
 #### Remove MongoDB and its Databases
 
 > [!CAUTION]
-> This **destructive command** will stop and remove the container, then **remove** its data **volume** 
-> (all the databases created by MongoDB running in the container).
+> This **destructive command** will:
+> - stop and remove the `mongo` service container, 
+> - **remove** its data **volumes** (i.e., **ALL** the **databases** created by MongoDB running in the container).
 
 ```shell
-docker compose stop mongo # Stop container
-docker  rm          mongo # Remove the stopped container
-docker volume rm    learn-dev_mongo_data # Remove the named volume   
+docker compose down -v mongo 
 ```
+
+Where:
+- `-v` request Compose to remove the named data volumes created for this service
 
 
 ## Project Status
 
-See the [GitHub Project](https://github.com/users/ebouchut/projects/7/views/3) for up-to-date information.
+For up-to-date information about the status of the project, 
+visit [this link](https://github.com/users/ebouchut/projects/7/views/3). 
+
+
+## Documentation
+
+- [ARCHITECTURE.md](ARCHITECTURE.md) — how the pieces fit together (layers, request flow, authentication, data, testing).
+- [docs/tech-stacks.md](docs/tech-stacks.md) — catalogue of tools, languages, and frameworks with versions used in the project.
+- [GLOSSARY.md](GLOSSARY.md) — definitions of the domain and technical terms used across the project.
+- [Architecture Decision Records](docs/adr/README.md) — A list of design decisions and their trade-offs.
 
 
 ## Contributing
 
-See the [CONTRIBUTING.md](CONTRIBUTING.md) file for how to help out.    
-It contains detailed guidelines, including:
+**[CONTRIBUTING.md](CONTRIBUTING.md)** contains:
 
-- Architecture overview
-- Code:
+- How to help
+- [Code of Conduct](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#code-of-conduct)
+- [Architecture overview](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#architecture-overview)
+- [Architecture Decision Records](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#architecture-decision-records-adr) (ADRs)
+- Codebase:
     - Documentation
-    - Directory structure
-    - Naming conventions
-- Database:
-    - Database schema, ERD (Entity Relationships Diagram)
-    - Running database migrations
+    - [MonoRepo](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#monorepo)
+    - [Directory structure](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#directory-structure)
+    - [Feature-based package layout](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#feature-based-package-layout)
+    - [File naming conventions](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#file-naming-convention)
+- **Database**:
+    - [Database Naming Conventions](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#database-naming-conventions)
+    - Database schema:
+      - **[MCD](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#mcd-diagram)**,
+      - **[MLD](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#mld-diagram)**, 
+      - **[MPD](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#mpd-diagram)**, 
+      - **[ERD](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#erd-diagram)**.
+    - [Database migrations](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#database-migrations-liquibase)
 - Git:
-    - Git branching strategy
-    - Git commit message conventions
+    - Git [branching strategy](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#git-branching-strategy)
+    - Git [commit message convention](https://github.com/ebouchut/learn-dev?tab=contributing-ov-file#git-commit-message-convention)
 - Dependencies:
     - Adding dependencies
     - Installing dependencies
 - Running tests
-- Submitting pull requests
-- ...
+- Submitting Pull Requests
+- TODO: ...
 
 
 ## License
