@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 // - Tests are transactional and roll back by default
 @DataJpaTest
 // Do not perform tests against an in-memory H2 database but use the real one
-// defined in AbstractPostgresIT.POSTGRES annotated with @ServiceConnection and @Container
+// defined in AbstractPostgresIT.POSTGRES annotated with @ServiceConnection.
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class UserRepositoryTest extends AbstractPostgresIT {
 

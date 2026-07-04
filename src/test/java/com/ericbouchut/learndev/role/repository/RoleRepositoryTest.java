@@ -10,9 +10,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
- * {@code @AutoConfigureTestDatabase(replace = NONE} prevents
+ * {@code @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)} prevents
  * the test from using a H2 embedded database.
- * We use containerized PostgresSQL database via {@link AbstractPostgresIT#POSTGRES}
+ * We use containerized PostgreSQL database via {@link AbstractPostgresIT#POSTGRES}
  * because we need to test against the real database schema and datatypes
  * that H2 does not support.
  */
