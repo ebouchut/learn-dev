@@ -37,7 +37,7 @@ The code reference documentation is not yet available and will be added to this 
 
 #### Architecture Decision Records (ADR)
 
-Significant Architectural and design Decisions are Recorded as **ADRs** under
+Significant architectural and design decisions are recorded as **ADRs** under
 [`docs/adr/`](docs/adr/), as Markdown files using the **[MADR](https://adr.github.io/madr/)** structure. 
 ADRs are an append-only, numbered log: a decision is never rewritten.  
 A new ADR supersedes an old one.   

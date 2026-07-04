@@ -271,7 +271,7 @@ you can stop then restart the `mongo` service container individually.
 #### Stop MongoDB
 
 ```shell
-docker compose down mongo
+docker compose stop mongo
 ```
 This command stops the `mongo` service container.
 It does NOT remove its data volume (i.e., the MongoDB databases created in this container).
