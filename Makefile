@@ -25,7 +25,10 @@ diagrams: mcd mld mpd
 # Podman socket and disable Ryuk. Under Docker, run the Maven wrapper directly.
 test:
 	@echo "Running tests..."
-	@SOCK=$$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}' 2>/dev/null); \
+	@SOCK=""; \
+	if command -v podman >/dev/null 2>&1; then \
+		SOCK=$$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}' 2>/dev/null); \
+	fi; \
 	if [ -n "$$SOCK" ]; then \
 	  echo "Podman detected, socket: $$SOCK"; \
 	  DOCKER_HOST="unix://$$SOCK" TESTCONTAINERS_RYUK_DISABLED=true ./mvnw test; \
