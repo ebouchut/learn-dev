@@ -640,55 +640,6 @@ At a high level, you will usually need to:
 
 For more detailed, component-specific instructions, please refer to the corresponding README files in each subdirectory.
 
-### Testing the API with Postman
-
-The repository ships two files under `backend/postman/` that let you
-send requests to the backend API directly from [Postman](https://www.postman.com/):
-
-| File                       | Purpose |
-|----------------------------|---|
-| `learndev.collection.json` | All API requests, grouped by feature |
-| `learndev.environment.json`  | Variables with placeholder values (no real credentials) |
-
-
-#### Import the Postman collection
-
-1. Open Postman.
-2. Click **`Collections`** / **`Import`**.
-3. Select `backend/postman/learndev.collection.json`.
-
-#### Import the Postman environment
-
-1. Click **`Environments`** / **`Import`**.
-2. Select `backend/postman/learndev.environment.json`.
-3. Select **learnDev – Local** as the active environment (top-right dropdown).
-
-#### Configure the Postman Collection
-
-Open the **`learnDev – Local`** environment in Postman and fill in the fields marked as placeholders:
-
-| Variable | What to set                                                         |
-|---|---------------------------------------------------------------------|
-| `baseUrl` | URL of your local backend server (default: `http://localhost:3000`) |
-
-> [!WARNING]
-> Never commit real credentials. The environment file intentionally ships
-> with empty secret fields (`authToken`, `loginPassword`). Fill them in
-> locally; Postman keeps them on your machine only.
-
-
-#### Authenticate with Postman
-
-Most endpoints require a JWT. To obtain one:
-
-1. Run **`Auth`** / **`Login`** (`POST /auth/login`).
-2. Copy the `token` value from the response body.
-3. Paste it into the `authToken` environment variable.
-
-All subsequent requests that require authentication read `{{authToken}}` from
-the environment automatically.
-
-
 ### Git Branching Strategy
 
 > [!NOTE]
