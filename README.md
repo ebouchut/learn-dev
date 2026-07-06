@@ -74,7 +74,7 @@ See the [Tech Stack](#tech-stack) section.
 ### Installation
 
 - Clone the `ebouchut/learn-dev` Git Repository
-- Install Docker, Docker Desktop, and Docker Compose
+- Install a container engine: **Podman** (recommended) or Docker, plus Docker Compose
 
 #### Clone the Git repository
 
@@ -86,14 +86,35 @@ git clone git@github.com:ebouchut/learn-dev.git
 cd learn-dev
 ```
 
-#### Docker Setup
+#### Container Engine Setup
 
-From the project root folder.
-Install _Docker_ and _Docker Compose_:
+You need a container engine and _Docker Compose_ to run the databases.
+
+**Option 1 (recommended): Podman**
+
+We recommend [Podman](https://podman.io/) for **security reasons**:
+it runs containers **rootless** by default and does not need a
+privileged, always-on daemon.
+
+- on macOS:
+  ```shell
+  brew install podman docker-compose
+  podman machine init   # Do it once: create the Linux VM
+  podman machine start  # Start the VM (needed after each reboot)
+  ```
+- on [Windows and Linux](https://podman.io/docs/installation)
+
+`podman` understands the Docker CLI syntax, and `docker compose` works
+against the Podman socket, so every `docker compose ...` command in this
+README works unchanged.
+
+**Option 2: Docker**
+
+If you prefer Docker anyway:
 
 - on macOS (read [this for Windows or Linux install](https://docs.docker.com/get-started/get-docker/)):  
   ```shell
-  brew install docker docker-compose docker-desktop
+  brew install --cask docker   # Docker Desktop (includes Docker Compose)
   ```
 - on [Windows and Linux](https://docs.docker.com/get-started/get-docker/)
 
