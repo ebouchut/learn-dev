@@ -174,6 +174,17 @@ Create it from the provided template, then fill in the secrets:
 
 ## Run the application
 
+The quickest way is the Make target, from the project root:
+
+```shell
+make run
+```
+
+It starts the container machine if needed (Podman only), starts the
+database services, then runs the app on http://localhost:8080/
+(stop it with `Ctrl+C`).
+
+Alternatively, run the underlying commands yourself:
 
   ```shell
   # Make sure the required versions of Java and Maven are active for this shell
