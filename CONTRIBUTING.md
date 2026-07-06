@@ -702,7 +702,9 @@ The **branches**:
     - It is also where we test that the merged features do not break the website.    
       Once we are confident the code on `dev` can be deployed to production, we merge `dev` into `main`.
     - We should not commit directly to `dev`, but create a PR (Pull Request) to bring in changes.
-    - We have configured `dev` to require two approvals before merging to `dev`.
+    - As this is a solo project for now, no review approval is required to merge a PR.
+      Once the team grows, protect the `dev` branch with a rule requiring
+      at least two approving reviews before merging.
 - **`main`** contains the production-ready code.
     - This is where the team merges `dev` after ensuring that the new features on `dev`
       are working properly together.
