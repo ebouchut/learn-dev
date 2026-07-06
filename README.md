@@ -44,7 +44,14 @@ and [Thymeleaf](https://en.wikipedia.org/wiki/Thymeleaf) frontend.
 
 ### Frontend
 
-TODO
+The frontend is **server-rendered**: there is no separate frontend application.
+
+- [Thymeleaf](https://www.thymeleaf.org/) templates rendered by the backend
+  (home, login, register, and dashboard pages)
+- [thymeleaf-extras-springsecurity6](https://github.com/thymeleaf/thymeleaf-extras-springsecurity)
+  to display authentication data (such as the logged-in username) in the pages
+- Server-side form handling with bean validation (no JavaScript framework yet)
+- Plain HTML and CSS
 
 
 ### Development Tools
