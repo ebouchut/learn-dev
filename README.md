@@ -60,7 +60,6 @@ The frontend is **server-rendered**: there is no separate frontend application.
 - **Git**: Version control
 - [**Maven**](https://en.wikipedia.org/wiki/Apache_Maven): Build and dependency management
 - **Podman**: Containerization
-- **Swagger**: API documentation
 
 
 ## Getting Started
