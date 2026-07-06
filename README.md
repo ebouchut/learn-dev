@@ -33,8 +33,12 @@ and [Thymeleaf](https://en.wikipedia.org/wiki/Thymeleaf) frontend.
     - Thymeleaf
 -  Authentication and authorization framework:
   - [Spring Security](https://spring.io/projects/spring-security):
-- Database:
-  - [PostgreSQL](https://www.postgresql.org/about/) version 17
+- Databases:
+  - [PostgreSQL](https://www.postgresql.org/about/) version 17 (relational core)
+  - [MongoDB](https://www.mongodb.com/) version 8, provisioned (Docker) for
+    future content storage; not yet wired to a feature
+- Database schema migrations:
+  - [Liquibase](https://www.liquibase.com/) (migrations applied at application startup)
 - Build and dependency management tool:
   - [Maven](https://maven.apache.org/what-is-maven.html)
 - Containerization:
