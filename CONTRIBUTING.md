@@ -57,64 +57,61 @@ using a PostgreSQL database to persist information.
 graph TD
     U["👤 User (Browser)"]
 
-    subgraph FE["Frontend (HTML / CSS / TypeScript)"]
-        Pages["Pages"]
-    end
-
     subgraph BE["Backend (Spring Boot / Java)"]
-        Controllers["REST Controllers"]
+        Security["Spring Security (session cookie, CSRF)"]
+        Controllers["Spring MVC Controllers (@Controller)"]
         Services["Services"]
-        Repositories["Repositories"]
-        Security["Spring Security (JWT)"]
+        Repositories["Repositories (Spring Data JPA)"]
+        Views["Thymeleaf Views (server-rendered HTML)"]
     end
 
     DB[("PostgreSQL Database")]
 
-    U -->|"HTTPS (JSON)"| FE
-    FE -->|"REST API calls"| Security
+    U -->|"HTTP GET / form POST"| Security
     Security --> Controllers
     Controllers --> Services
     Services --> Repositories
-    Repositories -->|"SQL"| DB
+    Repositories -->|"SQL (Hibernate)"| DB
+    Controllers -->|"view name + model"| Views
+    Views -->|"HTML page"| U
 ```
+
+There is no separate frontend application and no REST API in v1:
+the backend renders HTML pages server-side with **Thymeleaf** and
+authentication uses a **session cookie** (no JWT).
 
 ##### User Login Sequence Diagram
 
 ```mermaid
 sequenceDiagram
-    actor U as User
-    participant FE as Frontend
-    participant API as Backend REST API
-    participant DB as Database
+    actor U as User (Browser)
+    participant SEC as Spring Security
+    participant UDS as CustomUserDetailsService
+    participant DB as PostgreSQL
 
-    U->>FE: Enter email + password, click Login
+    U->>SEC: GET /auth/login
+    SEC-->>U: Login page (Thymeleaf form with CSRF token)
 
-    FE->>API: POST /auth/login<br/>{ email, password }
-
-    API->>API: Validate request body (server-side validation)
-    alt Validation fails
-        API-->>FE: 400 Bad Request<br/>{ message: [...errors] }
-        FE-->>U: Show validation errors
+    U->>SEC: POST /auth/login<br/>username + password + CSRF token
+    SEC->>UDS: loadUserByUsername(username)
+    UDS->>DB: SELECT user and roles WHERE username = ?
+    alt User not found or password mismatch (BCrypt check)
+        SEC-->>U: 302 redirect to /auth/login?error
     end
 
-    API->>DB: SELECT user WHERE login = ? AND email = ?
-    alt User not found
-        API-->>FE: 401 Unauthorized
-        FE-->>U: "Invalid credentials"
-    end
-
-    API->>API: Verify Password
-    alt Password mismatch
-        API-->>FE: 401 Unauthorized
-        FE-->>U: "Invalid credentials"
-    end
-
-    API->>API: generate JWT { sub: uuid, role }
-    API-->>FE: 200 OK<br/>{ token: "eyJ..." }
-
-    FE->>FE: Store token (HTTP-only cookie)
-    FE-->>U: Redirect to dashboard (by role)
+    SEC->>SEC: Create HTTP session
+    SEC-->>U: 302 redirect to /dashboard<br/>Set-Cookie: JSESSIONID (HttpOnly, SameSite=Lax)
+    U->>SEC: GET /dashboard (session cookie)
+    SEC-->>U: Dashboard page (server-rendered by Thymeleaf)
 ```
+
+Spring Security handles the login POST itself
+(`UsernamePasswordAuthenticationFilter`); no controller code is involved.
+`CustomUserDetailsService` loads the user and their roles from PostgreSQL,
+and the password is verified against its BCrypt hash.
+Registration (`POST /auth/register`) is handled by `AuthController` and
+`RegistrationService` (server-side bean validation plus duplicate
+username/email detection).
 
 #### MonoRepo
 
