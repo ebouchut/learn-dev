@@ -228,7 +228,7 @@ This command stops all the application services containers
 declared in the Docker Compose file (`docker-compose.yaml`):
 
   ```shell
-  docker compose down
+  docker compose stop
   ```
 
 
