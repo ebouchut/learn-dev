@@ -131,134 +131,104 @@ We use a **monorepo**, that is a Git repository containing mainly both the **fro
   
 #### Directory Structure
 
+The Spring Boot application lives at the **repository root** (standard Maven layout):
+
 ```txt
 learn-dev/
-├── .gitignore
-├── README.md
+├── .env.example                                          # Template for the local .env file (see README)
+├── .sdkmanrc                                             # Pins the Java and Maven versions (SDKMAN)
+├── Makefile                                              # Developer shortcuts (run, test, diagrams, ...)
+├── docker-compose.yaml                                   # PostgreSQL and MongoDB services
+├── mvnw                                                  # Maven wrapper
+├── pom.xml                                               # Dependencies, build configuration, and metadata
 │
-├── backend/                                              # Spring Boot application
-│   ├── pom.xml                                           # Project’s dependencies, build configuration, and metadata
-│   │
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/dev/ericbouchut/learndev/
-│   │   │   │   ├── LearnDevApplication.java              # Spring Boot entry point
-│   │   │   │   │
-│   │   │   │   ├── common/                               # Concerns shared across multiple features
-│   │   │   │   │   ├── config/
-│   │   │   │   │   │   ├── SecurityConfig.java           # Spring Security filter chain, CORS, CSRF
-│   │   │   │   │   │   └── WebConfig.java                # Global web configuration
-│   │   │   │   │   ├── dto/
-│   │   │   │   │   │   └── ApiErrorResponse.java         # Standardized error response body
-│   │   │   │   │   └── exception/
-│   │   │   │   │       ├── GlobalExceptionHandler.java   # @RestControllerAdvice for centralized error handling
-│   │   │   │   │       └── ResourceNotFoundException.java
-│   │   │   │   │
-│   │   │   │   ├── auth/                                 # Authentication and token management
-│   │   │   │   │   ├── AuthController.java               # /api/auth endpoints (login, register, refresh)
-│   │   │   │   │   ├── AuthService.java
-│   │   │   │   │   ├── CustomUserDetailsService.java     # Loads user from DB for Spring Security
-│   │   │   │   │   ├── dto/
-│   │   │   │   │   │   ├── LoginRequest.java
-│   │   │   │   │   │   ├── RegisterRequest.java
-│   │   │   │   │   │   └── AuthResponse.java
-│   │   │   │   │   ├── entity/
-│   │   │   │   │   │   ├── EmailVerificationToken.java
-│   │   │   │   │   │   ├── PasswordResetToken.java
-│   │   │   │   │   │   └── RefreshToken.java
-│   │   │   │   │   ├── repository/
-│   │   │   │   │   │   ├── EmailVerificationTokenRepository.java
-│   │   │   │   │   │   ├── PasswordResetTokenRepository.java
-│   │   │   │   │   │   └── RefreshTokenRepository.java
-│   │   │   │   │   └── exception/
-│   │   │   │   │       ├── InvalidCredentialsException.java
-│   │   │   │   │       └── TokenExpiredException.java
-│   │   │   │   │
-│   │   │   │   ├── user/                                 # User profile and account management
-│   │   │   │   │   ├── UserController.java               # /api/users endpoints (CRUD, profile)
-│   │   │   │   │   ├── UserService.java
-│   │   │   │   │   ├── entity/
-│   │   │   │   │   │   └── User.java                     # Maps to the users table
-│   │   │   │   │   ├── repository/
-│   │   │   │   │   │   └── UserRepository.java
-│   │   │   │   │   ├── dto/
-│   │   │   │   │   │   ├── UserResponse.java             # Outbound DTO (never exposes password hash)
-│   │   │   │   │   │   └── UpdateUserRequest.java
-│   │   │   │   │   └── exception/
-│   │   │   │   │       ├── UserNotFoundException.java
-│   │   │   │   │       ├── DuplicateEmailException.java
-│   │   │   │   │       └── AccountLockedException.java
-│   │   │   │   │
-│   │   │   │   ├── role/                                 # Role and permission management
-│   │   │   │   │   ├── RoleController.java               # /api/roles endpoints (admin only)
-│   │   │   │   │   ├── RoleService.java
-│   │   │   │   │   ├── entity/
-│   │   │   │   │   │   ├── Role.java                     # Maps to the roles table
-│   │   │   │   │   │   └── UserRole.java                 # Maps to the user_roles junction table
-│   │   │   │   │   ├── repository/
-│   │   │   │   │   │   ├── RoleRepository.java
-│   │   │   │   │   │   └── UserRoleRepository.java
-│   │   │   │   │   └── dto/
-│   │   │   │   │       ├── RoleResponse.java
-│   │   │   │   │       └── AssignRoleRequest.java
-│   │   │   │   │
-│   │   │   │   └── audit/                                # Security audit trail
-│   │   │   │       ├── AuditService.java                 # Internal use only (no controller)
-│   │   │   │       ├── entity/
-│   │   │   │       │   └── AuditLog.java                 # Maps to the audit_logs table
-│   │   │   │       └── repository/
-│   │   │   │           └── AuditLogRepository.java
-│   │   │   │
-│   │   │   └── resources/
-│   │   │       ├── application.yaml                      # Main config (active profile, app name)
-│   │   │       ├── application-dev.yml                   # Dev profile (local DB, debug logging)
-│   │   │       ├── application-prod.yml                  # Prod profile (external DB, stricter security)
-│   │   │       └── db/
-│   │   │           └── changelog/                        # Liquibase migration files (when introduced)
-│   │   │               ├── db.changelog-master.yaml
-│   │   │               ├── changes/
-│   │   │                   └── V20260608161836-create-users-table.sql # Database migration file
-│   │   │
-│   │   │
-│   │   └── test/
-│   │       └── java/dev/ericbouchut/learndev/
-│   │           ├── LearnDevApplicationTests.java         # Context load smoke test
-│   │           │
-│   │           ├── auth/
-│   │           │   ├── AuthControllerTest.java           # @WebMvcTest for auth endpoints
-│   │           │   └── AuthServiceTest.java
-│   │           │
-│   │           ├── user/
-│   │           │   ├── UserControllerTest.java
-│   │           │   ├── UserServiceTest.java
-│   │           │   └── UserRepositoryTest.java           # @DataJpaTest with Testcontainers
-│   │           │
-│   │           ├── role/
-│   │           │   ├── RoleServiceTest.java
-│   │           │   └── RoleRepositoryTest.java
-│   │           │
-│   │           └── audit/
-│   │               └── AuditServiceTest.java
-│    
-│    
-├── docker/                         # Docker scripts
+├── docker/
 │   └── init/
-│       └── 01-create-app-user.sh   # Runs once on first postgres:17 container start to create application database and user 
-└── postman/                        # Contains the Postman requests to test the REST endpoints
-    ├── learndev.environment.json   # Postman environment file with placeholders (adjust to your local config.) 
-    └── learndev.collection.json    # Collection of Postman requests, with folders per feature  
+│       └── 01-create-app-db-user.sh                      # Runs once on first postgres container start to create the application database and user
+│
+├── docs/
+│   ├── adr/                                              # Architecture Decision Records (MADR)
+│   ├── database/merise/                                  # MCD, MLD, MPD diagrams and sources
+│   ├── plans/                                            # Implementation plans
+│   └── tech-stacks.md                                    # Catalogue of tools and frameworks
+│
+└── src/
+    ├── main/
+    │   ├── java/com/ericbouchut/learndev/
+    │   │   ├── LearnDevApplication.java                  # Spring Boot entry point
+    │   │   │
+    │   │   ├── auth/                                     # Authentication (registration, login support)
+    │   │   │   ├── AuthController.java                   # Web pages: home, login, dashboard, register
+    │   │   │   ├── CustomUserDetailsService.java         # Loads user + roles from DB for Spring Security
+    │   │   │   ├── RegistrationService.java              # Creates accounts (hashing, default role, duplicates)
+    │   │   │   ├── dto/
+    │   │   │   │   └── RegisterForm.java                 # Registration form backing bean (bean validation)
+    │   │   │   └── exception/
+    │   │   │       ├── DuplicateEmailException.java
+    │   │   │       └── DuplicateUsernameException.java
+    │   │   │
+    │   │   ├── common/                                   # Concerns shared across features
+    │   │   │   └── config/
+    │   │   │       └── SecurityConfig.java               # Spring Security filter chain, form login, PasswordEncoder
+    │   │   │
+    │   │   ├── role/                                     # Role management
+    │   │   │   ├── entity/
+    │   │   │   │   └── Role.java                         # Maps to the roles table
+    │   │   │   └── repository/
+    │   │   │       └── RoleRepository.java
+    │   │   │
+    │   │   └── user/                                     # User account management
+    │   │       ├── entity/
+    │   │       │   └── User.java                         # Maps to the users table
+    │   │       └── repository/
+    │   │           └── UserRepository.java
+    │   │
+    │   └── resources/
+    │       ├── application.yaml                          # Main config (datasource, Liquibase, session cookie)
+    │       ├── application-dev.yaml                      # Dev profile overrides
+    │       ├── application-prod.yaml                     # Prod profile overrides
+    │       ├── db/
+    │       │   └── changelog/                            # Liquibase migrations
+    │       │       ├── db.changelog-master.yaml          # Master changelog (includeAll on changes/)
+    │       │       └── changes/
+    │       │           └── V20260608161836-create-users-table.sql  # One changeset per file
+    │       └── templates/                                # Thymeleaf views (server-rendered HTML)
+    │           ├── dashboard.html
+    │           ├── home.html
+    │           ├── login.html
+    │           └── register.html
+    │
+    └── test/
+        └── java/com/ericbouchut/learndev/
+            ├── LearnDevApplicationTests.java             # Context load smoke test
+            │
+            ├── auth/
+            │   ├── AuthFlowTest.java                     # End-to-end register, login, dashboard flow (MockMvc + Testcontainers)
+            │   ├── CustomUserDetailsServiceTest.java
+            │   └── RegistrationServiceTest.java
+            │
+            ├── role/repository/
+            │   └── RoleRepositoryTest.java               # @DataJpaTest with Testcontainers
+            │
+            ├── support/
+            │   └── AbstractPostgresIT.java               # Shared Testcontainers PostgreSQL base class
+            │
+            └── user/repository/
+                └── UserRepositoryTest.java               # @DataJpaTest with Testcontainers
 ```
 
 The table below explains what each folder entails.
 
-| Folder                                     | Purpose                                                                                  |
-|--------------------------------------------|------------------------------------------------------------------------------------------|
-| `backend/src/main/java/…/learndev/`        | Spring Boot application root — entry point and top-level package                         |
-| `backend/src/main/java/…/learndev/common/` | Cross-cutting concerns: security config, global error handling, shared DTOs              |
-| `backend/src/main/java/…/learndev/auth/`   | Authentication and token management (login, register, JWT, refresh)                      |
-| `backend/src/main/java/…/learndev/user/`   | User profile and account management                                                      |
-| `backend/src/main/java/…/learndev/role/`   | Role and permission management                                                           |
-| `backend/src/main/java/…/learndev/audit/`  | Security audit trail (internal use — no public controller)                               |
+| Folder                              | Purpose                                                                   |
+|-------------------------------------|---------------------------------------------------------------------------|
+| `src/main/java/.../learndev/`       | Spring Boot application root: entry point and top-level package           |
+| `src/main/java/.../learndev/auth/`  | Authentication: registration flow, login support, auth pages             |
+| `src/main/java/.../learndev/common/`| Cross-cutting concerns: Spring Security configuration                    |
+| `src/main/java/.../learndev/role/`  | Role entity and data access                                               |
+| `src/main/java/.../learndev/user/`  | User entity and data access                                               |
+| `src/main/resources/templates/`     | Thymeleaf views rendered server-side                                      |
+| `src/main/resources/db/changelog/`  | Liquibase database migrations                                             |
+| `src/test/java/.../learndev/`       | Tests (unit and Testcontainers-backed integration tests, all `*Test`)     |
 
 #### Feature-based Package Layout
 
