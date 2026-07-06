@@ -279,13 +279,6 @@ The main advantages in my opinion are:
           They delegate business logic to the service layer and returns the appropriate
           HTTP response and status code.
         - ...
-      - Multi-part-naming for files in a feature folder: **`name.type.extension`**, contains 3 segments, where:
-          - `name` may refer to a feature, middleware, service,
-          - `type` refers to the type: `routes`, `controller`, `validation` (JSON validation),
-            `service` (handles business logic),
-            `middleware` (intercepts requests before the handler — e.g., auth, logging),
-            `client` (adapter for an external service)
-          - `extension` refers to the file extension such as `ts`
 
     
 > [!NOTE]
@@ -346,7 +339,7 @@ and are named with a timestamp prefix:
 and avoids numbering collisions  when branches add migrations in parallel.
 
 
-**Example:**  `src/main/resources/db/changelog/changes/V20260608161836-add-users.sql`
+**Example:**  `src/main/resources/db/changelog/changes/V20260608161836-create-users-table.sql`
 
 ```sql
 --liquibase formatted sql
@@ -393,7 +386,7 @@ Where:
 >   ```shell
 >   make check-schema-drift && make diagrams
 >   ```
->   `scheck-schema-drift` verifies every table column is represented in the
+>   `check-schema-drift` verifies every table column is represented in the
 diagram.  [CI](.github/workflows/schema-drift.yml) runs this check too.
 
 
@@ -826,7 +819,7 @@ We use `Maven` as a packages/dependencies manager on the backend.
 
 1. Search for the artifact on [Maven Central](https://central.sonatype.com/).
 2. Copy the `<dependency>` snippet (select the **Maven** tab).
-3. Paste it inside the `<dependencies>` block of `backend/pom.xml`:
+3. Paste it inside the `<dependencies>` block of `pom.xml`:
 
    ```xml
    <dependency>
@@ -858,6 +851,12 @@ TODO: Explain how to write tests, what naming convention and best practices
 - The file name of a test class should end in `Test`.
   Although this is counterintuitive and the opposite of the standard Java
   method naming convention, it makes the test output easier to read.
+- Every test class ends in `Test` (never `IT`), including
+  Testcontainers-backed integration tests, so Surefire runs the whole suite
+  with `mvn test`. See
+  [ADR-0009](docs/adr/0009-run-tests-under-surefire-not-failsafe.md) for the
+  rationale; the `IT` suffix is reserved for non-test support classes such as
+  `AbstractPostgresIT`.
 
 
 ### Running Tests
