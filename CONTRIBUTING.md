@@ -57,64 +57,61 @@ using a PostgreSQL database to persist information.
 graph TD
     U["👤 User (Browser)"]
 
-    subgraph FE["Frontend (HTML / CSS / TypeScript)"]
-        Pages["Pages"]
-    end
-
     subgraph BE["Backend (Spring Boot / Java)"]
-        Controllers["REST Controllers"]
+        Security["Spring Security (session cookie, CSRF)"]
+        Controllers["Spring MVC Controllers (@Controller)"]
         Services["Services"]
-        Repositories["Repositories"]
-        Security["Spring Security (JWT)"]
+        Repositories["Repositories (Spring Data JPA)"]
+        Views["Thymeleaf Views (server-rendered HTML)"]
     end
 
     DB[("PostgreSQL Database")]
 
-    U -->|"HTTPS (JSON)"| FE
-    FE -->|"REST API calls"| Security
+    U -->|"HTTP GET / form POST"| Security
     Security --> Controllers
     Controllers --> Services
     Services --> Repositories
-    Repositories -->|"SQL"| DB
+    Repositories -->|"SQL (Hibernate)"| DB
+    Controllers -->|"view name + model"| Views
+    Views -->|"HTML page"| U
 ```
+
+There is no separate frontend application and no REST API in v1:
+the backend renders HTML pages server-side with **Thymeleaf** and
+authentication uses a **session cookie** (no JWT).
 
 ##### User Login Sequence Diagram
 
 ```mermaid
 sequenceDiagram
-    actor U as User
-    participant FE as Frontend
-    participant API as Backend REST API
-    participant DB as Database
+    actor U as User (Browser)
+    participant SEC as Spring Security
+    participant UDS as CustomUserDetailsService
+    participant DB as PostgreSQL
 
-    U->>FE: Enter email + password, click Login
+    U->>SEC: GET /auth/login
+    SEC-->>U: Login page (Thymeleaf form with CSRF token)
 
-    FE->>API: POST /auth/login<br/>{ email, password }
-
-    API->>API: Validate request body (server-side validation)
-    alt Validation fails
-        API-->>FE: 400 Bad Request<br/>{ message: [...errors] }
-        FE-->>U: Show validation errors
+    U->>SEC: POST /auth/login<br/>username + password + CSRF token
+    SEC->>UDS: loadUserByUsername(username)
+    UDS->>DB: SELECT user and roles WHERE username = ?
+    alt User not found or password mismatch (BCrypt check)
+        SEC-->>U: 302 redirect to /auth/login?error
     end
 
-    API->>DB: SELECT user WHERE login = ? AND email = ?
-    alt User not found
-        API-->>FE: 401 Unauthorized
-        FE-->>U: "Invalid credentials"
-    end
-
-    API->>API: Verify Password
-    alt Password mismatch
-        API-->>FE: 401 Unauthorized
-        FE-->>U: "Invalid credentials"
-    end
-
-    API->>API: generate JWT { sub: uuid, role }
-    API-->>FE: 200 OK<br/>{ token: "eyJ..." }
-
-    FE->>FE: Store token (HTTP-only cookie)
-    FE-->>U: Redirect to dashboard (by role)
+    SEC->>SEC: Create HTTP session
+    SEC-->>U: 302 redirect to /dashboard<br/>Set-Cookie: JSESSIONID (HttpOnly, SameSite=Lax)
+    U->>SEC: GET /dashboard (session cookie)
+    SEC-->>U: Dashboard page (server-rendered by Thymeleaf)
 ```
+
+Spring Security handles the login POST itself
+(`UsernamePasswordAuthenticationFilter`); no controller code is involved.
+`CustomUserDetailsService` loads the user and their roles from PostgreSQL,
+and the password is verified against its BCrypt hash.
+Registration (`POST /auth/register`) is handled by `AuthController` and
+`RegistrationService` (server-side bean validation plus duplicate
+username/email detection).
 
 #### MonoRepo
 
@@ -134,134 +131,104 @@ We use a **monorepo**, that is a Git repository containing mainly both the **fro
   
 #### Directory Structure
 
+The Spring Boot application lives at the **repository root** (standard Maven layout):
+
 ```txt
 learn-dev/
-├── .gitignore
-├── README.md
+├── .env.example                                          # Template for the local .env file (see README)
+├── .sdkmanrc                                             # Pins the Java and Maven versions (SDKMAN)
+├── Makefile                                              # Developer shortcuts (run, test, diagrams, ...)
+├── docker-compose.yaml                                   # PostgreSQL and MongoDB services
+├── mvnw                                                  # Maven wrapper
+├── pom.xml                                               # Dependencies, build configuration, and metadata
 │
-├── backend/                                              # Spring Boot application
-│   ├── pom.xml                                           # Project’s dependencies, build configuration, and metadata
-│   │
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/dev/ericbouchut/learndev/
-│   │   │   │   ├── LearnDevApplication.java              # Spring Boot entry point
-│   │   │   │   │
-│   │   │   │   ├── common/                               # Concerns shared across multiple features
-│   │   │   │   │   ├── config/
-│   │   │   │   │   │   ├── SecurityConfig.java           # Spring Security filter chain, CORS, CSRF
-│   │   │   │   │   │   └── WebConfig.java                # Global web configuration
-│   │   │   │   │   ├── dto/
-│   │   │   │   │   │   └── ApiErrorResponse.java         # Standardized error response body
-│   │   │   │   │   └── exception/
-│   │   │   │   │       ├── GlobalExceptionHandler.java   # @RestControllerAdvice for centralized error handling
-│   │   │   │   │       └── ResourceNotFoundException.java
-│   │   │   │   │
-│   │   │   │   ├── auth/                                 # Authentication and token management
-│   │   │   │   │   ├── AuthController.java               # /api/auth endpoints (login, register, refresh)
-│   │   │   │   │   ├── AuthService.java
-│   │   │   │   │   ├── CustomUserDetailsService.java     # Loads user from DB for Spring Security
-│   │   │   │   │   ├── dto/
-│   │   │   │   │   │   ├── LoginRequest.java
-│   │   │   │   │   │   ├── RegisterRequest.java
-│   │   │   │   │   │   └── AuthResponse.java
-│   │   │   │   │   ├── entity/
-│   │   │   │   │   │   ├── EmailVerificationToken.java
-│   │   │   │   │   │   ├── PasswordResetToken.java
-│   │   │   │   │   │   └── RefreshToken.java
-│   │   │   │   │   ├── repository/
-│   │   │   │   │   │   ├── EmailVerificationTokenRepository.java
-│   │   │   │   │   │   ├── PasswordResetTokenRepository.java
-│   │   │   │   │   │   └── RefreshTokenRepository.java
-│   │   │   │   │   └── exception/
-│   │   │   │   │       ├── InvalidCredentialsException.java
-│   │   │   │   │       └── TokenExpiredException.java
-│   │   │   │   │
-│   │   │   │   ├── user/                                 # User profile and account management
-│   │   │   │   │   ├── UserController.java               # /api/users endpoints (CRUD, profile)
-│   │   │   │   │   ├── UserService.java
-│   │   │   │   │   ├── entity/
-│   │   │   │   │   │   └── User.java                     # Maps to the users table
-│   │   │   │   │   ├── repository/
-│   │   │   │   │   │   └── UserRepository.java
-│   │   │   │   │   ├── dto/
-│   │   │   │   │   │   ├── UserResponse.java             # Outbound DTO (never exposes password hash)
-│   │   │   │   │   │   └── UpdateUserRequest.java
-│   │   │   │   │   └── exception/
-│   │   │   │   │       ├── UserNotFoundException.java
-│   │   │   │   │       ├── DuplicateEmailException.java
-│   │   │   │   │       └── AccountLockedException.java
-│   │   │   │   │
-│   │   │   │   ├── role/                                 # Role and permission management
-│   │   │   │   │   ├── RoleController.java               # /api/roles endpoints (admin only)
-│   │   │   │   │   ├── RoleService.java
-│   │   │   │   │   ├── entity/
-│   │   │   │   │   │   ├── Role.java                     # Maps to the roles table
-│   │   │   │   │   │   └── UserRole.java                 # Maps to the user_roles junction table
-│   │   │   │   │   ├── repository/
-│   │   │   │   │   │   ├── RoleRepository.java
-│   │   │   │   │   │   └── UserRoleRepository.java
-│   │   │   │   │   └── dto/
-│   │   │   │   │       ├── RoleResponse.java
-│   │   │   │   │       └── AssignRoleRequest.java
-│   │   │   │   │
-│   │   │   │   └── audit/                                # Security audit trail
-│   │   │   │       ├── AuditService.java                 # Internal use only (no controller)
-│   │   │   │       ├── entity/
-│   │   │   │       │   └── AuditLog.java                 # Maps to the audit_logs table
-│   │   │   │       └── repository/
-│   │   │   │           └── AuditLogRepository.java
-│   │   │   │
-│   │   │   └── resources/
-│   │   │       ├── application.yaml                      # Main config (active profile, app name)
-│   │   │       ├── application-dev.yml                   # Dev profile (local DB, debug logging)
-│   │   │       ├── application-prod.yml                  # Prod profile (external DB, stricter security)
-│   │   │       └── db/
-│   │   │           └── changelog/                        # Liquibase migration files (when introduced)
-│   │   │               ├── db.changelog-master.yaml
-│   │   │               ├── changes/
-│   │   │                   └── V20260608161836-create-users-table.sql # Database migration file
-│   │   │
-│   │   │
-│   │   └── test/
-│   │       └── java/dev/ericbouchut/learndev/
-│   │           ├── LearnDevApplicationTests.java         # Context load smoke test
-│   │           │
-│   │           ├── auth/
-│   │           │   ├── AuthControllerTest.java           # @WebMvcTest for auth endpoints
-│   │           │   └── AuthServiceTest.java
-│   │           │
-│   │           ├── user/
-│   │           │   ├── UserControllerTest.java
-│   │           │   ├── UserServiceTest.java
-│   │           │   └── UserRepositoryTest.java           # @DataJpaTest with Testcontainers
-│   │           │
-│   │           ├── role/
-│   │           │   ├── RoleServiceTest.java
-│   │           │   └── RoleRepositoryTest.java
-│   │           │
-│   │           └── audit/
-│   │               └── AuditServiceTest.java
-│    
-│    
-├── docker/                         # Docker scripts
+├── docker/
 │   └── init/
-│       └── 01-create-app-user.sh   # Runs once on first postgres:17 container start to create application database and user 
-└── postman/                        # Contains the Postman requests to test the REST endpoints
-    ├── learndev.environment.json   # Postman environment file with placeholders (adjust to your local config.) 
-    └── learndev.collection.json    # Collection of Postman requests, with folders per feature  
+│       └── 01-create-app-db-user.sh                      # Runs once on first postgres container start to create the application database and user
+│
+├── docs/
+│   ├── adr/                                              # Architecture Decision Records (MADR)
+│   ├── database/merise/                                  # MCD, MLD, MPD diagrams and sources
+│   ├── plans/                                            # Implementation plans
+│   └── tech-stacks.md                                    # Catalogue of tools and frameworks
+│
+└── src/
+    ├── main/
+    │   ├── java/com/ericbouchut/learndev/
+    │   │   ├── LearnDevApplication.java                  # Spring Boot entry point
+    │   │   │
+    │   │   ├── auth/                                     # Authentication (registration, login support)
+    │   │   │   ├── AuthController.java                   # Web pages: home, login, dashboard, register
+    │   │   │   ├── CustomUserDetailsService.java         # Loads user + roles from DB for Spring Security
+    │   │   │   ├── RegistrationService.java              # Creates accounts (hashing, default role, duplicates)
+    │   │   │   ├── dto/
+    │   │   │   │   └── RegisterForm.java                 # Registration form backing bean (bean validation)
+    │   │   │   └── exception/
+    │   │   │       ├── DuplicateEmailException.java
+    │   │   │       └── DuplicateUsernameException.java
+    │   │   │
+    │   │   ├── common/                                   # Concerns shared across features
+    │   │   │   └── config/
+    │   │   │       └── SecurityConfig.java               # Spring Security filter chain, form login, PasswordEncoder
+    │   │   │
+    │   │   ├── role/                                     # Role management
+    │   │   │   ├── entity/
+    │   │   │   │   └── Role.java                         # Maps to the roles table
+    │   │   │   └── repository/
+    │   │   │       └── RoleRepository.java
+    │   │   │
+    │   │   └── user/                                     # User account management
+    │   │       ├── entity/
+    │   │       │   └── User.java                         # Maps to the users table
+    │   │       └── repository/
+    │   │           └── UserRepository.java
+    │   │
+    │   └── resources/
+    │       ├── application.yaml                          # Main config (datasource, Liquibase, session cookie)
+    │       ├── application-dev.yaml                      # Dev profile overrides
+    │       ├── application-prod.yaml                     # Prod profile overrides
+    │       ├── db/
+    │       │   └── changelog/                            # Liquibase migrations
+    │       │       ├── db.changelog-master.yaml          # Master changelog (includeAll on changes/)
+    │       │       └── changes/
+    │       │           └── V20260608161836-create-users-table.sql  # One changeset per file
+    │       └── templates/                                # Thymeleaf views (server-rendered HTML)
+    │           ├── dashboard.html
+    │           ├── home.html
+    │           ├── login.html
+    │           └── register.html
+    │
+    └── test/
+        └── java/com/ericbouchut/learndev/
+            ├── LearnDevApplicationTests.java             # Context load smoke test
+            │
+            ├── auth/
+            │   ├── AuthFlowTest.java                     # End-to-end register, login, dashboard flow (MockMvc + Testcontainers)
+            │   ├── CustomUserDetailsServiceTest.java
+            │   └── RegistrationServiceTest.java
+            │
+            ├── role/repository/
+            │   └── RoleRepositoryTest.java               # @DataJpaTest with Testcontainers
+            │
+            ├── support/
+            │   └── AbstractPostgresIT.java               # Shared Testcontainers PostgreSQL base class
+            │
+            └── user/repository/
+                └── UserRepositoryTest.java               # @DataJpaTest with Testcontainers
 ```
 
 The table below explains what each folder entails.
 
-| Folder                                     | Purpose                                                                                  |
-|--------------------------------------------|------------------------------------------------------------------------------------------|
-| `backend/src/main/java/…/learndev/`        | Spring Boot application root — entry point and top-level package                         |
-| `backend/src/main/java/…/learndev/common/` | Cross-cutting concerns: security config, global error handling, shared DTOs              |
-| `backend/src/main/java/…/learndev/auth/`   | Authentication and token management (login, register, JWT, refresh)                      |
-| `backend/src/main/java/…/learndev/user/`   | User profile and account management                                                      |
-| `backend/src/main/java/…/learndev/role/`   | Role and permission management                                                           |
-| `backend/src/main/java/…/learndev/audit/`  | Security audit trail (internal use — no public controller)                               |
+| Folder                              | Purpose                                                                   |
+|-------------------------------------|---------------------------------------------------------------------------|
+| `src/main/java/.../learndev/`       | Spring Boot application root: entry point and top-level package           |
+| `src/main/java/.../learndev/auth/`  | Authentication: registration flow, login support, auth pages             |
+| `src/main/java/.../learndev/common/`| Cross-cutting concerns: Spring Security configuration                    |
+| `src/main/java/.../learndev/role/`  | Role entity and data access                                               |
+| `src/main/java/.../learndev/user/`  | User entity and data access                                               |
+| `src/main/resources/templates/`     | Thymeleaf views rendered server-side                                      |
+| `src/main/resources/db/changelog/`  | Liquibase database migrations                                             |
+| `src/test/java/.../learndev/`       | Tests (unit and Testcontainers-backed integration tests, all `*Test`)     |
 
 #### Feature-based Package Layout
 
@@ -312,13 +279,6 @@ The main advantages in my opinion are:
           They delegate business logic to the service layer and returns the appropriate
           HTTP response and status code.
         - ...
-      - Multi-part-naming for files in a feature folder: **`name.type.extension`**, contains 3 segments, where:
-          - `name` may refer to a feature, middleware, service,
-          - `type` refers to the type: `routes`, `controller`, `validation` (JSON validation),
-            `service` (handles business logic),
-            `middleware` (intercepts requests before the handler — e.g., auth, logging),
-            `client` (adapter for an external service)
-          - `extension` refers to the file extension such as `ts`
 
     
 > [!NOTE]
@@ -379,7 +339,7 @@ and are named with a timestamp prefix:
 and avoids numbering collisions  when branches add migrations in parallel.
 
 
-**Example:**  `src/main/resources/db/changelog/changes/V20260608161836-add-users.sql`
+**Example:**  `src/main/resources/db/changelog/changes/V20260608161836-create-users-table.sql`
 
 ```sql
 --liquibase formatted sql
@@ -426,7 +386,7 @@ Where:
 >   ```shell
 >   make check-schema-drift && make diagrams
 >   ```
->   `scheck-schema-drift` verifies every table column is represented in the
+>   `check-schema-drift` verifies every table column is represented in the
 diagram.  [CI](.github/workflows/schema-drift.yml) runs this check too.
 
 
@@ -673,55 +633,6 @@ At a high level, you will usually need to:
 
 For more detailed, component-specific instructions, please refer to the corresponding README files in each subdirectory.
 
-### Testing the API with Postman
-
-The repository ships two files under `backend/postman/` that let you
-send requests to the backend API directly from [Postman](https://www.postman.com/):
-
-| File                       | Purpose |
-|----------------------------|---|
-| `learndev.collection.json` | All API requests, grouped by feature |
-| `learndev.environment.json`  | Variables with placeholder values (no real credentials) |
-
-
-#### Import the Postman collection
-
-1. Open Postman.
-2. Click **`Collections`** / **`Import`**.
-3. Select `backend/postman/learndev.collection.json`.
-
-#### Import the Postman environment
-
-1. Click **`Environments`** / **`Import`**.
-2. Select `backend/postman/learndev.environment.json`.
-3. Select **learnDev – Local** as the active environment (top-right dropdown).
-
-#### Configure the Postman Collection
-
-Open the **`learnDev – Local`** environment in Postman and fill in the fields marked as placeholders:
-
-| Variable | What to set                                                         |
-|---|---------------------------------------------------------------------|
-| `baseUrl` | URL of your local backend server (default: `http://localhost:3000`) |
-
-> [!WARNING]
-> Never commit real credentials. The environment file intentionally ships
-> with empty secret fields (`authToken`, `loginPassword`). Fill them in
-> locally; Postman keeps them on your machine only.
-
-
-#### Authenticate with Postman
-
-Most endpoints require a JWT. To obtain one:
-
-1. Run **`Auth`** / **`Login`** (`POST /auth/login`).
-2. Copy the `token` value from the response body.
-3. Paste it into the `authToken` environment variable.
-
-All subsequent requests that require authentication read `{{authToken}}` from
-the environment automatically.
-
-
 ### Git Branching Strategy
 
 > [!NOTE]
@@ -784,7 +695,9 @@ The **branches**:
     - It is also where we test that the merged features do not break the website.    
       Once we are confident the code on `dev` can be deployed to production, we merge `dev` into `main`.
     - We should not commit directly to `dev`, but create a PR (Pull Request) to bring in changes.
-    - We have configured `dev` to require two approvals before merging to `dev`.
+    - As this is a solo project for now, no review approval is required to merge a PR.
+      Once the team grows, protect the `dev` branch with a rule requiring
+      at least two approving reviews before merging.
 - **`main`** contains the production-ready code.
     - This is where the team merges `dev` after ensuring that the new features on `dev`
       are working properly together.
@@ -906,7 +819,7 @@ We use `Maven` as a packages/dependencies manager on the backend.
 
 1. Search for the artifact on [Maven Central](https://central.sonatype.com/).
 2. Copy the `<dependency>` snippet (select the **Maven** tab).
-3. Paste it inside the `<dependencies>` block of `backend/pom.xml`:
+3. Paste it inside the `<dependencies>` block of `pom.xml`:
 
    ```xml
    <dependency>
@@ -938,6 +851,12 @@ TODO: Explain how to write tests, what naming convention and best practices
 - The file name of a test class should end in `Test`.
   Although this is counterintuitive and the opposite of the standard Java
   method naming convention, it makes the test output easier to read.
+- Every test class ends in `Test` (never `IT`), including
+  Testcontainers-backed integration tests, so Surefire runs the whole suite
+  with `mvn test`. See
+  [ADR-0009](docs/adr/0009-run-tests-under-surefire-not-failsafe.md) for the
+  rationale; the `IT` suffix is reserved for non-test support classes such as
+  `AbstractPostgresIT`.
 
 
 ### Running Tests

@@ -33,8 +33,12 @@ and [Thymeleaf](https://en.wikipedia.org/wiki/Thymeleaf) frontend.
     - Thymeleaf
 -  Authentication and authorization framework:
   - [Spring Security](https://spring.io/projects/spring-security):
-- Database:
-  - [PostgreSQL](https://www.postgresql.org/about/) version 17
+- Databases:
+  - [PostgreSQL](https://www.postgresql.org/about/) version 17 (relational core)
+  - [MongoDB](https://www.mongodb.com/) version 8, provisioned (Docker) for
+    future content storage; not yet wired to a feature
+- Database schema migrations:
+  - [Liquibase](https://www.liquibase.com/) (migrations applied at application startup)
 - Build and dependency management tool:
   - [Maven](https://maven.apache.org/what-is-maven.html)
 - Containerization:
@@ -44,7 +48,14 @@ and [Thymeleaf](https://en.wikipedia.org/wiki/Thymeleaf) frontend.
 
 ### Frontend
 
-TODO
+The frontend is **server-rendered**: there is no separate frontend application.
+
+- [Thymeleaf](https://www.thymeleaf.org/) templates rendered by the backend
+  (home, login, register, and dashboard pages)
+- [thymeleaf-extras-springsecurity6](https://github.com/thymeleaf/thymeleaf-extras-springsecurity)
+  to display authentication data (such as the logged-in username) in the pages
+- Server-side form handling with bean validation (no JavaScript framework yet)
+- Plain HTML and CSS
 
 
 ### Development Tools
@@ -53,7 +64,6 @@ TODO
 - **Git**: Version control
 - [**Maven**](https://en.wikipedia.org/wiki/Apache_Maven): Build and dependency management
 - **Podman**: Containerization
-- **Swagger**: API documentation
 
 
 ## Getting Started
@@ -68,7 +78,7 @@ See the [Tech Stack](#tech-stack) section.
 ### Installation
 
 - Clone the `ebouchut/learn-dev` Git Repository
-- Install Docker, Docker Desktop, and Docker Compose
+- Install a container engine: **Podman** (recommended) or Docker, plus Docker Compose
 
 #### Clone the Git repository
 
@@ -80,14 +90,35 @@ git clone git@github.com:ebouchut/learn-dev.git
 cd learn-dev
 ```
 
-#### Docker Setup
+#### Container Engine Setup
 
-From the project root folder.
-Install _Docker_ and _Docker Compose_:
+You need a container engine and _Docker Compose_ to run the databases.
+
+**Option 1 (recommended): Podman**
+
+We recommend [Podman](https://podman.io/) for **security reasons**:
+it runs containers **rootless** by default and does not need a
+privileged, always-on daemon.
+
+- on macOS:
+  ```shell
+  brew install podman docker-compose
+  podman machine init   # Do it once: create the Linux VM
+  podman machine start  # Start the VM (needed after each reboot)
+  ```
+- on [Windows and Linux](https://podman.io/docs/installation)
+
+`podman` understands the Docker CLI syntax, and `docker compose` works
+against the Podman socket, so every `docker compose ...` command in this
+README works unchanged.
+
+**Option 2: Docker**
+
+If you prefer Docker anyway:
 
 - on macOS (read [this for Windows or Linux install](https://docs.docker.com/get-started/get-docker/)):  
   ```shell
-  brew install docker docker-compose docker-desktop
+  brew install --cask docker   # Docker Desktop (includes Docker Compose)
   ```
 - on [Windows and Linux](https://docs.docker.com/get-started/get-docker/)
 
@@ -134,12 +165,30 @@ Here is the procedure:
 
 ## Configuration
 
+A fresh clone has no `.env` file (it is gitignored because it holds secrets).
+Create it from the provided template, then fill in the secrets:
+
+- Create `.env` from the template (do it once):
+  ```shell
+  cp .env.example .env
+  ```
 - Edit `.env`
   - [ ] Set a value for the variables `POSTGRES_PASSWORD`, `LEARNDEV_DB_PASSWORD`, `MONGO_ROOT_PASSWORD`
 
 
 ## Run the application
 
+The quickest way is the Make target, from the project root:
+
+```shell
+make run
+```
+
+It starts the container machine if needed (Podman only), starts the
+database services, then runs the app on http://localhost:8080/
+(stop it with `Ctrl+C`).
+
+Alternatively, run the underlying commands yourself:
 
   ```shell
   # Make sure the required versions of Java and Maven are active for this shell
@@ -156,7 +205,7 @@ Here is the procedure:
   ```
 
 The first command starts the Podman machine if it is not already running.  
-Then `docker compoose up -d`  starts all the application Docker services 
+Then `docker compose up -d`  starts all the application Docker services 
  as declared in [docker-compose.yaml](docker-compose.yaml)
 (the *Docker Compose* configuration file), like this.
 For each service (`postgres` and `mongo`):
@@ -194,7 +243,7 @@ This command stops all the application services containers
 declared in the Docker Compose file (`docker-compose.yaml`):
 
   ```shell
-  docker compose down
+  docker compose stop
   ```
 
 
@@ -214,7 +263,7 @@ A **Docker image** is pre-packaged piece of software that can work as a standalo
 Once the `postgres` service container and its named data volume 
 have been created with `docker compose up -d`,
 you can stop then restart the `postgres` service container individually.
-
+Make sure you stopped the application beforehand.
 
 #### Stop Postgres
 
@@ -244,7 +293,7 @@ docker compose ps | grep postgres
 
 > To recreate the database, and start from scratch you need to stop the `postgres` container 
 > and remove the (data) volumes.   
-> See the `Remove all Posgres Databases` section for details.    
+> See the `Remove the Postgres Databases` section for details.    
 
 
 #### Remove the Postgres Databases
