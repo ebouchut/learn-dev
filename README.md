@@ -161,6 +161,13 @@ Here is the procedure:
 
 ## Configuration
 
+A fresh clone has no `.env` file (it is gitignored because it holds secrets).
+Create it from the provided template, then fill in the secrets:
+
+- Create `.env` from the template (do it once):
+  ```shell
+  cp .env.example .env
+  ```
 - Edit `.env`
   - [ ] Set a value for the variables `POSTGRES_PASSWORD`, `LEARNDEV_DB_PASSWORD`, `MONGO_ROOT_PASSWORD`
 
