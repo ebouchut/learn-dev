@@ -205,7 +205,7 @@ Alternatively, run the underlying commands yourself:
   ```
 
 The first command starts the Podman machine if it is not already running.  
-Then `docker compoose up -d`  starts all the application Docker services 
+Then `docker compose up -d`  starts all the application Docker services 
  as declared in [docker-compose.yaml](docker-compose.yaml)
 (the *Docker Compose* configuration file), like this.
 For each service (`postgres` and `mongo`):
@@ -263,7 +263,7 @@ A **Docker image** is pre-packaged piece of software that can work as a standalo
 Once the `postgres` service container and its named data volume 
 have been created with `docker compose up -d`,
 you can stop then restart the `postgres` service container individually.
-
+Make sure you stopped the application beforehand.
 
 #### Stop Postgres
 
@@ -293,7 +293,7 @@ docker compose ps | grep postgres
 
 > To recreate the database, and start from scratch you need to stop the `postgres` container 
 > and remove the (data) volumes.   
-> See the `Remove all Posgres Databases` section for details.    
+> See the `Remove the Postgres Databases` section for details.    
 
 
 #### Remove the Postgres Databases
