@@ -32,3 +32,12 @@ jobs:
         with:
           name: jacoco-coverage-report
           path: target/site/jacoco/
+      # Publish coverage to Codecov (ADR-0012). Advisory: codecov.yml sets
+      # informational statuses, and an upload failure does not fail CI.
+      - name: Upload coverage to Codecov
+        # Third-party action, pinned to the commit SHA of v7.0.0
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: target/site/jacoco/jacoco.xml
+          fail_ci_if_error: false

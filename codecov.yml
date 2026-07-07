@@ -1,0 +1,12 @@
+# Codecov configuration (see docs/adr/0012-publish-test-coverage-to-codecov.md).
+# Coverage is advisory: both statuses are informational, so Codecov reports
+# but never fails a check. Tighten later by removing "informational" and
+# setting coverage targets.
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true
