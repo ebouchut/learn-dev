@@ -5,6 +5,11 @@ project. For the concrete tools and versions, see [docs/tech-stacks.md](docs/tec
 for how the pieces fit together, see [ARCHITECTURE.md](ARCHITECTURE.md); for the
 rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 
+> [!NOTE]
+> 🇫🇷 French version: [GLOSSAIRE.md](GLOSSAIRE.md).
+> The two files are translations of each other: when you add, change, or
+> remove an entry in one, apply the same change to the other.
+
 ## Domain terms
 
 - **Archive** — Unpublish a course or lesson so it is no longer available to

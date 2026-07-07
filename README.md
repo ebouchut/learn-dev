@@ -367,7 +367,8 @@ visit [this link](https://github.com/users/ebouchut/projects/7/views/3).
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) — how the pieces fit together (layers, request flow, authentication, data, testing).
 - [docs/tech-stacks.md](docs/tech-stacks.md) — catalogue of tools, languages, and frameworks with versions used in the project.
-- [GLOSSARY.md](GLOSSARY.md) — definitions of the domain and technical terms used across the project.
+- [GLOSSARY.md](GLOSSARY.md) — definitions of the domain and technical terms used across the project
+  (🇫🇷 French version: [GLOSSAIRE.md](GLOSSAIRE.md)).
 - [Architecture Decision Records](docs/adr/README.md) — A list of design decisions and their trade-offs.
 
 
