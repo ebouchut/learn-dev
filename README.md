@@ -140,7 +140,7 @@ This is necessary in order to regenerate the MERISE database diagrams
 You will need to install *Python* and:
 - **`mocodo`**: a CLI tool to generate the MCD and MLD database diagrams 
   from a text-file description of the conceptual data model.
-- **`tbls`**: a CLI tool to reverse engineer the live database to generate the MPD. 
+- **`tbls`**: a CLI tool used to generate the MPD. 
 
 Here is the procedure:
 
