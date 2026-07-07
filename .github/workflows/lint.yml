@@ -1,0 +1,35 @@
+name: Lint
+
+# Code quality check (Checkstyle, Google ruleset) on every PR and push.
+# Deliberately non-blocking on day one for an existing codebase:
+#   - checkstyle:checkstyle only generates a report, it never fails on violations
+#   - continue-on-error keeps even setup errors from gating merges
+# The report is uploaded as a workflow artifact for review.
+# Tighten later: switch the goal to checkstyle:check and set
+# failOnViolation to true in pom.xml, then drop continue-on-error.
+
+on:
+  pull_request:
+    branches: [dev]
+  push:
+    branches: [dev, main]
+
+jobs:
+  checkstyle:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Generate the Checkstyle report
+        run: ./mvnw -B -ntp checkstyle:checkstyle
+      - name: Upload the Checkstyle report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkstyle-report
+          path: target/checkstyle-result.xml
