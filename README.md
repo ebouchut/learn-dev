@@ -378,6 +378,10 @@ visit [this link](https://github.com/users/ebouchut/projects/7/views/3).
 - [GLOSSARY.md](GLOSSARY.md) — definitions of the domain and technical terms used across the project
   (🇫🇷 French version: [GLOSSAIRE.md](GLOSSAIRE.md)).
 - [Architecture Decision Records](docs/adr/README.md) — A list of design decisions and their trade-offs.
+- [Test coverage reports (JaCoCo)](https://github.com/ebouchut/learn-dev/actions/workflows/test.yml) —
+  published as the `jacoco-coverage-report` artifact of each Tests workflow run;
+  locally, `make test` writes the same report to `target/site/jacoco/index.html`
+  (see [CONTRIBUTING](CONTRIBUTING.md#test-coverage-report-jacoco) for details).
 
 
 ## Contributing

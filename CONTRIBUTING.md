@@ -899,6 +899,22 @@ Make sure the Podman machine is started first: `podman machine start`.
 On real Docker (for example in CI) neither variable is needed; `make test`
 falls back to a plain `./mvnw test`.
 
+#### Test Coverage Report (JaCoCo)
+
+Every test run measures code coverage with [JaCoCo](https://www.jacoco.org/jacoco/)
+(see [ADR-0011](docs/adr/0011-start-ci-quality-checks-as-advisory-reports.md):
+coverage is reported, not yet enforced as a threshold).
+
+- **Locally**: `make test` (or `./mvnw test`) writes the report to
+  `target/site/jacoco/index.html`. Open it in a browser:
+  ```bash
+  open target/site/jacoco/index.html  # macOS
+  ```
+- **On CI**: every [Tests workflow run](https://github.com/ebouchut/learn-dev/actions/workflows/test.yml)
+  uploads the report as the **`jacoco-coverage-report`** artifact.
+  Open a run, scroll to its **Artifacts** section, download the archive,
+  and open `index.html` inside it.
+
 
 ### Generating the Documentation
 
