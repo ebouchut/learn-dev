@@ -1,6 +1,6 @@
 # Start CI quality checks as advisory reports
 
-- Status: accepted
+- Status: superseded by [ADR-0012](0012-publish-test-coverage-to-codecov.md)
 - Date: 2026-07-06
 - Deciders: Eric Bouchut
 
