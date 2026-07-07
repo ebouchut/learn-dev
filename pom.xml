@@ -56,6 +56,7 @@
         <java.version>21</java.version>
         <spring-dotenv.version>5.1.0</spring-dotenv.version>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+        <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -219,6 +220,32 @@
                     <failsOnError>false</failsOnError>
                     <failOnViolation>false</failOnViolation>
                 </configuration>
+            </plugin>
+            <!--
+                Test coverage: JaCoCo.
+                prepare-agent instruments the JVM Surefire forks, and the report
+                is bound to the test phase so every `mvn test` run writes the
+                HTML and XML report to target/site/jacoco/.
+            -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 

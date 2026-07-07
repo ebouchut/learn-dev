@@ -24,3 +24,11 @@ jobs:
           cache: maven
       - name: Run the test suite
         run: ./mvnw -B -ntp test
+      # JaCoCo is bound to the test phase, so the run above already
+      # produced the coverage report (HTML and XML).
+      - name: Upload the coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-coverage-report
+          path: target/site/jacoco/
