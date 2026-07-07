@@ -89,7 +89,12 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
   style ruleset. Runs here with the bundled Google ruleset (`google_checks.xml`)
   in report-only mode (see [ADR-0011](docs/adr/0011-start-ci-quality-checks-as-advisory-reports.md)).
 - **Code coverage** — The percentage of code exercised by the test suite.
-  Measured here by JaCoCo; reported, not yet enforced as a threshold.
+  Measured here by JaCoCo and published to Codecov; reported, not yet
+  enforced as a threshold.
+- **Codecov** — A hosted service that ingests coverage reports from CI,
+  renders a dashboard and a README badge, and comments on PRs with the
+  project and patch coverage. Statuses are informational here (see
+  [ADR-0012](docs/adr/0012-publish-test-coverage-to-codecov.md)).
 - **DTO (Data Transfer Object)** — An object carrying data across a boundary,
   deliberately separate from entities. A `...Form` DTO backs an HTML form.
 - **Failsafe** — The Maven plugin that runs `*IT` integration tests in the `verify`

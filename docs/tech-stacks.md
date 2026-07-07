@@ -75,6 +75,15 @@ definitions see [GLOSSARY.md](../GLOSSARY.md).
 
 All tests run under the Maven Surefire plugin (no Failsafe); see [ADR-0009](adr/0009-run-tests-under-surefire-not-failsafe.md).
 
+## Continuous integration and code quality
+
+| Technology | Version | Why here |
+|------------|---------|----------|
+| GitHub Actions | — | CI: one focused workflow per concern (build, test, lint, schema drift). See [ADR-0010](adr/0010-structure-ci-as-focused-workflows-per-concern.md). |
+| Checkstyle (maven-checkstyle-plugin) | 3.6.0 | Advisory linting against the project ruleset (`config/checkstyle/checkstyle.xml`). See [ADR-0011](adr/0011-start-ci-quality-checks-as-advisory-reports.md). |
+| JaCoCo | 0.8.15 | Test coverage measurement; report produced by every `mvn test`. |
+| Codecov | — | Hosts the coverage reports: README badge, dashboard, PR comments (informational statuses). See [ADR-0012](adr/0012-publish-test-coverage-to-codecov.md). |
+
 ## Containers and local infrastructure
 
 | Technology | Version | Why here |
