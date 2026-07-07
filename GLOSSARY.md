@@ -80,6 +80,11 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
   capturing one design decision and its trade-offs, in MADR format.
 - **Bean Validation** — The Jakarta standard for declaring constraints
   (`@NotBlank`, `@Email`, `@Size`) on form/DTO fields, enforced with `@Valid`.
+- **Checkstyle** — A static-analysis tool that checks Java source against a
+  style ruleset. Runs here with the bundled Google ruleset (`google_checks.xml`)
+  in report-only mode (see [ADR-0011](docs/adr/0011-start-ci-quality-checks-as-advisory-reports.md)).
+- **Code coverage** — The percentage of code exercised by the test suite.
+  Measured here by JaCoCo; reported, not yet enforced as a threshold.
 - **DTO (Data Transfer Object)** — An object carrying data across a boundary,
   deliberately separate from entities. A `...Form` DTO backs an HTML form.
 - **Failsafe** — The Maven plugin that runs `*IT` integration tests in the `verify`
@@ -89,9 +94,17 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 - **HikariCP** — The JDBC connection pool bundled with Spring Boot.
 - **Integration test** — A test that boots a Spring context and exercises multiple
   layers together (here `@SpringBootTest` against a real Postgres container).
+- **JaCoCo (Java Code Coverage)** — The code-coverage tool for Java. Its Maven
+  plugin instruments the tests (`prepare-agent`) and writes an HTML/XML report to
+  `target/site/jacoco/` during the `test` phase; CI uploads it as a workflow artifact.
+- **Linter** — A tool that flags style and quality issues in source code without
+  running it (static analysis). The project's linter is Checkstyle.
 - **Lombok** — A library that generates boilerplate (getters, constructors) from
   annotations at compile time.
 - **MADR (Markdown ADR)** — The lightweight ADR template format used in `docs/adr/`.
+- **Maven Wrapper (`mvnw`)** — A committed launcher script that downloads and runs
+  the project's pinned Maven version, so builds do not depend on a locally
+  installed Maven (used by CI: `./mvnw -B -ntp ...`).
 - **Slice test** — A test that loads only one layer of the context (for example
   `@DataJpaTest` for the persistence layer).
 - **Smoke test** — A minimal test that the application context starts at all
@@ -107,15 +120,33 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 
 ## Infrastructure and process
 
+- **Advisory check** — A CI check that reports problems without blocking the
+  merge (report-only goal and/or `continue-on-error`). Linting and coverage
+  start advisory here (see [ADR-0011](docs/adr/0011-start-ci-quality-checks-as-advisory-reports.md)).
+- **CI (Continuous Integration)** — Automatically building and testing every
+  change (each PR and push) to catch regressions early. Implemented with
+  GitHub Actions (issues #45 to #48).
 - **Docker Compose** — Declarative multi-container orchestration; here it runs
   Postgres and Mongo. `docker` on the dev machine is Podman.
 - **GitButler** — The version-control tool wrapping Git; used via the `but` CLI when
   the current branch is `gitbutler/workspace`.
+- **GitHub Actions** — GitHub's CI service. Each workflow is a YAML file under
+  `.github/workflows/`; this project uses one focused workflow per concern
+  (see [ADR-0010](docs/adr/0010-structure-ci-as-focused-workflows-per-concern.md)).
 - **Podman** — A daemonless container engine, used as the `docker` drop-in.
+- **Runner** — The machine that executes a GitHub Actions job (`ubuntu-latest`
+  here); it ships with a Docker daemon, which Testcontainers uses directly.
 - **Spring profile** — A named configuration set (for example `dev`) selecting
   profile-specific properties and Liquibase contexts.
+- **Temurin** — The Eclipse Adoptium distribution of the OpenJDK; the Java 21
+  build used locally (via SDKMAN) and on CI (via `actions/setup-java`).
 - **Thymeleaf** — The server-side HTML template engine. Its Spring Security
   **dialect** (`sec:` namespace) exposes the authenticated user to templates.
+- **Workflow (GitHub Actions)** — A YAML file declaring when (triggers) and how
+  (jobs, steps) CI runs. This project has `build.yml`, `test.yml`, `lint.yml`,
+  and `schema-drift.yml`.
+- **Workflow artifact** — A file or folder uploaded from a workflow run and
+  downloadable from the run page (here: the Checkstyle XML and JaCoCo reports).
 
 ## Certification
 
