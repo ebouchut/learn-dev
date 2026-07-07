@@ -110,7 +110,7 @@ privileged, always-on daemon.
 
 - on macOS:
   ```shell
-  brew install podman docker-compose
+  brew install podman podman-compose podman-desktop
   podman machine init   # Do it once: create the Linux VM
   podman machine start  # Start the VM (needed after each reboot)
   ```
