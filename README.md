@@ -1,3 +1,11 @@
+<!-- GitHub Badges -->
+
+[![build status][build-image]][build-url]
+[![test status][test-image]][test-url]
+[![lint status][lint-image]][lint-url]
+[![schema drift status][schema-drift-image]][schema-drift-url]
+[![github issues][github-issues-image]][github-issues-url]
+
 # Learn-dev: An Interactive Programming Learning Platform
 
 ## Presentation
@@ -431,3 +439,16 @@ See [LICENSE](LICENSE) for details.
   - [Aubry Capitone](https://www.linkedin.com/in/a-capitone/)
   - [Esteban Bare](https://www.linkedin.com/in/esteban-bare-337927284/),
 - [REAC Developpeur Web et Web mobile](https://www.francecompetences.fr/recherche/rncp/37674/)
+
+<!-- GitHub Badges: image and link definitions -->
+
+[build-image]: https://github.com/ebouchut/learn-dev/actions/workflows/build.yml/badge.svg?branch=dev&event=push
+[build-url]:   https://github.com/ebouchut/learn-dev/actions/workflows/build.yml
+[test-image]:  https://github.com/ebouchut/learn-dev/actions/workflows/test.yml/badge.svg?branch=dev&event=push
+[test-url]:    https://github.com/ebouchut/learn-dev/actions/workflows/test.yml
+[lint-image]:  https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml/badge.svg?branch=dev&event=push
+[lint-url]:    https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml
+[schema-drift-image]: https://github.com/ebouchut/learn-dev/actions/workflows/schema-drift.yml/badge.svg?branch=dev&event=push
+[schema-drift-url]:   https://github.com/ebouchut/learn-dev/actions/workflows/schema-drift.yml
+[github-issues-image]: https://img.shields.io/github/issues/ebouchut/learn-dev
+[github-issues-url]: https://github.com/ebouchut/learn-dev/issues
