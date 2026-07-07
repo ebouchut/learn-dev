@@ -41,4 +41,5 @@ NNNN-short-title-in-kebab-case.md
 | [0008](0008-share-singleton-testcontainers-postgres.md) | Share one Testcontainers PostgreSQL as a static singleton, not @Container | accepted |
 | [0009](0009-run-tests-under-surefire-not-failsafe.md) | Run all tests under Surefire with the *Test suffix, not Failsafe/*IT | accepted |
 | [0010](0010-structure-ci-as-focused-workflows-per-concern.md) | Structure CI as focused workflows per concern, not a monolithic ci.yml | accepted |
-| [0011](0011-start-ci-quality-checks-as-advisory-reports.md) | Start CI quality checks as advisory reports, gates come later | accepted |
+| [0011](0011-start-ci-quality-checks-as-advisory-reports.md) | Start CI quality checks as advisory reports, gates come later | superseded by ADR-0012 |
+| [0012](0012-publish-test-coverage-to-codecov.md) | Publish test coverage to Codecov | accepted |

@@ -107,8 +107,13 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
   fourni (`google_checks.xml`) en mode rapport seul (voir
   [ADR-0011](docs/adr/0011-start-ci-quality-checks-as-advisory-reports.md)).
 - **Code coverage (couverture de code)** — Le pourcentage de code exercé par
-  la suite de tests. Mesuré ici par JaCoCo ; rapporté, sans seuil imposé pour
-  l'instant.
+  la suite de tests. Mesuré ici par JaCoCo et publié sur Codecov ; rapporté,
+  sans seuil imposé pour l'instant.
+- **Codecov** — Un service hébergé qui reçoit les rapports de couverture
+  depuis la CI, fournit un tableau de bord et un badge pour le README, et
+  commente chaque PR avec la couverture du projet et du patch. Les statuts
+  sont informatifs ici (voir
+  [ADR-0012](docs/adr/0012-publish-test-coverage-to-codecov.md)).
 - **DTO (Data Transfer Object)** — Un objet qui transporte des données à
   travers une frontière, volontairement distinct des entités. Un DTO `...Form`
   porte un formulaire HTML.

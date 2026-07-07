@@ -2,6 +2,7 @@
 
 [![build status][build-image]][build-url]
 [![test status][test-image]][test-url]
+[![code coverage][coverage-image]][coverage-url]
 [![lint status][lint-image]][lint-url]
 [![schema drift status][schema-drift-image]][schema-drift-url]
 [![github issues][github-issues-image]][github-issues-url]
@@ -378,9 +379,12 @@ visit [this link](https://github.com/users/ebouchut/projects/7/views/3).
 - [GLOSSARY.md](GLOSSARY.md) — definitions of the domain and technical terms used across the project
   (🇫🇷 French version: [GLOSSAIRE.md](GLOSSAIRE.md)).
 - [Architecture Decision Records](docs/adr/README.md) — A list of design decisions and their trade-offs.
-- [Test coverage reports (JaCoCo)](https://github.com/ebouchut/learn-dev/actions/workflows/test.yml) —
-  published as the `jacoco-coverage-report` artifact of each Tests workflow run;
-  locally, `make test` writes the same report to `target/site/jacoco/index.html`
+- [Test coverage (Codecov)](https://app.codecov.io/gh/ebouchut/learn-dev) —
+  live coverage dashboard fed by CI
+  (see [ADR-0012](docs/adr/0012-publish-test-coverage-to-codecov.md));
+  the raw JaCoCo report is also published as the `jacoco-coverage-report`
+  artifact of each [Tests workflow run](https://github.com/ebouchut/learn-dev/actions/workflows/test.yml),
+  and locally `make test` writes it to `target/site/jacoco/index.html`
   (see [CONTRIBUTING](CONTRIBUTING.md#test-coverage-report-jacoco) for details).
 
 
@@ -450,6 +454,8 @@ See [LICENSE](LICENSE) for details.
 [build-url]:   https://github.com/ebouchut/learn-dev/actions/workflows/build.yml
 [test-image]:  https://github.com/ebouchut/learn-dev/actions/workflows/test.yml/badge.svg?branch=dev&event=push
 [test-url]:    https://github.com/ebouchut/learn-dev/actions/workflows/test.yml
+[coverage-image]: https://codecov.io/gh/ebouchut/learn-dev/branch/dev/graph/badge.svg
+[coverage-url]:   https://app.codecov.io/gh/ebouchut/learn-dev
 [lint-image]:  https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml/badge.svg?branch=dev&event=push
 [lint-url]:    https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml
 [schema-drift-image]: https://github.com/ebouchut/learn-dev/actions/workflows/schema-drift.yml/badge.svg?branch=dev&event=push

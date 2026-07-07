@@ -914,6 +914,12 @@ coverage is reported, not yet enforced as a threshold).
   uploads the report as the **`jacoco-coverage-report`** artifact.
   Open a run, scroll to its **Artifacts** section, download the archive,
   and open `index.html` inside it.
+- **On Codecov**: CI also uploads the report to the
+  [Codecov dashboard](https://app.codecov.io/gh/ebouchut/learn-dev)
+  (see [ADR-0012](docs/adr/0012-publish-test-coverage-to-codecov.md)),
+  which powers the README coverage badge and comments on every PR with the
+  project and patch coverage. The Codecov statuses are **informational**
+  (configured in `codecov.yml`): they report, they never block a merge.
 
 
 ### Generating the Documentation
