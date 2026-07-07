@@ -1,0 +1,25 @@
+name: Build
+
+# Verify that the project compiles on every PR and push.
+# One focused workflow per CI concern (build, test, lint) instead of a
+# monolithic ci.yml (see issue #49, closed as wontfix). Test compilation
+# and execution live in test.yml.
+
+on:
+  pull_request:
+    branches: [dev]
+  push:
+    branches: [dev, main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Compile the project
+        run: ./mvnw -B -ntp compile
