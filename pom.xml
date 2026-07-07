@@ -201,21 +201,23 @@
                 </executions>
             </plugin>
             <!--
-                Code quality (linting): Checkstyle with the bundled Google ruleset.
+                Code quality (linting): Checkstyle with the project ruleset
+                (config/checkstyle/checkstyle.xml, the Google ruleset adapted
+                to 4-space indentation and IDE-managed import order).
                 Deliberately report-only for now: the report goal never fails the
                 build, and failOnViolation/failsOnError are off so an existing
                 codebase is not blocked on day one. Generate the report with:
                     ./mvnw checkstyle:checkstyle  (violations on the console,
                     XML report in target/checkstyle-result.xml)
                 Tighten later by switching CI to checkstyle:check and setting
-                failOnViolation to true, or by adopting a project ruleset.
+                failOnViolation to true.
             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${maven-checkstyle-plugin.version}</version>
                 <configuration>
-                    <configLocation>google_checks.xml</configLocation>
+                    <configLocation>config/checkstyle/checkstyle.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>false</failsOnError>
                     <failOnViolation>false</failOnViolation>
