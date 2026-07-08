@@ -27,9 +27,13 @@ jobs:
           cache: maven
       - name: Generate the Checkstyle report
         run: ./mvnw -B -ntp checkstyle:checkstyle
+      # The artifact ships the browsable HTML report (target/reports/,
+      # with its css/fonts/images assets) plus the raw XML result.
       - name: Upload the Checkstyle report
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: checkstyle-report
-          path: target/checkstyle-result.xml
+          path: |
+            target/reports/
+            target/checkstyle-result.xml
