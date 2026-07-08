@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>learn-dev — Learn programming by doing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Sora:wght@600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme-catppuccin.css">
+  <link rel="stylesheet" href="css/base.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-header__brand" href="home.html">learn<span class="site-header__brand-mark">-dev</span></a>
+      <nav class="site-header__nav" aria-label="Main">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="home.html" aria-current="page">Home</a></li>
+          <li><a class="nav__link" href="login.html">Log in</a></li>
+          <li><a class="button button--primary" href="register.html">Sign up</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main" id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div>
+        <h1 class="hero__title reveal" id="hero-title">
+          Learn programming <span class="hero__title-accent">by&nbsp;doing</span>
+        </h1>
+        <p class="hero__lead reveal reveal--2">
+          Interactive lessons, hands-on exercises, and instant feedback.
+          Build real skills at your own pace, one lesson at a time.
+        </p>
+        <div class="hero__actions reveal reveal--3">
+          <a class="button button--primary" href="register.html">Create your account</a>
+          <a class="button button--ghost" href="login.html">I already have one</a>
+        </div>
+      </div>
+      <div class="code-card reveal reveal--4" aria-hidden="true">
+        <code class="code-card__code"><span class="code-card__comment">// your first lesson</span>
+<span class="code-card__keyword">public class</span> <span class="code-card__function">Hello</span> {
+  <span class="code-card__keyword">public static void</span> <span class="code-card__function">main</span>(String[] args) {
+    System.out.println(<span class="code-card__string">"Hello, learn-dev!"</span>);
+  }
+}</code>
+      </div>
+    </section>
+
+    <section aria-labelledby="features-title">
+      <h2 id="features-title">Why learn-dev?</h2>
+      <ul class="features">
+        <li class="feature-card">
+          <span class="feature-card__icon" aria-hidden="true">🧑‍💻</span>
+          <h3 class="feature-card__title">Interactive lessons</h3>
+          <p class="feature-card__text">
+            Read, try, and experiment in the same place. Every concept comes
+            with editable examples.
+          </p>
+        </li>
+        <li class="feature-card">
+          <span class="feature-card__icon" aria-hidden="true">⚡</span>
+          <h3 class="feature-card__title">Instant feedback</h3>
+          <p class="feature-card__text">
+            Automated assessment tells you what works and what to fix,
+            the moment you submit.
+          </p>
+        </li>
+        <li class="feature-card">
+          <span class="feature-card__icon" aria-hidden="true">📈</span>
+          <h3 class="feature-card__title">Track your progress</h3>
+          <p class="feature-card__text">
+            Courses, lessons, and streaks: watch your skills grow on your
+            personal dashboard.
+          </p>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p>learn-dev — an interactive programming learning platform.</p>
+      <p><a href="https://github.com/ebouchut/learn-dev">Source on GitHub</a></p>
+    </div>
+  </footer>
+</body>
+</html>

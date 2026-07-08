@@ -1,0 +1,65 @@
+/*
+  learn-dev theme: Catppuccin (DEFAULT)
+  Palette: Catppuccin Latte (light) / Mocha (dark), official values from
+  https://github.com/catppuccin/palette
+  Values marked "adjusted" are darkened from upstream to reach the WCAG 2.1
+  AA contrast ratio of 4.5:1 on --color-bg; every pair is documented with
+  its computed ratio in docs/design/theme-exploration.md
+  Both themes define the SAME token names: switching theme = swapping the
+  <link> to theme-soft-paper.css (no runtime switcher in v1).
+*/
+
+:root {
+  color-scheme: light dark;
+
+  /* Latte (light) */
+  --color-bg: #eff1f5;            /* base */
+  --color-surface: #e6e9ef;       /* mantle */
+  --color-surface-deep: #dce0e8;  /* crust */
+  --color-border: #ccd0da;        /* surface0 */
+  --color-text: #4c4f69;          /* text, 7.06:1 */
+  --color-text-muted: #5c5f77;    /* subtext1, 5.53:1 */
+  --color-primary: #8839ef;       /* mauve, 4.79:1 */
+  --color-on-primary: #ffffff;    /* 5.41:1 on primary */
+  --color-link: #1a5cd7;          /* adjusted from blue #1e66f5, 5.22:1 */
+  --color-success: #2f7a1f;       /* adjusted from green #40a02b, 4.73:1 */
+  --color-warning: #8f5b08;       /* adjusted from yellow #df8e1d, 5.06:1 */
+  --color-error: #d20f39;         /* red, 4.80:1 */
+  --color-focus: #1e66f5;         /* blue, UI 3:1 requirement */
+  --color-primary-soft: #eadcfd;  /* decorative wash behind hero art */
+
+  /* Decorative syntax colors (code card is aria-hidden eye candy) */
+  --code-bg: #1e1e2e;
+  --code-text: #cdd6f4;
+  --code-keyword: #cba6f7;
+  --code-string: #a6e3a1;
+  --code-function: #89b4fa;
+  --code-comment: #9399b2;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Mocha (dark), all upstream values pass AA */
+    --color-bg: #1e1e2e;           /* base */
+    --color-surface: #181825;      /* mantle */
+    --color-surface-deep: #11111b; /* crust */
+    --color-border: #313244;       /* surface0 */
+    --color-text: #cdd6f4;         /* text, 11.34:1 */
+    --color-text-muted: #bac2de;   /* subtext1, 9.26:1 */
+    --color-primary: #cba6f7;      /* mauve, 8.07:1 */
+    --color-on-primary: #11111b;   /* crust, 9.23:1 on primary */
+    --color-link: #89b4fa;         /* blue, 7.79:1 */
+    --color-success: #a6e3a1;      /* green, 11.03:1 */
+    --color-warning: #f9e2af;      /* yellow, 12.91:1 */
+    --color-error: #f38ba8;        /* red, 7.08:1 */
+    --color-focus: #89b4fa;        /* blue */
+    --color-primary-soft: #2b2440;
+
+    --code-bg: #11111b;
+    --code-text: #cdd6f4;
+    --code-keyword: #cba6f7;
+    --code-string: #a6e3a1;
+    --code-function: #89b4fa;
+    --code-comment: #9399b2;
+  }
+}
