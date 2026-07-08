@@ -3,7 +3,7 @@
 [![build status][build-image]][build-url]
 [![test status][test-image]][test-url]
 [![code coverage][coverage-image]][coverage-url]
-[![lint status][lint-image]][lint-url]
+[![lint status][lint-image]][lint-url][![lint report][lint-report-image]][lint-report-url]
 [![schema drift status][schema-drift-image]][schema-drift-url]
 [![github issues][github-issues-image]][github-issues-url]
 
@@ -386,6 +386,12 @@ visit [this link](https://github.com/users/ebouchut/projects/7/views/3).
   artifact of each [Tests workflow run](https://github.com/ebouchut/learn-dev/actions/workflows/test.yml),
   and locally `make test` writes it to `target/site/jacoco/index.html`
   (see [CONTRIBUTING](CONTRIBUTING.md#test-coverage-report-jacoco) for details).
+- [Code quality report (Checkstyle)](https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml) —
+  published as the `checkstyle-report` artifact of each Lint workflow run;
+  [download the latest report directly](https://nightly.link/ebouchut/learn-dev/workflows/lint/dev/checkstyle-report.zip)
+  (a zip served by nightly.link; open `reports/checkstyle.html` inside);
+  locally, `./mvnw checkstyle:checkstyle` writes `target/reports/checkstyle.html`
+  (see [CONTRIBUTING](CONTRIBUTING.md#code-style-and-formatting) for the code style).
 
 
 ## Contributing
@@ -458,6 +464,8 @@ See [LICENSE](LICENSE) for details.
 [coverage-url]:   https://app.codecov.io/gh/ebouchut/learn-dev
 [lint-image]:  https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml/badge.svg?branch=dev&event=push
 [lint-url]:    https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml
+[lint-report-image]: https://img.shields.io/badge/-report-blue
+[lint-report-url]:   https://nightly.link/ebouchut/learn-dev/workflows/lint/dev/checkstyle-report.zip
 [schema-drift-image]: https://github.com/ebouchut/learn-dev/actions/workflows/schema-drift.yml/badge.svg?branch=dev&event=push
 [schema-drift-url]:   https://github.com/ebouchut/learn-dev/actions/workflows/schema-drift.yml
 [github-issues-image]: https://img.shields.io/github/issues/ebouchut/learn-dev

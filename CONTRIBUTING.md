@@ -775,7 +775,31 @@ chore(git): Ignore IntelliJ IDEA configuration files
 
 ### Code Style and Formatting
 
-: Document the code style and formatting
+- **Java**: standard 4-space indentation. The style is checked by
+  **Checkstyle** against the project ruleset
+  [`config/checkstyle/checkstyle.xml`](config/checkstyle/checkstyle.xml),
+  a copy of the Google ruleset adapted to this project's conventions
+  (4-space indentation, IDE-managed import order; the adaptations are
+  documented in the file header). Checks are **advisory** for now: see
+  [ADR-0012](docs/adr/0012-publish-test-coverage-to-codecov.md), which
+  restates the advisory-lint stance of
+  [ADR-0011](docs/adr/0011-start-ci-quality-checks-as-advisory-reports.md).
+- **HTML/CSS**: 2-space indentation (the convention used by the Thymeleaf
+  templates in `src/main/resources/templates/`).
+
+#### Checkstyle Report
+
+- **Locally**: run the check and open the browsable report:
+  ```bash
+  ./mvnw -B checkstyle:checkstyle
+  open target/reports/checkstyle.html  # macOS
+  ```
+  Violations also print on the console as warnings, and the raw XML result
+  is written to `target/checkstyle-result.xml`.
+- **On CI**: every [Lint workflow run](https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml)
+  uploads both as the **`checkstyle-report`** artifact.
+  Open a run, scroll to its **Artifacts** section, download the archive,
+  and open `reports/checkstyle.html` inside it.
 
 
 ### Reset the Development Database
