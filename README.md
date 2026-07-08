@@ -386,6 +386,10 @@ visit [this link](https://github.com/users/ebouchut/projects/7/views/3).
   artifact of each [Tests workflow run](https://github.com/ebouchut/learn-dev/actions/workflows/test.yml),
   and locally `make test` writes it to `target/site/jacoco/index.html`
   (see [CONTRIBUTING](CONTRIBUTING.md#test-coverage-report-jacoco) for details).
+- [Code quality report (Checkstyle)](https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml) —
+  published as the `checkstyle-report` artifact of each Lint workflow run;
+  locally, `./mvnw checkstyle:checkstyle` writes `target/reports/checkstyle.html`
+  (see [CONTRIBUTING](CONTRIBUTING.md#code-style-and-formatting) for the code style).
 
 
 ## Contributing
