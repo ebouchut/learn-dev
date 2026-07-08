@@ -1,10 +1,12 @@
 name: Lint
 
-# Code quality check (Checkstyle, Google ruleset) on every PR and push.
+# Code quality check (Checkstyle, project ruleset) on every PR and push.
 # Deliberately non-blocking on day one for an existing codebase:
 #   - checkstyle:checkstyle only generates a report, it never fails on violations
 #   - continue-on-error keeps even setup errors from gating merges
-# The report is uploaded as a workflow artifact for review.
+# The report is uploaded as a workflow artifact for review, and on pushes
+# to dev it is also published to GitHub Pages (rendered HTML, no download):
+# the official upload-pages-artifact + deploy-pages flow creates no commits.
 # Tighten later: switch the goal to checkstyle:check and set
 # failOnViolation to true in pom.xml, then drop continue-on-error.
 
@@ -37,3 +39,45 @@ jobs:
           path: |
             target/reports/
             target/checkstyle-result.xml
+      # On pushes to dev, publish the HTML report online via GitHub Pages.
+      # The site is namespaced under /checkstyle/ so future reports can
+      # join under their own paths without breaking URLs.
+      - name: Assemble the Pages site
+        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+        run: |
+          mkdir -p _site/checkstyle
+          cp -R target/reports/. _site/checkstyle/
+          cat > _site/index.html <<'HTML'
+          <!DOCTYPE html>
+          <html lang="en">
+            <head>
+              <meta charset="UTF-8">
+              <meta http-equiv="refresh" content="0; url=checkstyle/checkstyle.html">
+              <title>learn-dev reports</title>
+            </head>
+            <body>
+              <p><a href="checkstyle/checkstyle.html">Checkstyle report</a></p>
+            </body>
+          </html>
+          HTML
+      - name: Upload the Pages artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  # Deploys the assembled site (no commits: Pages serves the artifact).
+  deploy-report:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    needs: checkstyle
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
