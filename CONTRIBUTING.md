@@ -796,6 +796,9 @@ chore(git): Ignore IntelliJ IDEA configuration files
   ```
   Violations also print on the console as warnings, and the raw XML result
   is written to `target/checkstyle-result.xml`.
+- **Online**: the latest report from `dev` is
+  [rendered on GitHub Pages](https://www.ericbouchut.com/learn-dev/checkstyle/checkstyle.html)
+  (republished by the Lint workflow on each merge to `dev`, without any commit).
 - **On CI**: every [Lint workflow run](https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml)
   uploads both as the **`checkstyle-report`** artifact.
   Open a run, scroll to its **Artifacts** section, download the archive,
