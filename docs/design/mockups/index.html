@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>learn-dev mockups</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Sora:wght@600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme-catppuccin.css">
+  <link rel="stylesheet" href="css/base.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <span class="site-header__brand">learn<span class="site-header__brand-mark">-dev</span> mockups</span>
+    </div>
+  </header>
+
+  <main class="site-main" id="main">
+    <h1>Mockup gallery</h1>
+    <p>
+      Static HTML mockups for the learn-dev frontend, styled by the
+      <strong>Catppuccin</strong> theme (default). Structure, BEM classes,
+      and accessibility wiring mirror the future Thymeleaf templates.
+      See <code>docs/design/theme-exploration.md</code> for tokens and
+      WCAG contrast ratios.
+    </p>
+
+    <ul class="features">
+      <li class="feature-card">
+        <h2 class="feature-card__title"><a href="home.html">Home</a></h2>
+        <p class="feature-card__text">Hero, features, decorative code card.</p>
+      </li>
+      <li class="feature-card">
+        <h2 class="feature-card__title"><a href="login.html">Log in</a></h2>
+        <p class="feature-card__text">Post-registration success state.</p>
+      </li>
+      <li class="feature-card">
+        <h2 class="feature-card__title"><a href="register.html">Register</a></h2>
+        <p class="feature-card__text">Field-error state with aria wiring.</p>
+      </li>
+      <li class="feature-card">
+        <h2 class="feature-card__title"><a href="dashboard.html">Dashboard</a></h2>
+        <p class="feature-card__text">Stats and course progress (authenticated).</p>
+      </li>
+    </ul>
+
+    <h2>Themes</h2>
+    <p>
+      Dark mode follows the OS preference (<code>prefers-color-scheme</code>).
+      To preview the alternate <strong>Soft Paper</strong> theme, edit the
+      theme <code>&lt;link&gt;</code> in a page head to point at
+      <code>css/theme-soft-paper.css</code>: both themes define the same
+      token names (no runtime switcher in v1, by decision).
+    </p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p>learn-dev — design mockups, not the running app.</p>
+    </div>
+  </footer>
+</body>
+</html>

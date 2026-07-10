@@ -113,6 +113,27 @@ Registration (`POST /auth/register`) is handled by `AuthController` and
 `RegistrationService` (server-side bean validation plus duplicate
 username/email detection).
 
+#### Design: Mockups and Wireframes
+
+The frontend look and feel is specified before code:
+
+- **[Figma file](https://www.figma.com/design/2q1Rt5NGbQ1w8gRtRGoF4A)**
+  (read-only): low-fidelity wireframes (page structure) and high-fidelity
+  mockups (Catppuccin theme).
+- **[Browsable HTML mockups](docs/design/mockups/index.html)**: the same
+  pages as static HTML/CSS; their markup and BEM classes are the blueprint
+  for the future Thymeleaf templates.
+- **[docs/design/theme-exploration.md](docs/design/theme-exploration.md)**:
+  the design tokens and their WCAG contrast ratios;
+  [mockups-explained.md](docs/design/mockups-explained.md)
+  (FR: [mockups-explained-fr.md](docs/design/mockups-explained-fr.md)) and
+  the per-file docs in [docs/design/mockups/](docs/design/mockups/) explain
+  every tag and CSS rule.
+
+Frontend contributions are expected to follow the mockups, consume colors
+only through the design tokens, and use the BEM naming convention (see
+[Code Style and Formatting](#code-style-and-formatting)).
+
 #### MonoRepo
 
 We use a **monorepo**, that is a Git repository containing mainly both the **frontend and** the **backend**.

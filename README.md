@@ -379,6 +379,12 @@ visit [this link](https://github.com/users/ebouchut/projects/7/views/3).
 - [GLOSSARY.md](GLOSSARY.md) — definitions of the domain and technical terms used across the project
   (🇫🇷 French version: [GLOSSAIRE.md](GLOSSAIRE.md)).
 - [Architecture Decision Records](docs/adr/README.md) — A list of design decisions and their trade-offs.
+- [Mockups and wireframes (Figma)](https://www.figma.com/design/2q1Rt5NGbQ1w8gRtRGoF4A) —
+  read-only Figma file with the high-fidelity mockups (Catppuccin theme) and the
+  low-fidelity wireframes of the frontend pages; the browsable HTML mockups and
+  their study docs live in [docs/design/](docs/design/theme-exploration.md)
+  (see [mockups-explained.md](docs/design/mockups-explained.md),
+  🇫🇷 [mockups-explained-fr.md](docs/design/mockups-explained-fr.md)).
 - [Test coverage (Codecov)](https://app.codecov.io/gh/ebouchut/learn-dev) —
   live coverage dashboard fed by CI
   (see [ADR-0012](docs/adr/0012-publish-test-coverage-to-codecov.md));

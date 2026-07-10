@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard — learn-dev</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Sora:wght@600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme-catppuccin.css">
+  <link rel="stylesheet" href="css/base.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-header__brand" href="home.html">learn<span class="site-header__brand-mark">-dev</span></a>
+      <nav class="site-header__nav" aria-label="Main">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="dashboard.html" aria-current="page">Dashboard</a></li>
+          <li>
+            <!-- Logout is a POST in the real app (CSRF); styled as a ghost button -->
+            <form action="#" method="post">
+              <button class="button button--ghost" type="submit">Log out</button>
+            </form>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main" id="main">
+    <h1 class="page-title reveal">Welcome back, <strong>carol</strong> 👋</h1>
+    <p class="reveal reveal--2">Here is where you left off.</p>
+
+    <h2 class="visually-hidden" id="stats-title">Your numbers</h2>
+    <ul class="stats reveal reveal--2" aria-labelledby="stats-title">
+      <li class="stat-card">
+        <span class="stat-card__value">3</span>
+        <span class="stat-card__label">Courses enrolled</span>
+      </li>
+      <li class="stat-card">
+        <span class="stat-card__value">27</span>
+        <span class="stat-card__label">Lessons completed</span>
+      </li>
+      <li class="stat-card">
+        <span class="stat-card__value">6</span>
+        <span class="stat-card__label">Day streak</span>
+      </li>
+    </ul>
+
+    <section aria-labelledby="courses-title" class="reveal reveal--3">
+      <h2 id="courses-title">Your courses</h2>
+      <ul class="course-list">
+        <li class="course-card">
+          <h3 class="course-card__title">Java fundamentals</h3>
+          <p class="course-card__meta">12 of 16 lessons completed</p>
+          <progress class="course-card__progress" max="16" value="12"
+                    aria-label="Java fundamentals progress: 12 of 16 lessons"></progress>
+        </li>
+        <li class="course-card">
+          <h3 class="course-card__title">SQL and relational databases</h3>
+          <p class="course-card__meta">9 of 14 lessons completed</p>
+          <progress class="course-card__progress" max="14" value="9"
+                    aria-label="SQL and relational databases progress: 9 of 14 lessons"></progress>
+        </li>
+        <li class="course-card">
+          <h3 class="course-card__title">Accessible HTML and CSS</h3>
+          <p class="course-card__meta">6 of 18 lessons completed</p>
+          <progress class="course-card__progress" max="18" value="6"
+                    aria-label="Accessible HTML and CSS progress: 6 of 18 lessons"></progress>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p>learn-dev — an interactive programming learning platform.</p>
+      <p><a href="https://github.com/ebouchut/learn-dev">Source on GitHub</a></p>
+    </div>
+  </footer>
+</body>
+</html>

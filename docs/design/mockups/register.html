@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create an account — learn-dev</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Sora:wght@600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme-catppuccin.css">
+  <link rel="stylesheet" href="css/base.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-header__brand" href="home.html">learn<span class="site-header__brand-mark">-dev</span></a>
+      <nav class="site-header__nav" aria-label="Main">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="home.html">Home</a></li>
+          <li><a class="nav__link" href="login.html">Log in</a></li>
+          <li><a class="nav__link" href="register.html" aria-current="page">Sign up</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main site-main--narrow" id="main">
+    <!-- Mockup state: submission came back with one field error.
+         The alert summarizes; the field error is tied to its input
+         with aria-describedby, exactly as the Thymeleaf template will. -->
+    <p class="alert alert--error reveal" role="alert">
+      Your registration could not be completed. Check the highlighted field below.
+    </p>
+
+    <div class="form-card reveal reveal--2">
+      <h1 class="form-card__title">Create an account</h1>
+
+      <form action="#" method="post" novalidate>
+        <div class="form__group">
+          <label class="form__label" for="username">Username</label>
+          <span class="form__hint" id="username-hint">3 to 50 characters.</span>
+          <input class="form__input" type="text" id="username" name="username"
+                 autocomplete="username" aria-describedby="username-hint"
+                 value="carol" required>
+        </div>
+
+        <div class="form__group">
+          <label class="form__label" for="email">Email</label>
+          <input class="form__input form__input--invalid" type="email" id="email" name="email"
+                 autocomplete="email" aria-describedby="email-error" aria-invalid="true"
+                 value="carol@example.org" required>
+          <span class="form__error" id="email-error">Email already registered</span>
+        </div>
+
+        <div class="form__group">
+          <label class="form__label" for="password">Password</label>
+          <span class="form__hint" id="password-hint">At least 12 characters.</span>
+          <input class="form__input" type="password" id="password" name="password"
+                 autocomplete="new-password" aria-describedby="password-hint" required>
+        </div>
+
+        <button class="button button--primary" type="submit">Create my account</button>
+      </form>
+
+      <p class="form__footer">
+        Already registered? <a href="login.html">Log in</a>.
+      </p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p>learn-dev — an interactive programming learning platform.</p>
+      <p><a href="https://github.com/ebouchut/learn-dev">Source on GitHub</a></p>
+    </div>
+  </footer>
+</body>
+</html>
