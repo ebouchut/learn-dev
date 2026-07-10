@@ -131,8 +131,9 @@ The frontend look and feel is specified before code:
   every tag and CSS rule.
 
 Frontend contributions are expected to follow the mockups, consume colors
-only through the design tokens, and use the BEM naming convention (see
-[Code Style and Formatting](#code-style-and-formatting)).
+only through the design tokens, use the BEM naming convention (see
+[Code Style and Formatting](#code-style-and-formatting)), and preserve the
+accessibility wiring documented in [docs/rgaa.md](docs/rgaa.md).
 
 #### MonoRepo
 
