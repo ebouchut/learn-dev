@@ -65,6 +65,21 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 - **XSS (Cross-Site Scripting)** — Injection of malicious scripts into pages viewed
   by other users. Mitigated by Thymeleaf's automatic output escaping and `HttpOnly`.
 
+## Design and frontend
+
+- **BEM (Block Element Modifier)** — The CSS class-naming convention
+  `block__element--modifier` (for example `.form__input--invalid`): a block is a
+  standalone component, an element only makes sense inside its block, a modifier
+  is a variant or state. Keeps every selector at single-class specificity;
+  detailed in [docs/design/mockups-explained.md](docs/design/mockups-explained.md).
+- **Design token** — A named, reusable design decision (a color, spacing step,
+  font size, radius) defined once and referenced by name instead of repeating the
+  raw value. Implemented as CSS custom properties in the theme stylesheets
+  (`--color-primary` consumed via `var(...)` in `base.css`) and mirrored as Figma
+  variables. Swapping token values re-themes the whole UI without touching any
+  component. Not related to security tokens (CSRF, JWT) or the database's
+  reset/email tokens.
+
 ## Persistence and data modelling
 
 - **Changelog / Changeset (Liquibase)** — A changelog is the ordered list of
@@ -204,3 +219,6 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
   capstone targets.
 - **REAC (Referentiel Emploi Activites Competences)** — The official competency
   reference framework defining what the certification assesses.
+- **RGAA (Referentiel general d'amelioration de l'accessibilite)** — The French
+  accessibility framework: WCAG 2.1 AA restated as 106 testable criteria in 13
+  themes. How learn-dev addresses it is mapped in [docs/rgaa.md](docs/rgaa.md).
