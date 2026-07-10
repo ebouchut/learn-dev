@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Politique de confidentialité — learn-dev</title>
+</head>
+<body>
+  <main id="main">
+    <article>
+      <header>
+        <h1>Politique de confidentialité</h1>
+        <p>
+          Dernière mise à jour : <time datetime="2026-07-09">9 juillet 2026</time>
+        </p>
+        <p>
+          Cette page décrit comment <strong>learn-dev</strong> traite vos données
+          personnelles, conformément au
+          <abbr title="Règlement général sur la protection des données">RGPD</abbr>.
+        </p>
+      </header>
+
+      <section aria-labelledby="controller">
+        <h2 id="controller">Responsable du traitement</h2>
+        <address>
+          Eric Bouchut, contact :
+          <a href="mailto:ebouchut@gmail.com">ebouchut@gmail.com</a>
+        </address>
+      </section>
+
+      <section aria-labelledby="data">
+        <h2 id="data">Données collectées</h2>
+        <ul>
+          <li>Identifiant de connexion (nom d'utilisateur) et adresse e-mail&nbsp;;</li>
+          <li>Prénom et nom (facultatifs)&nbsp;;</li>
+          <li>Mot de passe, stocké exclusivement sous forme hachée (BCrypt), jamais en clair&nbsp;;</li>
+          <li>Cookie de session (<code>JSESSIONID</code>)&nbsp;;</li>
+          <li>Journaux techniques du serveur (adresses IP, horodatages).</li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="purposes">
+        <h2 id="purposes">Finalités et bases légales</h2>
+        <table>
+          <caption>Pour quoi et sur quel fondement vos données sont traitées</caption>
+          <thead>
+            <tr>
+              <th scope="col">Finalité</th>
+              <th scope="col">Base légale (art. 6 <abbr title="Règlement général sur la protection des données">RGPD</abbr>)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Création et gestion de votre compte, authentification</td>
+              <td>Exécution du contrat</td>
+            </tr>
+            <tr>
+              <td>Sécurité de la plateforme et journalisation technique</td>
+              <td>Intérêt légitime</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section aria-labelledby="retention">
+        <h2 id="retention">Durées de conservation</h2>
+        <!-- TODO(ebouchut): valider ces durées avant la mise en production. -->
+        <table>
+          <caption>Combien de temps vos données sont conservées</caption>
+          <thead>
+            <tr>
+              <th scope="col">Données</th>
+              <th scope="col">Durée</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Données de compte</td>
+              <td>Jusqu'à la suppression du compte</td>
+            </tr>
+            <tr>
+              <td>Journaux techniques</td>
+              <td>12 mois au maximum</td>
+            </tr>
+            <tr>
+              <td>Jetons de vérification ou de réinitialisation</td>
+              <td>Leur durée de validité</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section aria-labelledby="rights">
+        <h2 id="rights">Vos droits</h2>
+        <p>
+          Vous disposez des droits d'accès, de rectification, d'effacement, de
+          limitation, d'opposition et de portabilité sur vos données. Pour les
+          exercer, écrivez à
+          <a href="mailto:ebouchut@gmail.com">ebouchut@gmail.com</a>.
+          Vous pouvez également introduire une réclamation auprès de la
+          <a href="https://www.cnil.fr/"><abbr title="Commission nationale de l'informatique et des libertés">CNIL</abbr></a>.
+        </p>
+      </section>
+
+      <section aria-labelledby="cookies">
+        <h2 id="cookies">Cookies</h2>
+        <p>
+          learn-dev n'utilise qu'un seul cookie, <code>JSESSIONID</code>,
+          strictement nécessaire au fonctionnement de la session authentifiée.
+          Il est exempté de consentement et n'est utilisé à aucune fin de suivi.
+        </p>
+      </section>
+
+      <section aria-labelledby="changes">
+        <h2 id="changes">Évolutions</h2>
+        <p>
+          Cette politique sera mise à jour lorsque de nouvelles fonctionnalités
+          traiteront des données supplémentaires (par exemple l'envoi d'e-mails
+          de réinitialisation de mot de passe).
+        </p>
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <p><a th:href="@{/}">Retour à l'accueil</a></p>
+  </footer>
+</body>
+</html>
