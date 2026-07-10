@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-</head>
+<head th:replace="~{fragments/layout :: head('Dashboard — learn-dev')}"></head>
 <body>
-  <h1>Dashboard</h1>
-  <p>Signed in as <strong sec:authentication="name">user</strong>.</p>
-  <form th:action="@{/auth/logout}" method="post">
-    <button type="submit">Log out</button>
-  </form>
+  <th:block th:replace="~{fragments/layout :: header('dashboard')}"></th:block>
+
+  <main class="site-main" id="main">
+    <h1 class="page-title">
+      Welcome back, <strong sec:authentication="name">user</strong> 👋
+    </h1>
+
+    <section aria-labelledby="courses-title">
+      <h2 id="courses-title">Your courses</h2>
+      <p class="feature-card__text">
+        No courses yet. Course enrollment arrives with the course catalog;
+        this is where your progress will live.
+      </p>
+    </section>
+  </main>
+
+  <th:block th:replace="~{fragments/layout :: footer}"></th:block>
 </body>
 </html>
