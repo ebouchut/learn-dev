@@ -21,7 +21,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/auth/**", "/css/**", "/js/**").permitAll()
+                .requestMatchers("/", "/privacy", "/auth/**", "/css/**", "/js/**").permitAll()
                 .anyRequest().authenticated())
             .formLogin(form -> form
                 .loginPage("/auth/login")            // GET: show the login form
