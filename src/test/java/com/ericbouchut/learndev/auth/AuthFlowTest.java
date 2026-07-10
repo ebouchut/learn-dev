@@ -7,12 +7,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -61,5 +63,30 @@ class AuthFlowTest extends AbstractPostgresIT {
         mvc.perform(formLogin("/auth/login").user("carol").password("secret12"))
                 .andExpect(authenticated().withUsername("carol"))
                 .andExpect(redirectedUrl("/dashboard"));
+    }
+
+    /**
+     * Renders the registration form and its server-side error state. This
+     * guards template regressions the happy-path test cannot see: a template
+     * exception surfaces as a redirect to the login page (the error page is
+     * behind authentication), not as an obvious 500.
+     */
+    @Test
+    void register_form_renders_and_shows_field_errors() throws Exception {
+        // The empty form renders for an anonymous visitor.
+        mvc.perform(get("/auth/register"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Create an account")));
+
+        // Invalid input re-renders the form with the alert and the error
+        // wired to its field (aria-describedby / aria-invalid).
+        mvc.perform(post("/auth/register").with(csrf())
+                        .param("username", "ab")          // too short (min 3)
+                        .param("email", "not-an-email")
+                        .param("password", "short"))      // too short (min 8)
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("could not be completed")))
+                .andExpect(content().string(containsString("aria-invalid=\"true\"")))
+                .andExpect(content().string(containsString("id=\"username-error\"")));
     }
 }
