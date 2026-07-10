@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!--
+  Shared layout fragments (plain th:fragment, no layout dialect):
+  - head(title): document head with the design stylesheets
+  - header(current): skip link + banner + auth-aware navigation;
+    `current` names the nav entry of the calling page ('home', 'login',
+    'register', 'dashboard' or null) and drives aria-current="page"
+  - footer: site footer
+  Each page keeps its own <html lang> (privacy.html is lang="fr").
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${title}">learn-dev</title>
+  <link rel="stylesheet" th:href="@{/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/css/theme-catppuccin.css}">
+  <link rel="stylesheet" th:href="@{/css/base.css}">
+</head>
+<body>
+
+  <th:block th:fragment="header(current)">
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <!-- lang="en": the chrome stays English even on French pages (RGAA 8.7) -->
+    <header class="site-header" lang="en">
+      <div class="site-header__inner">
+        <a class="site-header__brand" th:href="@{/}">learn<span class="site-header__brand-mark">-dev</span></a>
+        <nav class="site-header__nav" aria-label="Main">
+          <ul class="nav__list" sec:authorize="!isAuthenticated()">
+            <li><a class="nav__link" th:href="@{/}"
+                   th:attr="aria-current=${current == 'home'} ? 'page' : null">Home</a></li>
+            <li><a class="nav__link" th:href="@{/auth/login}"
+                   th:attr="aria-current=${current == 'login'} ? 'page' : null">Log in</a></li>
+            <li><a class="button button--primary" th:href="@{/auth/register}">Sign up</a></li>
+          </ul>
+          <ul class="nav__list" sec:authorize="isAuthenticated()">
+            <li><a class="nav__link" th:href="@{/dashboard}"
+                   th:attr="aria-current=${current == 'dashboard'} ? 'page' : null">Dashboard</a></li>
+            <li>
+              <form th:action="@{/auth/logout}" method="post">
+                <button class="button button--ghost" type="submit">Log out</button>
+              </form>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+  </th:block>
+
+  <footer class="site-footer" th:fragment="footer" lang="en">
+    <div class="site-footer__inner">
+      <p>learn-dev, an interactive programming learning platform.</p>
+      <p>
+        <a th:href="@{/privacy}" hreflang="fr">Privacy policy (RGPD)</a>
+        &middot;
+        <a href="https://github.com/ebouchut/learn-dev">Source on GitHub</a>
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
