@@ -25,6 +25,17 @@ spring:
     hibernate:
       ddl-auto: validate # Ensure the database and its schema are in sync
 
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Mail (SMTP)
+  # Default: the local Mailpit catcher (docker compose service).
+  # Setting a host here also makes Spring Boot create the JavaMailSender
+  # bean in every context, including tests. Production overrides this with
+  # a real provider in application-prod.yaml.
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  mail:
+    host: localhost
+    port: 1025
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Database schema change manager
   # See: https://www.liquibase.com/
