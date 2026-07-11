@@ -58,7 +58,7 @@ definitions see [GLOSSARY.md](../GLOSSARY.md).
 | Technology | Version | Why here |
 |------------|---------|----------|
 | spring-dotenv (`springboot3-dotenv`) | BOM-managed | Loads `./.env` at startup from the working directory. |
-| 1Password Environments | — | Provisions `.env` (a FIFO) and the `gh` token; never edited by hand. |
+| External secrets manager | — | Provisions `.env` (a FIFO) and the `gh` token; never edited by hand. |
 
 ## Build and dependency management
 

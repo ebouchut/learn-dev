@@ -128,8 +128,9 @@ invalidates any others, and records the outcome in `audit_logs` through
 - **Profiles.** `application.yaml` holds base config; `application-dev.yaml` holds
   dev overrides. `SPRING_PROFILES_ACTIVE=dev` selects the profile and the Liquibase
   `dev` context.
-- **Secrets.** Loaded from `./.env` (a 1Password-filled FIFO) via spring-dotenv at
-  startup, so the working directory must be the project root.
+- **Secrets.** Loaded from `./.env` (a FIFO filled by an external secrets
+  manager) via spring-dotenv at startup, so the working directory must be the
+  project root.
 
 ## Testing strategy
 

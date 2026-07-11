@@ -165,8 +165,9 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
   dans la phase `verify`. Ce projet ne l'utilise **pas** (voir
   [ADR-0009](docs/adr/0009-run-tests-under-surefire-not-failsafe.md)).
 - **FIFO (tube nommé)** — Un fichier spécial qui transmet les données à la
-  lecture. Le `.env` du projet est une FIFO remplie par 1Password ; le
-  `source` du shell ne peut pas la lire (taille nulle au `stat`).
+  lecture. Le `.env` du projet est une FIFO remplie par un gestionnaire de
+  secrets externe ; le `source` du shell ne peut pas la lire (taille nulle
+  au `stat`).
 - **HikariCP** — Le pool de connexions JDBC fourni avec Spring Boot.
 - **Test d'intégration (integration test)** — Un test qui démarre un contexte
   Spring et exerce plusieurs couches ensemble (ici `@SpringBootTest` contre un

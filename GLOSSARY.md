@@ -139,7 +139,8 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 - **Failsafe** — The Maven plugin that runs `*IT` integration tests in the `verify`
   phase. This project does **not** use it (see [ADR-0009](docs/adr/0009-run-tests-under-surefire-not-failsafe.md)).
 - **FIFO (named pipe)** — A special file that streams data on read. The project's
-  `.env` is a FIFO filled by 1Password; shell `source` cannot read it (0-byte stat).
+  `.env` is a FIFO filled by an external secrets manager; shell `source` cannot
+  read it (0-byte stat).
 - **HikariCP** — The JDBC connection pool bundled with Spring Boot.
 - **Integration test** — A test that boots a Spring context and exercises multiple
   layers together (here `@SpringBootTest` against a real Postgres container).
