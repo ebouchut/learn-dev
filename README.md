@@ -217,7 +217,7 @@ The first command starts the Podman machine if it is not already running.
 Then `docker compose up -d`  starts all the application Docker services 
  as declared in [docker-compose.yaml](docker-compose.yaml)
 (the *Docker Compose* configuration file), like this.
-For each service (`postgres` and `mongo`):
+For each service (`postgres`, `mongo`, and `mailpit`):
 
 1. Download the Docker image for this service as specified in `docker-compose.yaml` 
   from the [Docker Hub](https://hub.docker.com/) public registry, only if the Docker
@@ -377,6 +377,45 @@ It starts with the other services (`docker compose up -d`).
 
 See [ADR-0004](docs/adr/0004-use-mailpit-as-local-smtp-catcher.md) for why
 Mailpit was chosen.
+
+#### Stop Mailpit
+
+```shell
+docker compose stop mailpit
+```
+
+This command stops the `mailpit` service container.
+The application keeps running without it, but any email it tries to send
+(for example the password reset email) is lost until Mailpit is started again.
+
+#### Start Mailpit
+
+This command **restarts the existing stopped** `mailpit` service container.
+
+```shell
+docker compose start mailpit
+```
+
+Now, check that `mailpit` is running:
+
+```shell
+docker compose ps | grep mailpit
+```
+
+#### Remove the Mailpit Data
+
+There is **nothing to remove**: unlike `postgres` and `mongo`, the `mailpit`
+service has **no data volume**. Mailpit keeps the caught emails **in memory
+only**, so they disappear as soon as the container stops.
+
+To clear the caught emails without stopping Mailpit:
+
+- delete them from the [Web UI](http://localhost:8025), or
+- restart the service:
+
+```shell
+docker compose restart mailpit
+```
 
 
 ## Project Status
