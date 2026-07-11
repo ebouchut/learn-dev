@@ -379,6 +379,8 @@ visit [this link](https://github.com/users/ebouchut/projects/7/views/3).
 - [GLOSSARY.md](GLOSSARY.md) — definitions of the domain and technical terms used across the project
   (🇫🇷 French version: [GLOSSAIRE.md](GLOSSAIRE.md)).
 - [Architecture Decision Records](docs/adr/README.md) — A list of design decisions and their trade-offs.
+- [docs/rgaa.md](docs/rgaa.md) — accessibility (RGAA) criteria map: what is expected for the DWWM,
+  how and where each criterion is fulfilled.
 - [Mockups and wireframes (Figma)](https://www.figma.com/design/2q1Rt5NGbQ1w8gRtRGoF4A) —
   read-only Figma file with the high-fidelity mockups (Catppuccin theme) and the
   low-fidelity wireframes of the frontend pages; the browsable HTML mockups and

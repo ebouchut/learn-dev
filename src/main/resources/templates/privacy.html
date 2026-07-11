@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>Politique de confidentialité — learn-dev</title>
-</head>
+<head th:replace="~{fragments/layout :: head('Politique de confidentialité — learn-dev')}"></head>
 <body>
-  <main id="main">
+  <th:block th:replace="~{fragments/layout :: header(null)}"></th:block>
+
+  <main class="site-main" id="main">
     <article>
       <header>
         <h1>Politique de confidentialité</h1>
@@ -121,8 +120,6 @@
     </article>
   </main>
 
-  <footer>
-    <p><a th:href="@{/}">Retour à l'accueil</a></p>
-  </footer>
+  <th:block th:replace="~{fragments/layout :: footer}"></th:block>
 </body>
 </html>
