@@ -30,6 +30,11 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
 
 ## Authentification et sécurité
 
+- **Énumération de comptes (account enumeration)** — Sonder un formulaire de
+  connexion, d'inscription ou de réinitialisation de mot de passe pour savoir
+  si un compte existe (par exemple via un message « email inconnu »). Contrée
+  en répondant le même message neutre dans tous les cas, comme le fait le flux
+  de réinitialisation de mot de passe.
 - **Authority (autorité)** — Dans Spring Security, une permission unitaire
   détenue par un utilisateur authentifié. Les rôles sont représentés comme des
   autorités préfixées par `ROLE_` (le rôle `ADMIN` devient l'autorité
@@ -54,6 +59,10 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
   drapeau `is_locked`. À distinguer d'un *compte désactivé*.
 - **Principal** — L'entité actuellement authentifiée (en général l'utilisateur)
   dans un contexte de sécurité.
+- **Limitation de débit (rate limiting)** — Plafonner le nombre de fois qu'une
+  opération peut être effectuée dans une fenêtre de temps, pour ralentir les
+  abus et la force brute. Ici : les demandes de réinitialisation de mot de
+  passe sont limitées par utilisateur et par adresse IP.
 - **SameSite** — Un attribut de cookie qui contrôle l'envoi du cookie par le
   navigateur sur les requêtes inter-sites. Positionné sur `Lax` ici comme
   défense en profondeur contre le CSRF.

@@ -25,6 +25,10 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 
 ## Authentication and security
 
+- **Account enumeration** — Probing a login, registration, or password reset
+  form to learn whether an account exists (for example from an "unknown email"
+  error message). Countered by answering with the same neutral message either
+  way, as the password reset flow does.
 - **Authority** — In Spring Security, a single granted permission string held by an
   authenticated user. Roles are represented as authorities prefixed with `ROLE_`
   (for example the `ADMIN` role becomes the authority `ROLE_ADMIN`).
@@ -45,6 +49,9 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
   from a *disabled account*.
 - **Principal** — The currently authenticated entity (typically the user) within a
   security context.
+- **Rate limiting** — Capping how many times an operation may be performed in a
+  time window, to slow down abuse and brute force. Here: password reset
+  requests are limited per user and per IP address.
 - **SameSite** — A cookie attribute controlling whether the browser sends the cookie
   on cross-site requests. Set to `Lax` here as CSRF defense in depth.
 - **Secure (cookie)** — A cookie attribute that restricts the cookie to HTTPS.
