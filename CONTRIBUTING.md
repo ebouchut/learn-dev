@@ -66,12 +66,14 @@ graph TD
     end
 
     DB[("PostgreSQL Database")]
+    MP["Mailpit (fake SMTP, dev only)"]
 
     U -->|"HTTP GET / form POST"| Security
     Security --> Controllers
     Controllers --> Services
     Services --> Repositories
     Repositories -->|"SQL (Hibernate)"| DB
+    Services -->|"SMTP (password reset email)"| MP
     Controllers -->|"view name + model"| Views
     Views -->|"HTML page"| U
 ```
@@ -112,6 +114,54 @@ and the password is verified against its BCrypt hash.
 Registration (`POST /auth/register`) is handled by `AuthController` and
 `RegistrationService` (server-side bean validation plus duplicate
 username/email detection).
+
+##### Password Reset Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    actor U as User (Browser)
+    participant C as PasswordResetController
+    participant S as PasswordResetService
+    participant DB as PostgreSQL
+    participant M as Mailpit (SMTP, dev)
+
+    U->>C: GET /auth/forgot-password
+    C-->>U: Email form (CSRF token)
+
+    U->>C: POST /auth/forgot-password (email)
+    C->>S: requestReset(email, ip, resetUrlBase)
+    alt Unknown email or rate limit exceeded
+        S->>DB: Record the attempt in audit_logs
+    else Known email, within the rate limit
+        S->>DB: Invalidate the outstanding tokens
+        S->>DB: Store the SHA-256 hash of a new random token
+        S->>M: Email the reset link (raw token in the URL)
+        S->>DB: Record the request in audit_logs
+    end
+    C-->>U: 302 redirect to ?sent (same answer either way)
+
+    U->>C: GET /auth/reset-password?token=...
+    C->>S: findUsableToken(raw)
+    S->>DB: SELECT by SHA-256(token), unused, not expired
+    C-->>U: New password form (or invalid link message)
+
+    U->>C: POST /auth/reset-password (token + new password)
+    C->>S: resetPassword(raw, newPassword, ip)
+    S->>DB: Store the BCrypt hash, consume the token,<br/>invalidate the others, audit
+    C-->>U: 302 redirect to /auth/login?reset
+```
+
+The flow is **enumeration-safe**: whether the email exists or not (or the
+per-user / per-IP rate limit was exceeded), the browser gets the same
+neutral confirmation, so an attacker cannot use the form to discover
+accounts. Only the **SHA-256 hash** of the token is stored; the raw token
+appears once, in the emailed link. A token is **single-use**, only one is
+active per user at a time, and it expires after **30 minutes** (tunable
+under `learndev.password-reset.*` in `application.yaml`). Every request
+and reset attempt is recorded in the `audit_logs` table by `AuditService`.
+In development the email lands in [Mailpit](http://localhost:8025); the
+end-to-end journey (request, email, link, new password) is covered by
+`PasswordResetFlowTest`.
 
 #### Design: Mockups and Wireframes
 
@@ -158,9 +208,14 @@ The Spring Boot application lives at the **repository root** (standard Maven lay
 ```txt
 learn-dev/
 ├── .env.example                                          # Template for the local .env file (see README)
+├── .github/
+│   └── workflows/                                        # CI: one workflow per concern (build, test, lint, schema drift)
 ├── .sdkmanrc                                             # Pins the Java and Maven versions (SDKMAN)
 ├── Makefile                                              # Developer shortcuts (run, test, diagrams, ...)
-├── docker-compose.yaml                                   # PostgreSQL and MongoDB services
+├── config/
+│   └── checkstyle/
+│       └── checkstyle.xml                                # Project Checkstyle ruleset (advisory lint)
+├── docker-compose.yaml                                   # PostgreSQL, MongoDB, and Mailpit services
 ├── mvnw                                                  # Maven wrapper
 ├── pom.xml                                               # Dependencies, build configuration, and metadata
 │
@@ -171,7 +226,9 @@ learn-dev/
 ├── docs/
 │   ├── adr/                                              # Architecture Decision Records (MADR)
 │   ├── database/merise/                                  # MCD, MLD, MPD diagrams and sources
+│   ├── design/                                           # Design tokens study, HTML mockups, Figma links
 │   ├── plans/                                            # Implementation plans
+│   ├── rgaa.md                                           # Accessibility (RGAA) criteria map
 │   └── tech-stacks.md                                    # Catalogue of tools and frameworks
 │
 └── src/
@@ -179,19 +236,38 @@ learn-dev/
     │   ├── java/com/ericbouchut/learndev/
     │   │   ├── LearnDevApplication.java                  # Spring Boot entry point
     │   │   │
-    │   │   ├── auth/                                     # Authentication (registration, login support)
+    │   │   ├── audit/                                    # Security audit trail (audit_logs table)
+    │   │   │   ├── AuditService.java                     # Records auditable events (reset requests, ...)
+    │   │   │   ├── entity/
+    │   │   │   │   └── AuditLog.java
+    │   │   │   └── repository/
+    │   │   │       └── AuditLogRepository.java
+    │   │   │
+    │   │   ├── auth/                                     # Authentication (registration, login, password reset)
     │   │   │   ├── AuthController.java                   # Web pages: home, login, dashboard, register
     │   │   │   ├── CustomUserDetailsService.java         # Loads user + roles from DB for Spring Security
+    │   │   │   ├── PasswordResetController.java          # Forgot password and reset password pages
+    │   │   │   ├── PasswordResetMailer.java              # Sends the reset link over SMTP
+    │   │   │   ├── PasswordResetService.java             # Token issue/consume, rate limit, enumeration safety
     │   │   │   ├── RegistrationService.java              # Creates accounts (hashing, default role, duplicates)
     │   │   │   ├── dto/
-    │   │   │   │   └── RegisterForm.java                 # Registration form backing bean (bean validation)
-    │   │   │   └── exception/
-    │   │   │       ├── DuplicateEmailException.java
-    │   │   │       └── DuplicateUsernameException.java
+    │   │   │   │   ├── ForgotPasswordForm.java
+    │   │   │   │   ├── RegisterForm.java                 # Form backing beans (bean validation)
+    │   │   │   │   └── ResetPasswordForm.java
+    │   │   │   ├── entity/
+    │   │   │   │   └── PasswordResetToken.java           # Maps to the reset_tokens table
+    │   │   │   ├── exception/
+    │   │   │   │   ├── DuplicateEmailException.java
+    │   │   │   │   └── DuplicateUsernameException.java
+    │   │   │   └── repository/
+    │   │   │       └── PasswordResetTokenRepository.java
     │   │   │
     │   │   ├── common/                                   # Concerns shared across features
     │   │   │   └── config/
     │   │   │       └── SecurityConfig.java               # Spring Security filter chain, form login, PasswordEncoder
+    │   │   │
+    │   │   ├── legal/                                    # Legal pages
+    │   │   │   └── LegalController.java                  # Privacy policy page (French)
     │   │   │
     │   │   ├── role/                                     # Role management
     │   │   │   ├── entity/
@@ -206,19 +282,28 @@ learn-dev/
     │   │           └── UserRepository.java
     │   │
     │   └── resources/
-    │       ├── application.yaml                          # Main config (datasource, Liquibase, session cookie)
+    │       ├── application.yaml                          # Main config (datasource, Liquibase, mail, session cookie)
     │       ├── application-dev.yaml                      # Dev profile overrides
     │       ├── application-prod.yaml                     # Prod profile overrides
     │       ├── db/
     │       │   └── changelog/                            # Liquibase migrations
     │       │       ├── db.changelog-master.yaml          # Master changelog (includeAll on changes/)
     │       │       └── changes/
-    │       │           └── V20260608161836-create-users-table.sql  # One changeset per file
+    │       │           ├── V20260608161836-create-users-table.sql  # One changeset per file
+    │       │           └── ...                           # Tables, indexes, seeds (applied in filename order)
+    │       ├── static/
+    │       │   ├── css/                                  # Design system: base.css, theme and font stylesheets
+    │       │   └── fonts/                                # Self-hosted webfonts (OFL license files alongside)
     │       └── templates/                                # Thymeleaf views (server-rendered HTML)
+    │           ├── fragments/
+    │           │   └── layout.html                       # Shared head, header (nav), and footer fragments
     │           ├── dashboard.html
+    │           ├── forgot-password.html
     │           ├── home.html
     │           ├── login.html
-    │           └── register.html
+    │           ├── privacy.html                          # Privacy policy (French)
+    │           ├── register.html
+    │           └── reset-password.html
     │
     └── test/
         └── java/com/ericbouchut/learndev/
@@ -227,7 +312,11 @@ learn-dev/
             ├── auth/
             │   ├── AuthFlowTest.java                     # End-to-end register, login, dashboard flow (MockMvc + Testcontainers)
             │   ├── CustomUserDetailsServiceTest.java
+            │   ├── PasswordResetFlowTest.java            # End-to-end password reset through a real Mailpit container
             │   └── RegistrationServiceTest.java
+            │
+            ├── legal/
+            │   └── PrivacyPageTest.java                  # The public privacy page renders
             │
             ├── role/repository/
             │   └── RoleRepositoryTest.java               # @DataJpaTest with Testcontainers
@@ -244,10 +333,13 @@ The table below explains what each folder entails.
 | Folder                              | Purpose                                                                   |
 |-------------------------------------|---------------------------------------------------------------------------|
 | `src/main/java/.../learndev/`       | Spring Boot application root: entry point and top-level package           |
-| `src/main/java/.../learndev/auth/`  | Authentication: registration flow, login support, auth pages             |
+| `src/main/java/.../learndev/audit/` | Security audit trail: records auditable events in `audit_logs`            |
+| `src/main/java/.../learndev/auth/`  | Authentication: registration, login support, password reset, auth pages  |
 | `src/main/java/.../learndev/common/`| Cross-cutting concerns: Spring Security configuration                    |
+| `src/main/java/.../learndev/legal/` | Legal pages (privacy policy)                                              |
 | `src/main/java/.../learndev/role/`  | Role entity and data access                                               |
 | `src/main/java/.../learndev/user/`  | User entity and data access                                               |
+| `src/main/resources/static/`        | Design system stylesheets and self-hosted webfonts                        |
 | `src/main/resources/templates/`     | Thymeleaf views rendered server-side                                      |
 | `src/main/resources/db/changelog/`  | Liquibase database migrations                                             |
 | `src/test/java/.../learndev/`       | Tests (unit and Testcontainers-backed integration tests, all `*Test`)     |
@@ -911,8 +1003,12 @@ TODO: Explain how to write tests, what naming convention and best practices
 ### Running Tests
 
 Repository and integration tests run against a **real PostgreSQL** started by
-[Testcontainers](https://testcontainers.com/) (see ADR-0006), so a container
-engine must be running. This project uses **Podman**.
+[Testcontainers](https://testcontainers.com/)
+(see [ADR-0006](docs/adr/0006-test-against-real-postgres-testcontainers.md)),
+so a container engine must be running. This project uses **Podman**.
+`PasswordResetFlowTest` also starts a **Mailpit** container the same way, to
+receive the password reset email: no locally running Mailpit is needed to run
+the tests.
 
 #### Run All Tests
 
