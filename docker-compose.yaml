@@ -40,6 +40,20 @@ services:
       retries: 5
       start_period: 20s
 
+  mailpit:
+    # Fake SMTP catcher for local development (see ADR-0004): the app sends
+    # real SMTP to port 1025, and every message is browsable in the web UI
+    # at http://localhost:8025 (nothing ever leaves the machine).
+    # Ports are literal on purpose: no secrets are involved, and this avoids
+    # adding variables to the externally managed .env file.
+    image: axllent/mailpit
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:1025:1025" # SMTP (the app sends here)
+      - "127.0.0.1:8025:8025" # Web UI (browse the caught emails)
+    networks:
+      - net
+
 networks:
   net:
     # A bridge network connects your services together

@@ -120,6 +120,12 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+        <!-- Email sending (password reset); Mailpit catches it locally -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
         <!-- Testcontainers: real PostgreSQL for repository/integration tests -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

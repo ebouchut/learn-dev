@@ -175,11 +175,19 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
 - **GitHub Actions** — Le service de CI de GitHub. Chaque workflow est un
   fichier YAML sous `.github/workflows/` ; ce projet utilise un workflow ciblé
   par préoccupation (voir [ADR-0010](docs/adr/0010-structure-ci-as-focused-workflows-per-concern.md)).
+- **Mailpit** — Un faux serveur SMTP pour le développement : il accepte tous
+  les e-mails envoyés par l'application, n'en délivre aucun, et les affiche
+  dans une interface web (http://localhost:8025) et une API REST. Tourne comme
+  service Docker Compose (voir
+  [ADR-0004](docs/adr/0004-use-mailpit-as-local-smtp-catcher.md)).
 - **Podman** — Un moteur de conteneurs sans démon, utilisé comme remplaçant de
   `docker`.
 - **Runner (exécuteur)** — La machine qui exécute un job GitHub Actions
   (`ubuntu-latest` ici) ; elle embarque un démon Docker, que Testcontainers
   utilise directement.
+- **SMTP (Simple Mail Transfer Protocol)** — Le protocole d'envoi des
+  e-mails. L'application parle SMTP à Mailpit en développement (port 1025) et
+  parlerait à un vrai fournisseur en production.
 - **Profil Spring (Spring profile)** — Un jeu de configuration nommé (par
   exemple `dev`) qui sélectionne des propriétés spécifiques et des contextes
   Liquibase.

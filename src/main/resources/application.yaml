@@ -47,6 +47,21 @@ server:
         # secure: true    # enable once served over HTTPS (cookie sent only over TLS)
 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Application settings (learn-dev)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+learndev:
+  mail:
+    # Sender address for transactional emails (password reset)
+    from: noreply@learn-dev.local
+  password-reset:
+    # How long a reset token stays valid
+    token-ttl: 30m
+    # Rate limit: max reset requests per user within the window
+    max-requests: 3
+    window: 15m
+
+
 # ~~~~~~~~~~~~~~~~~~
 # Logging Level
 # ~~~~~~~~~~~~~~~~~~
