@@ -163,6 +163,100 @@ In development the email lands in [Mailpit](http://localhost:8025); the
 end-to-end journey (request, email, link, new password) is covered by
 `PasswordResetFlowTest`.
 
+##### Domain Lifecycles
+
+The state diagrams below (designed in issue
+[#42](https://github.com/ebouchut/learn-dev/issues/42)) describe how a
+student progresses through a course, and how a course and a lesson move
+between their editorial states. They drive the `status` columns of the
+`enrollments`, `courses`, and `lessons` tables.
+
+Not every state is persisted in v1:
+
+- *BrowsingCourses* and *ViewingCourseDetails* are plain navigation, not
+  stored state.
+- *EnrollmentPending* / *EnrollmentFailed* (prerequisites) are **future**:
+  v1 has no prerequisites, so enrolling succeeds synchronously and
+  *Enrolled* / *NotStarted* collapse into the `ENROLLED` status.
+- *CourseUpdated* / *LessonUpdated* are transient editing views of
+  `PUBLISHED`, not a stored status.
+- *CourseDeleted* / *LessonDeleted* are **future**: v1 models removal as
+  `ARCHIVED` (nothing destructive), so the stored statuses are `DRAFT`,
+  `PUBLISHED`, and `ARCHIVED`.
+
+###### Student Course Progress Lifecycle
+
+The state diagram below shows the student lifecycle from enrollment to the
+end of the course.
+
+```mermaid
+stateDiagram-v2
+    [*] --> BrowsingCourses
+
+    BrowsingCourses --> ViewingCourseDetails: View course overview
+    ViewingCourseDetails --> EnrollmentPending: Click "Enroll" to sign up
+
+    EnrollmentPending --> Enrolled: Enrollment successful
+    EnrollmentPending --> EnrollmentFailed: Prerequisites missing
+    EnrollmentFailed --> ViewingCourseDetails: Try again / choose another course
+
+    Enrolled --> NotStarted: Course access granted
+
+    NotStarted --> InProgress: Start first lesson
+    InProgress --> InProgress: Complete lesson
+    InProgress --> Completed: All required lessons completed
+    InProgress --> Dropped: Drop/withdraw from course
+
+    NotStarted --> Dropped: Drop/withdraw before starting
+
+    Completed --> [*]
+    Dropped --> [*]
+```
+
+###### Course Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> CourseDraft
+
+    CourseDraft --> CoursePublished: Publish course
+    CourseDraft --> CourseArchived: Archive course
+
+    CoursePublished --> CourseDraft: Unpublish for editing (optional)
+    CoursePublished --> CourseUpdated: Update course
+    CoursePublished --> CourseArchived: Archive course
+
+    CourseUpdated --> CoursePublished: Re-publish course
+    CourseUpdated --> CourseArchived: Archive course
+
+    CourseArchived --> CourseDraft: Restore / re-open (optional)
+    CourseArchived --> CourseDeleted: Delete course
+
+    CourseDeleted --> [*]
+```
+
+###### Lesson Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> LessonDraft
+
+    LessonDraft --> LessonPublished: Publish lesson
+    LessonDraft --> LessonArchived: Archive lesson
+
+    LessonPublished --> LessonDraft: Unpublish for editing (optional)
+    LessonPublished --> LessonUpdated: Update lesson
+    LessonPublished --> LessonArchived: Archive lesson
+
+    LessonUpdated --> LessonPublished: Re-publish lesson
+    LessonUpdated --> LessonArchived: Archive lesson
+
+    LessonArchived --> LessonDraft: Restore / re-open (optional)
+    LessonArchived --> LessonDeleted: Delete lesson
+
+    LessonDeleted --> [*]
+```
+
 #### Design: Mockups and Wireframes
 
 The frontend look and feel is specified before code:
