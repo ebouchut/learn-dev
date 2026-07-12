@@ -78,6 +78,23 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
   pages vues par d'autres utilisateurs. Limitée par l'échappement automatique
   de Thymeleaf et par `HttpOnly`.
 
+## Design et frontend
+
+- **BEM (Block Element Modifier)** — La convention de nommage des classes CSS
+  `bloc__element--modificateur` (par exemple `.form__input--invalid`) : un bloc
+  est un composant autonome, un élément n'a de sens qu'à l'intérieur de son
+  bloc, un modificateur est une variante ou un état. Chaque sélecteur garde une
+  spécificité d'une seule classe ; détaillée dans
+  [docs/design/mockups-explained-fr.md](docs/design/mockups-explained-fr.md).
+- **Design token (jeton de conception)** — Une décision de design nommée et
+  réutilisable (couleur, pas d'espacement, taille de police, rayon), définie une
+  seule fois et référencée par son nom au lieu de répéter la valeur brute.
+  Implémentés comme propriétés personnalisées CSS dans les feuilles de thème
+  (`--color-primary` consommée via `var(...)` dans `base.css`) et reflétés en
+  variables Figma. Changer les valeurs des tokens rethème toute l'interface
+  sans toucher aux composants. Sans rapport avec les jetons de sécurité (CSRF,
+  JWT) ni les jetons de réinitialisation en base.
+
 ## Persistance et modélisation des données
 
 - **Changelog / Changeset (Liquibase)** — Un changelog est la liste ordonnée
@@ -148,8 +165,9 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
   dans la phase `verify`. Ce projet ne l'utilise **pas** (voir
   [ADR-0009](docs/adr/0009-run-tests-under-surefire-not-failsafe.md)).
 - **FIFO (tube nommé)** — Un fichier spécial qui transmet les données à la
-  lecture. Le `.env` du projet est une FIFO remplie par 1Password ; le
-  `source` du shell ne peut pas la lire (taille nulle au `stat`).
+  lecture. Le `.env` du projet est une FIFO remplie par un gestionnaire de
+  secrets externe ; le `source` du shell ne peut pas la lire (taille nulle
+  au `stat`).
 - **HikariCP** — Le pool de connexions JDBC fourni avec Spring Boot.
 - **Test d'intégration (integration test)** — Un test qui démarre un contexte
   Spring et exerce plusieurs couches ensemble (ici `@SpringBootTest` contre un
@@ -248,3 +266,7 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
   visé par ce projet de fin de formation.
 - **REAC (Référentiel Emploi Activités Compétences)** — Le référentiel
   officiel de compétences qui définit ce que la certification évalue.
+- **RGAA (Référentiel général d'amélioration de l'accessibilité)** — Le
+  référentiel français d'accessibilité : WCAG 2.1 AA reformulé en 106 critères
+  testables répartis en 13 thématiques. La couverture de learn-dev est décrite
+  dans [docs/rgaa.md](docs/rgaa.md).
