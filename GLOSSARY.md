@@ -101,6 +101,10 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
   capturing one design decision and its trade-offs, in MADR format.
 - **Bean Validation** — The Jakarta standard for declaring constraints
   (`@NotBlank`, `@Email`, `@Size`) on form/DTO fields, enforced with `@Valid`.
+- **Caffeine** — A high-performance in-memory cache library for Java. Used
+  behind Spring's cache abstraction (`@Cacheable`) to hold rendered lesson
+  HTML, capped at 1000 entries (see
+  [ADR-0013](docs/adr/0013-render-lesson-markdown-with-commonmark-java.md)).
 - **Checkstyle** — A static-analysis tool that checks Java source against a
   style ruleset. Runs here with the bundled Google ruleset (`google_checks.xml`)
   in report-only mode (see [ADR-0011](docs/adr/0011-start-ci-quality-checks-as-advisory-reports.md)).
@@ -111,6 +115,10 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
   renders a dashboard and a README badge, and comments on PRs with the
   project and patch coverage. Statuses are informational here (see
   [ADR-0012](docs/adr/0012-publish-test-coverage-to-codecov.md)).
+- **CommonMark** — A strict, unambiguous specification of Markdown, and by
+  extension its reference Java implementation (commonmark-java), which
+  converts lesson Markdown to HTML (see
+  [ADR-0013](docs/adr/0013-render-lesson-markdown-with-commonmark-java.md)).
 - **DTO (Data Transfer Object)** — An object carrying data across a boundary,
   deliberately separate from entities. A `...Form` DTO backs an HTML form.
 - **Failsafe** — The Maven plugin that runs `*IT` integration tests in the `verify`
@@ -123,11 +131,18 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 - **JaCoCo (Java Code Coverage)** — The code-coverage tool for Java. Its Maven
   plugin instruments the tests (`prepare-agent`) and writes an HTML/XML report to
   `target/site/jacoco/` during the `test` phase; CI uploads it as a workflow artifact.
+- **jsoup** — A Java HTML parser and sanitizer. Its `Safelist` allowlist
+  strips dangerous markup (scripts, event handlers, frames) from the rendered
+  lesson HTML: XSS defense that does not depend on trusting authors (see
+  [ADR-0013](docs/adr/0013-render-lesson-markdown-with-commonmark-java.md)).
 - **Linter** — A tool that flags style and quality issues in source code without
   running it (static analysis). The project's linter is Checkstyle.
 - **Lombok** — A library that generates boilerplate (getters, constructors) from
   annotations at compile time.
 - **MADR (Markdown ADR)** — The lightweight ADR template format used in `docs/adr/`.
+- **Markdown** — A lightweight plain-text markup format. Lesson content is
+  authored in Markdown (the `content_markdown` column) and rendered to
+  sanitized HTML at display time.
 - **Maven Wrapper (`mvnw`)** — A committed launcher script that downloads and runs
   the project's pinned Maven version, so builds do not depend on a locally
   installed Maven (used by CI: `./mvnw -B -ntp ...`).
