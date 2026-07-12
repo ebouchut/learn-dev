@@ -80,7 +80,11 @@ how learn-dev fulfills it, and where.
   the computed `aria-describedby` associations.
 - **Responsive**: screenshots at 375, 768, and 1440 px; no horizontal page
   scroll (`scrollWidth == viewport`).
+- **Self-audit report** (dossier appendix, French): Lighthouse and
+  axe-core on every page (100/100, zero violations) plus the keyboard
+  walkthrough, with the commands to reproduce it, in
+  [rgaa-audit.md](rgaa-audit.md).
 - **Remaining manual passes** (tracked in
-  [#84](https://github.com/ebouchut/learn-dev/issues/84)): keyboard
-  walkthrough, Lighthouse/axe on each page, a VoiceOver smoke test, and a
-  contrast re-run after any palette change.
+  [#84](https://github.com/ebouchut/learn-dev/issues/84)): a VoiceOver
+  smoke test, and a re-run of [rgaa-audit.md](rgaa-audit.md) after any
+  palette change or new page.
