@@ -43,3 +43,4 @@ NNNN-short-title-in-kebab-case.md
 | [0010](0010-structure-ci-as-focused-workflows-per-concern.md) | Structure CI as focused workflows per concern, not a monolithic ci.yml | accepted |
 | [0011](0011-start-ci-quality-checks-as-advisory-reports.md) | Start CI quality checks as advisory reports, gates come later | superseded by ADR-0012 |
 | [0012](0012-publish-test-coverage-to-codecov.md) | Publish test coverage to Codecov | accepted |
+| [0013](0013-render-lesson-markdown-with-commonmark-java.md) | Render lesson Markdown with commonmark-java, sanitized by jsoup | accepted |
