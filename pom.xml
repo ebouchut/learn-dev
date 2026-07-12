@@ -11,8 +11,8 @@
     <groupId>com.ericbouchut</groupId>
     <artifactId>learn-dev</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>learn-dev-backend</name>
-    <description>learn-dev-backend</description>
+    <name>learn-dev</name>
+    <description>learn-dev Web Application</description>
     <url>https://github.com/ebouchut/learn-dev</url>
     <licenses>
         <!-- Open-source license -->
