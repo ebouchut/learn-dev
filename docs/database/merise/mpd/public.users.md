@@ -4,7 +4,7 @@
 
 | Name | Type | Default | Nullable | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | -------- | ------- | ------- |
-| user_id | uuid | gen_random_uuid() | false | [public.user_roles](public.user_roles.md) [public.email_tokens](public.email_tokens.md) [public.reset_tokens](public.reset_tokens.md) [public.audit_logs](public.audit_logs.md) |  |  |
+| user_id | uuid | gen_random_uuid() | false | [public.user_roles](public.user_roles.md) [public.email_tokens](public.email_tokens.md) [public.reset_tokens](public.reset_tokens.md) [public.audit_logs](public.audit_logs.md) [public.courses](public.courses.md) [public.enrollments](public.enrollments.md) |  |  |
 | username | varchar(50) |  | false |  |  |  |
 | email | varchar(255) |  | false |  |  |  |
 | password | varchar(255) |  | false |  |  |  |

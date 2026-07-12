@@ -21,3 +21,16 @@ Requests, 11 Reset Token, 0N User
 User: user_id, username, email, password, first_name, last_name, is_active, is_verified, is_locked, failed_login_attempts, last_login_at, password_changed_at
 Holds, 0N User, 0N Role : assigned_at, assigned_by
 Role: role_id, role_name, description, is_active
+:
+
+% Course/lesson domain. Teaches materializes as courses.instructor_id in the
+% MLD/MPD; Enrolls (many-to-many with attributes) becomes the enrollments table.
+:
+Teaches, 0N User, 11 Course
+Enrolls, 0N User, 0N Course : status, enrolled_at, completed_at, dropped_at
+:
+
+Lesson: lesson_id, title, content_markdown, position, status, created_at, updated_at
+Contains, 0N Course, 11 Lesson
+Course: course_id, title, description, status, published_at, created_at, updated_at
+:
