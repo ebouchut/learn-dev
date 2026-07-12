@@ -4,7 +4,7 @@
 <body>
   <th:block th:replace="~{fragments/layout :: header('login')}"></th:block>
 
-  <main class="site-main site-main--narrow" id="main">
+  <main class="site-main site-main--narrow" id="main" tabindex="-1">
     <p class="alert alert--success" role="status" th:if="${param.registered}">
       Account created, please log in.
     </p>

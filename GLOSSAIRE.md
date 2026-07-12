@@ -135,6 +135,10 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
 - **ADR (Architecture Decision Record)** — Un document court, numéroté et en
   ajout seul qui capture une décision de conception et ses compromis, au
   format MADR.
+- **axe-core** — Le moteur open source de règles d'accessibilité derrière la
+  plupart des audits automatisés (utilisé par Lighthouse et des extensions
+  de navigateur). Exécuté ici sur les pages rendues avec le jeu de règles
+  WCAG 2.1 A/AA ; résultats dans [docs/rgaa-audit.md](docs/rgaa-audit.md).
 - **Bean Validation** — Le standard Jakarta de déclaration de contraintes
   (`@NotBlank`, `@Email`, `@Size`) sur les champs de formulaires/DTO,
   appliquées avec `@Valid`.
@@ -181,6 +185,10 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
   gestionnaires d'événements, cadres) du HTML des leçons rendues : une
   défense XSS qui ne repose pas sur la confiance envers les auteurs (voir
   [ADR-0013](docs/adr/0013-render-lesson-markdown-with-commonmark-java.md)).
+- **Lighthouse** — L'outil d'audit de pages de Google (livré avec Chrome).
+  Sa catégorie accessibilité note une page rendue selon un sous-ensemble
+  des règles axe-core ; chaque page de learn-dev obtient 100 dans
+  [docs/rgaa-audit.md](docs/rgaa-audit.md).
 - **Linter** — Un outil qui signale les problèmes de style et de qualité dans
   le code source sans l'exécuter (analyse statique). Le linter du projet est
   Checkstyle.

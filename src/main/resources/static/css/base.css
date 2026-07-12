@@ -136,6 +136,12 @@ code {
   top: 0;
 }
 
+/* The skip link moves focus onto main (tabindex="-1"); no ring on a
+   non-interactive landmark (WCAG 2.4.7 applies to interactive controls) */
+main:focus {
+  outline: none;
+}
+
 /* ---------- Site header ---------- */
 
 .site-header {

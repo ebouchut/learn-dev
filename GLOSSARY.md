@@ -114,6 +114,10 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 
 - **ADR (Architecture Decision Record)** — A short, numbered, append-only document
   capturing one design decision and its trade-offs, in MADR format.
+- **axe-core** — The open-source accessibility rules engine behind most
+  automated audits (used by Lighthouse and browser extensions). Run here
+  against the rendered pages with the WCAG 2.1 A/AA rule set; results in
+  [docs/rgaa-audit.md](docs/rgaa-audit.md).
 - **Bean Validation** — The Jakarta standard for declaring constraints
   (`@NotBlank`, `@Email`, `@Size`) on form/DTO fields, enforced with `@Valid`.
 - **Caffeine** — A high-performance in-memory cache library for Java. Used
@@ -151,6 +155,10 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
   strips dangerous markup (scripts, event handlers, frames) from the rendered
   lesson HTML: XSS defense that does not depend on trusting authors (see
   [ADR-0013](docs/adr/0013-render-lesson-markdown-with-commonmark-java.md)).
+- **Lighthouse** — Google's page auditing tool (bundled with Chrome). Its
+  accessibility category scores a rendered page against a subset of
+  axe-core rules; every learn-dev page scores 100 in
+  [docs/rgaa-audit.md](docs/rgaa-audit.md).
 - **Linter** — A tool that flags style and quality issues in source code without
   running it (static analysis). The project's linter is Checkstyle.
 - **Lombok** — A library that generates boilerplate (getters, constructors) from
