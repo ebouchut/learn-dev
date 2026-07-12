@@ -6,7 +6,7 @@
 
   <!-- th:object on main puts the form-backing bean in scope for the whole
        page, so #fields works in the alert ABOVE the form too. -->
-  <main class="site-main site-main--narrow" id="main" th:object="${form}">
+  <main class="site-main site-main--narrow" id="main" tabindex="-1" th:object="${form}">
     <p class="alert alert--error" role="alert" th:if="${#fields.hasAnyErrors()}">
       Your registration could not be completed. Check the highlighted fields below.
     </p>

@@ -154,12 +154,18 @@ Les mesures ci-dessus apportent la preuve outillée des critères suivis dans
 1. **Aucune violation** détectée par les deux outils sur les 7 pages, y
    compris la page authentifiée et l'état « lien invalide » de la
    réinitialisation ; score Lighthouse 100/100 partout.
-2. **Recommandation (robustesse)** : ajouter `tabindex="-1"` sur
-   `<main id="main">`. Aujourd'hui l'activation du lien d'évitement
-   repose sur le « sequential focus navigation starting point » du
+2. **Recommandation (robustesse), implémentée** : ajouter `tabindex="-1"` sur
+   `<main id="main">`. Avant, l'activation du lien d'évitement
+   reposait sur le « sequential focus navigation starting point » du
    navigateur (comportement correct des navigateurs modernes) ; avec
-   `tabindex="-1"`, le focus serait déplacé explicitement sur `main`, ce
+   `tabindex="-1"`, le focus est déplacé explicitement sur `main`, ce
    qui est plus robuste avec des technologies d'assistance anciennes.
+   Mise en oeuvre : `tabindex="-1"` sur le `<main id="main">` des 7
+   gabarits, plus la règle `main:focus { outline: none; }` dans
+   [base.css](../src/main/resources/static/css/base.css), car le contour
+   global `:focus-visible` apparaissait sinon autour de toute la région de
+   contenu après activation au clavier (vérifié en navigateur ; `main`
+   n'étant pas un élément interactif, WCAG 2.4.7 ne s'applique pas).
 3. **Reste à faire** (suivi dans
    [#84](https://github.com/ebouchut/learn-dev/issues/84)) : test de fumée
    avec un lecteur d'écran (VoiceOver), et re-passage de cet audit après
