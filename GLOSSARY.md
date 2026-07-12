@@ -18,7 +18,10 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 - **Deactivate** — Disable an account (for example an instructor or student) so it
   can no longer be used, without deleting it. See also *disabled account*.
 - **Drop a course** — A student withdrawing from a course before finishing it.
-- **Enrollment** — The relationship linking a student to a course they have joined.
+- **Enrollment** — The relationship linking a student to a course they have
+  joined. Persisted as a *join entity* on the `enrollments` table, keyed by
+  the (user, course) pair, with a status following the student course
+  progress lifecycle (see CONTRIBUTING.md).
 - **Lesson** — An individual piece of content within a course.
 - **Role** — A named set of permissions granted to a user. The seeded roles are
   `STUDENT`, `INSTRUCTOR`, and `ADMIN`; `SUPERADMIN` is planned (see issue #65).
@@ -69,6 +72,12 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 - **ERD (Entity-Relationship Diagram)** — A diagram of entities and their
   relationships (rendered here with Mermaid).
 - **Hibernate** — The JPA implementation (ORM) used to map Java entities to tables.
+- **Join entity** — A many-to-many association promoted to a full JPA entity
+  because the relationship carries state of its own (for example `Enrollment`
+  with its status and timestamps). Its primary key is the composite of the two
+  foreign keys (`@EmbeddedId`), and `@MapsId` lets the two `@ManyToOne`
+  references reuse those key columns. Contrast with a plain join *table* like
+  `user_roles`, which stays invisible behind `@ManyToMany`.
 - **JPA (Jakarta Persistence API)** — The standard Java API for object-relational
   mapping; implemented by Hibernate.
 - **JSESSIONID** — The default name of the servlet session cookie.

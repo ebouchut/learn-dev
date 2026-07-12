@@ -22,7 +22,10 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
 - **Drop a course (abandonner un cours)** — Le retrait d'un étudiant d'un cours
   avant de l'avoir terminé.
 - **Enrollment (inscription)** — La relation qui lie un étudiant à un cours
-  qu'il a rejoint.
+  qu'il a rejoint. Persistée comme une *entité de jointure* sur la table
+  `enrollments`, identifiée par la paire (utilisateur, cours), avec un statut
+  qui suit le cycle de vie de la progression de l'étudiant (voir
+  CONTRIBUTING.md).
 - **Lesson (leçon)** — Un élément de contenu individuel au sein d'un cours.
 - **Role (rôle)** — Un ensemble nommé de permissions accordées à un
   utilisateur. Les rôles fournis par défaut sont `STUDENT`, `INSTRUCTOR` et
@@ -84,6 +87,13 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
   relations (produit ici avec Mermaid).
 - **Hibernate** — L'implémentation JPA (ORM) utilisée pour faire correspondre
   les entités Java aux tables.
+- **Entité de jointure (join entity)** — Une association plusieurs-à-plusieurs
+  promue en entité JPA à part entière parce que la relation porte son propre
+  état (par exemple `Enrollment` avec son statut et ses horodatages). Sa clé
+  primaire est le composite des deux clés étrangères (`@EmbeddedId`), et
+  `@MapsId` permet aux deux références `@ManyToOne` de réutiliser ces colonnes
+  de clé. À distinguer d'une simple *table* de jointure comme `user_roles`,
+  qui reste invisible derrière `@ManyToMany`.
 - **JPA (Jakarta Persistence API)** — L'API Java standard du mapping
   objet-relationnel ; implémentée par Hibernate.
 - **JSESSIONID** — Le nom par défaut du cookie de session servlet.
