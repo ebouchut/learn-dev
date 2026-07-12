@@ -33,6 +33,15 @@ spring:
     contexts: dev
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Mail: Mailpit fake SMTP catcher (docker compose service)
+  # Web UI: http://localhost:8025
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  mail:
+    host: localhost
+    port: 1025
+    # Mailpit needs no authentication and no TLS locally.
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Thymeleaf: Server-Side Rendering Engine
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   thymeleaf:

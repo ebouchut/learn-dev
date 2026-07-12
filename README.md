@@ -366,6 +366,19 @@ Where:
 - `-v` request Compose to remove the named data volumes created for this service
 
 
+### Mailpit Service (fake SMTP)
+
+**Mailpit** catches every email the application sends in development
+(for example the password-reset email): nothing leaves your machine.
+It starts with the other services (`docker compose up -d`).
+
+- **Web UI (browse the caught emails):** http://localhost:8025
+- SMTP endpoint used by the app (dev profile): `localhost:1025`
+
+See [ADR-0004](docs/adr/0004-use-mailpit-as-local-smtp-catcher.md) for why
+Mailpit was chosen.
+
+
 ## Project Status
 
 For up-to-date information about the status of the project, 
