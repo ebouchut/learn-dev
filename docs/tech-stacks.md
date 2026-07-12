@@ -24,6 +24,7 @@ definitions see [GLOSSARY.md](../GLOSSARY.md).
 | Spring Security | via Boot | Authentication and authorization (session form login). |
 | Spring Data JPA | via Boot | Repository abstraction over the relational store. |
 | Spring Boot Actuator | via Boot | Operational endpoints (health, info). |
+| Spring Mail (`spring-boot-starter-mail`) | via Boot | Sends the password reset email over SMTP (`JavaMailSender`). |
 | Bean Validation (Hibernate Validator) | via Boot | Declarative form/DTO constraints enforced with `@Valid`. |
 
 ## View layer
@@ -90,7 +91,7 @@ All tests run under the Maven Surefire plugin (no Failsafe); see [ADR-0009](adr/
 |------------|---------|----------|
 | Podman | — | Daemonless container engine; the `docker` drop-in on the dev machine. |
 | Docker Compose | — | Runs Postgres and Mongo locally (`docker compose up -d`). |
-| Mailpit | — | Planned local fake SMTP catcher for the email flow. See [ADR-0004](adr/0004-use-mailpit-as-local-smtp-catcher.md). |
+| Mailpit | — | Local fake SMTP catcher: receives the password reset email in dev (web UI on port 8025). See [ADR-0004](adr/0004-use-mailpit-as-local-smtp-catcher.md). |
 
 ## Documentation and modelling tooling
 

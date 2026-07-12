@@ -44,8 +44,11 @@ controller, service, entity, and repository live together:
 
 ```
 com.ericbouchut.learndev
+├── audit     # AuditService, entity/AuditLog: security audit trail (audit_logs)
 ├── auth      # AuthController, RegistrationService, CustomUserDetailsService,
-│             # dto/RegisterForm, exception/Duplicate*Exception
+│             # PasswordResetController/Service/Mailer, entity/PasswordResetToken,
+│             # dto/*Form, exception/Duplicate*Exception
+├── legal     # LegalController (privacy policy page)
 ├── user      # entity/User, repository/UserRepository
 ├── role      # entity/Role, repository/RoleRepository
 ├── common
@@ -92,11 +95,26 @@ A method may instead return a `redirect:` prefix (for example
 role, saves) → redirect to the login page. Duplicate username/email surface as
 field errors on the re-rendered form.
 
+### Password reset flow
+
+`ForgotPasswordForm` → `PasswordResetController` → `PasswordResetService`. The
+service answers with the same neutral confirmation whether or not the email
+exists (no account enumeration), rate-limits requests per user and per IP,
+stores only the **SHA-256 hash** of a 32-byte random token (single active
+token per user, 30 minute TTL, configurable under `learndev.password-reset.*`),
+and emails the raw link via `PasswordResetMailer` over SMTP — Mailpit in
+development (see [ADR-0004](docs/adr/0004-use-mailpit-as-local-smtp-catcher.md)).
+Consuming the link stores the new BCrypt hash, marks the token used,
+invalidates any others, and records the outcome in `audit_logs` through
+`AuditService`. The sequence diagram lives in
+[CONTRIBUTING.md](CONTRIBUTING.md#password-reset-sequence-diagram).
+
 ## Data architecture
 
-- **Relational core (PostgreSQL).** Users, roles, and (upcoming) courses/lessons.
-  Users use a **UUID** primary key to avoid enumeration; other tables use `BIGINT`
-  identity (see [ADR-0003](docs/adr/0003-uuid-pk-for-users-bigint-elsewhere.md)).
+- **Relational core (PostgreSQL).** Users, roles, password-reset tokens, the
+  audit trail, and (upcoming) courses/lessons. Users use a **UUID** primary key
+  to avoid enumeration; other tables use `BIGINT` identity
+  (see [ADR-0003](docs/adr/0003-uuid-pk-for-users-bigint-elsewhere.md)).
 - **Document store (MongoDB).** Provisioned and configured for future content
   storage; not yet used by any feature.
 - **Schema evolution.** Managed by Liquibase, run at startup. Migrations are
@@ -134,12 +152,13 @@ as a static singleton container (see [ADR-0008](docs/adr/0008-share-singleton-te
 
 - `make test` — run the suite (Podman-aware Testcontainers wiring).
 - `make run` — start the databases and run the app (`http://localhost:8080/`).
-- `docker compose up -d` — start Postgres and Mongo (`docker` is Podman here).
+- `docker compose up -d` — start Postgres, Mongo, and Mailpit (`docker` is
+  Podman here). Mailpit's web UI (caught emails) is at `http://localhost:8025`.
 
 ## Direction of travel
 
-- Password-reset flow with email (Mailpit locally, see
-  [ADR-0004](docs/adr/0004-use-mailpit-as-local-smtp-catcher.md)).
+- The course and lesson domain (course catalogue, enrollment, Markdown lesson
+  content).
 - Possible extraction of microservices, with service-to-service authentication
   ([ADR-0002](docs/adr/0002-service-to-service-auth-via-service-token.md)).
 - A `SUPERADMIN` role (deferred under YAGNI; issue #65).
