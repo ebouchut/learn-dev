@@ -35,6 +35,14 @@ definitions see [GLOSSARY.md](../GLOSSARY.md).
 | thymeleaf-extras-springsecurity6 | via Boot | `sec:` dialect to read the authenticated user in templates. |
 | HTML / CSS / JavaScript | — | Front-end markup, styling, and behaviour. |
 
+## Content rendering
+
+| Technology | Version | Why here |
+|------------|---------|----------|
+| commonmark-java | 0.24.0 | Converts lesson Markdown to HTML (CommonMark reference implementation). See [ADR-0013](adr/0013-render-lesson-markdown-with-commonmark-java.md). |
+| jsoup | 1.21.1 | Sanitizes the rendered HTML against an allowlist (XSS defense). |
+| Spring Cache + Caffeine | via Boot | Caches rendered lesson HTML, keyed by content hash. |
+
 ## Persistence and data
 
 | Technology | Version | Why here |

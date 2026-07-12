@@ -121,6 +121,10 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
 - **Bean Validation** — Le standard Jakarta de déclaration de contraintes
   (`@NotBlank`, `@Email`, `@Size`) sur les champs de formulaires/DTO,
   appliquées avec `@Valid`.
+- **Caffeine** — Une bibliothèque de cache en mémoire très performante pour
+  Java. Utilisée derrière l'abstraction de cache de Spring (`@Cacheable`)
+  pour conserver le HTML des leçons rendues, plafonnée à 1000 entrées (voir
+  [ADR-0013](docs/adr/0013-render-lesson-markdown-with-commonmark-java.md)).
 - **Checkstyle** — Un outil d'analyse statique qui vérifie les sources Java
   contre un référentiel de style. Exécuté ici avec le référentiel Google
   fourni (`google_checks.xml`) en mode rapport seul (voir
@@ -133,6 +137,10 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
   commente chaque PR avec la couverture du projet et du patch. Les statuts
   sont informatifs ici (voir
   [ADR-0012](docs/adr/0012-publish-test-coverage-to-codecov.md)).
+- **CommonMark** — Une spécification stricte et non ambiguë de Markdown, et
+  par extension son implémentation Java de référence (commonmark-java), qui
+  convertit le Markdown des leçons en HTML (voir
+  [ADR-0013](docs/adr/0013-render-lesson-markdown-with-commonmark-java.md)).
 - **DTO (Data Transfer Object)** — Un objet qui transporte des données à
   travers une frontière, volontairement distinct des entités. Un DTO `...Form`
   porte un formulaire HTML.
@@ -150,6 +158,11 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
   Son plugin Maven instrumente les tests (`prepare-agent`) et écrit un rapport
   HTML/XML dans `target/site/jacoco/` pendant la phase `test` ; la CI le
   publie comme artefact de workflow.
+- **jsoup** — Un parseur et assainisseur HTML pour Java. Sa liste
+  d'autorisation `Safelist` retire le balisage dangereux (scripts,
+  gestionnaires d'événements, cadres) du HTML des leçons rendues : une
+  défense XSS qui ne repose pas sur la confiance envers les auteurs (voir
+  [ADR-0013](docs/adr/0013-render-lesson-markdown-with-commonmark-java.md)).
 - **Linter** — Un outil qui signale les problèmes de style et de qualité dans
   le code source sans l'exécuter (analyse statique). Le linter du projet est
   Checkstyle.
@@ -157,6 +170,9 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
   constructeurs) à partir d'annotations, à la compilation.
 - **MADR (Markdown ADR)** — Le format léger de modèle d'ADR utilisé dans
   `docs/adr/`.
+- **Markdown** — Un format de balisage léger en texte brut. Le contenu des
+  leçons est rédigé en Markdown (la colonne `content_markdown`) et rendu en
+  HTML assaini au moment de l'affichage.
 - **Maven Wrapper (`mvnw`)** — Un script de lancement versionné qui télécharge
   et exécute la version de Maven épinglée par le projet, pour que les builds
   ne dépendent pas d'un Maven installé localement (utilisé par la CI :
