@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Page not found — learn-dev')}"></head>
+<body>
+  <th:block th:replace="~{fragments/layout :: header(null)}"></th:block>
+
+  <main class="site-main site-main--narrow" id="main" tabindex="-1">
+    <h1>Page not found</h1>
+    <p>The page you are looking for does not exist or has moved.</p>
+    <p>
+      <a class="button button--primary" th:href="@{/}">Back to the home page</a>
+    </p>
+  </main>
+
+  <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+</html>
