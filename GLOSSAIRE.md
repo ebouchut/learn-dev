@@ -27,9 +27,15 @@ pour la justification des décisions de conception, voir les [ADR](docs/adr/READ
   qui suit le cycle de vie de la progression de l'étudiant (voir
   CONTRIBUTING.md).
 - **Lesson (leçon)** — Un élément de contenu individuel au sein d'un cours.
+- **Publish (publier)** — Rendre un cours ou une leçon en brouillon visible des
+  étudiants. La première publication d'un cours fixe sa date `published_at` ;
+  l'archiver puis le restaurer ne remet pas cette date à zéro.
 - **Role (rôle)** — Un ensemble nommé de permissions accordées à un
   utilisateur. Les rôles fournis par défaut sont `STUDENT`, `INSTRUCTOR` et
   `ADMIN` ; `SUPERADMIN` est prévu (voir l'issue #65).
+- **Roster (liste des inscrits)** — La liste des étudiants inscrits à un cours,
+  avec le statut et les dates de leur inscription ; les formateurs peuvent en
+  retirer un étudiant.
 
 ## Authentification et sécurité
 

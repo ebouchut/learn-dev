@@ -19,9 +19,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Access matrix for the role-gated URL prefixes: anonymous users are sent to
  * the login page, the wrong role is denied (403), and the right role passes
- * the gate. The instructor and admin controllers do not exist yet, so "passes
- * the gate" is asserted as 404 (the request reached MVC dispatch); tighten
- * those assertions to 200 as each feature phase lands.
+ * the gate. The admin controller does not exist yet, so its "passes the
+ * gate" is asserted as 404 (the request reached MVC dispatch); tighten it to
+ * 200 when the admin phase lands.
  *
  * <p>Named with the {@code Test} suffix (not {@code IT}) so Surefire runs it
  * as part of {@code mvn test}; this project does not use the Failsafe plugin.
@@ -40,16 +40,21 @@ class SecurityMatrixTest extends AbstractPostgresIT {
     @Autowired
     UserRepository userRepository;
 
-    // The catalogue controller resolves the domain user, so the gate-pass
-    // check needs a real users row, not just a mock principal.
+    // The catalogue and instructor controllers resolve the domain user, so
+    // the gate-pass checks need real users rows, not just mock principals.
     @BeforeEach
-    void seedStudent() {
-        if (userRepository.findByUsername("matrix-student").isEmpty()) {
-            User student = new User();
-            student.setUsername("matrix-student");
-            student.setEmail("matrix-student@example.com");
-            student.setPassword("hashed");
-            userRepository.save(student);
+    void seedUsers() {
+        seedUser("matrix-student");
+        seedUser("matrix-instructor");
+    }
+
+    private void seedUser(String username) {
+        if (userRepository.findByUsername(username).isEmpty()) {
+            User user = new User();
+            user.setUsername(username);
+            user.setEmail(username + "@example.com");
+            user.setPassword("hashed");
+            userRepository.save(user);
         }
     }
 
@@ -82,9 +87,10 @@ class SecurityMatrixTest extends AbstractPostgresIT {
     // Instructor: may pass the /instructor gate, denied on admin.
 
     @Test
-    @WithMockUser(roles = "INSTRUCTOR")
     void instructor_passes_instructor_gate() throws Exception {
-        mvc.perform(get("/instructor/courses")).andExpect(status().isNotFound());
+        mvc.perform(get("/instructor/courses")
+                        .with(user("matrix-instructor").roles("INSTRUCTOR")))
+                .andExpect(status().isOk());
     }
 
     @Test

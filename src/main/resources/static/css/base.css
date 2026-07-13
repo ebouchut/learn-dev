@@ -416,6 +416,43 @@ main:focus {
   padding: 0.6em 0.8em;
 }
 
+/* Markdown editors and long descriptions */
+textarea.form__input {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+/* Action buttons that sit inside a line of text or a list item */
+.form--inline {
+  display: inline;
+}
+
+/* ---------- Data tables (e.g. the course roster) ---------- */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table th {
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+}
+
+.table tr:last-child td {
+  border-bottom: 0;
+}
+
 .form__input:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 1px;

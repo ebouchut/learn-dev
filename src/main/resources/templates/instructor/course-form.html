@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Course editor — learn-dev')}"></head>
+<body>
+  <th:block th:replace="~{fragments/layout :: header('instructor')}"></th:block>
+
+  <!-- th:object on main puts the form-backing bean in scope for the whole
+       page, so #fields works in the alert ABOVE the form too. -->
+  <!-- Narrow for the bare creation form; full width once the page also
+       hosts the lesson management section. -->
+  <main class="site-main" th:classappend="${course == null} ? 'site-main--narrow'"
+        id="main" tabindex="-1" th:object="${form}">
+    <p class="alert alert--error" role="alert" th:if="${#fields.hasAnyErrors()}">
+      The course could not be saved. Check the highlighted fields below.
+    </p>
+    <p class="alert alert--success" role="status" th:if="${param.created}">
+      Course created as a draft.
+    </p>
+    <p class="alert alert--success" role="status" th:if="${param.saved}">
+      Course saved.
+    </p>
+    <p class="alert alert--success" role="status" th:if="${param.published}">
+      Course published. Students can now see it in the catalogue.
+    </p>
+    <p class="alert alert--info" role="status" th:if="${param.archived}">
+      Course archived. It is no longer listed in the catalogue.
+    </p>
+    <p class="alert alert--info" role="status" th:if="${param.restored}">
+      Course restored as a draft.
+    </p>
+    <p class="alert alert--success" role="status" th:if="${param['lesson-created']}">
+      Lesson added at the end of the course.
+    </p>
+    <p class="alert alert--success" role="status" th:if="${param['lesson-saved']}">
+      Lesson saved.
+    </p>
+    <p class="alert alert--success" role="status" th:if="${param['lesson-published']}">
+      Lesson published.
+    </p>
+    <p class="alert alert--info" role="status" th:if="${param['lesson-archived']}">
+      Lesson archived.
+    </p>
+    <p class="alert alert--info" role="status" th:if="${param['lesson-restored']}">
+      Lesson restored as a draft.
+    </p>
+
+    <div class="form-card">
+      <h1 class="form-card__title"
+          th:text="${course == null} ? 'Create a course' : 'Edit the course'">Create a course</h1>
+
+      <p class="course-card__meta" th:if="${course != null}">
+        Status: <span th:text="${#strings.capitalize(#strings.toLowerCase(course.status.name()))}">Draft</span>
+      </p>
+
+      <form th:action="${course == null} ? @{/instructor/courses/new}
+                     : @{/instructor/courses/{id}/edit(id=${course.courseId})}"
+            method="post">
+        <div class="form__group">
+          <label class="form__label" for="title">Title</label>
+          <span class="form__hint" id="title-hint">Up to 255 characters.</span>
+          <input class="form__input" type="text" th:field="*{title}" required
+                 th:classappend="${#fields.hasErrors('title')} ? 'form__input--invalid'"
+                 th:attr="aria-invalid=${#fields.hasErrors('title')} ? 'true' : null,
+                          aria-describedby=${#fields.hasErrors('title')} ? 'title-hint title-error' : 'title-hint'">
+          <span class="form__error" id="title-error"
+                th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+        </div>
+
+        <div class="form__group">
+          <label class="form__label" for="description">Description</label>
+          <span class="form__hint" id="description-hint">
+            Optional. Shown to students in the catalogue.
+          </span>
+          <textarea class="form__input" th:field="*{description}" rows="4"
+                    aria-describedby="description-hint"></textarea>
+        </div>
+
+        <button class="button button--primary" type="submit"
+                th:text="${course == null} ? 'Create the course' : 'Save the course'">Create</button>
+      </form>
+    </div>
+
+    <!-- Lifecycle actions match CONTRIBUTING.md: publish from draft,
+         archive from draft or published, restore from archived. -->
+    <section aria-labelledby="lifecycle-title" th:if="${course != null}">
+      <h2 id="lifecycle-title" class="visually-hidden">Publication actions</h2>
+      <form th:if="${course.status.name() == 'DRAFT'}"
+            th:action="@{/instructor/courses/{id}/publish(id=${course.courseId})}" method="post">
+        <button class="button button--primary" type="submit">Publish the course</button>
+      </form>
+      <form th:if="${course.status.name() != 'ARCHIVED'}"
+            th:action="@{/instructor/courses/{id}/archive(id=${course.courseId})}" method="post">
+        <button class="button button--ghost" type="submit">Archive the course</button>
+      </form>
+      <form th:if="${course.status.name() == 'ARCHIVED'}"
+            th:action="@{/instructor/courses/{id}/restore(id=${course.courseId})}" method="post">
+        <button class="button button--primary" type="submit">Restore as draft</button>
+      </form>
+    </section>
+
+    <p th:if="${course != null}">
+      <a th:href="@{/instructor/courses/{id}/students(id=${course.courseId})}">
+        View the students of this course</a>
+    </p>
+
+    <section aria-labelledby="lessons-title" th:if="${course != null && lessons != null}">
+      <h2 id="lessons-title">Lessons</h2>
+
+      <p>
+        <a class="button button--ghost"
+           th:href="@{/instructor/courses/{id}/lessons/new(id=${course.courseId})}">Add a lesson</a>
+      </p>
+
+      <p th:if="${#lists.isEmpty(lessons)}">No lesson yet.</p>
+
+      <ol th:unless="${#lists.isEmpty(lessons)}">
+        <li th:each="lesson, stat : ${lessons}">
+          <a th:href="@{/instructor/courses/{c}/lessons/{l}/edit(c=${course.courseId}, l=${lesson.lessonId})}"
+             th:text="${lesson.title}">Lesson title</a>
+          <span class="course-card__meta"
+                th:text="'(' + ${#strings.capitalize(#strings.toLowerCase(lesson.status.name()))} + ')'">(Draft)</span>
+          <form class="form--inline" th:unless="${stat.first}"
+                th:action="@{/instructor/courses/{c}/lessons/{l}/move-up(c=${course.courseId}, l=${lesson.lessonId})}"
+                method="post">
+            <button class="button button--ghost" type="submit">Move up
+              <span class="visually-hidden" th:text="': ' + ${lesson.title}"></span></button>
+          </form>
+          <form class="form--inline" th:unless="${stat.last}"
+                th:action="@{/instructor/courses/{c}/lessons/{l}/move-down(c=${course.courseId}, l=${lesson.lessonId})}"
+                method="post">
+            <button class="button button--ghost" type="submit">Move down
+              <span class="visually-hidden" th:text="': ' + ${lesson.title}"></span></button>
+          </form>
+          <form class="form--inline" th:if="${lesson.status.name() == 'DRAFT'}"
+                th:action="@{/instructor/courses/{c}/lessons/{l}/publish(c=${course.courseId}, l=${lesson.lessonId})}"
+                method="post">
+            <button class="button button--primary" type="submit">Publish
+              <span class="visually-hidden" th:text="': ' + ${lesson.title}"></span></button>
+          </form>
+          <form class="form--inline" th:if="${lesson.status.name() != 'ARCHIVED'}"
+                th:action="@{/instructor/courses/{c}/lessons/{l}/archive(c=${course.courseId}, l=${lesson.lessonId})}"
+                method="post">
+            <button class="button button--ghost" type="submit">Archive
+              <span class="visually-hidden" th:text="': ' + ${lesson.title}"></span></button>
+          </form>
+          <form class="form--inline" th:if="${lesson.status.name() == 'ARCHIVED'}"
+                th:action="@{/instructor/courses/{c}/lessons/{l}/restore(c=${course.courseId}, l=${lesson.lessonId})}"
+                method="post">
+            <button class="button button--ghost" type="submit">Restore
+              <span class="visually-hidden" th:text="': ' + ${lesson.title}"></span></button>
+          </form>
+        </li>
+      </ol>
+    </section>
+
+    <p><a th:href="@{/instructor/courses}">Back to my courses</a></p>
+  </main>
+
+  <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+</html>

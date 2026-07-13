@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My courses — learn-dev')}"></head>
+<body>
+  <th:block th:replace="~{fragments/layout :: header('instructor')}"></th:block>
+
+  <main class="site-main" id="main" tabindex="-1">
+    <h1 class="page-title">My courses</h1>
+
+    <p>
+      <a class="button button--primary" th:href="@{/instructor/courses/new}">Create a course</a>
+    </p>
+
+    <p th:if="${#lists.isEmpty(courses)}">
+      You have no course yet. Create your first one!
+    </p>
+
+    <ul class="course-list" th:unless="${#lists.isEmpty(courses)}">
+      <li class="course-card" th:each="course : ${courses}">
+        <h2 class="course-card__title">
+          <a th:href="@{/instructor/courses/{id}/edit(id=${course.courseId})}"
+             th:text="${course.title}">Course title</a>
+        </h2>
+        <p class="course-card__meta">
+          Status: <span th:text="${#strings.capitalize(#strings.toLowerCase(course.status.name()))}">Draft</span>
+          <th:block th:if="${course.publishedAt}">
+            &middot; first published on
+            <span th:text="${#temporals.format(course.publishedAt, 'd MMMM yyyy')}">date</span>
+          </th:block>
+        </p>
+      </li>
+    </ul>
+  </main>
+
+  <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+</html>
