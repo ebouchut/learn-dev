@@ -416,6 +416,17 @@ main:focus {
   padding: 0.6em 0.8em;
 }
 
+/* Markdown editors and long descriptions */
+textarea.form__input {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+/* Action buttons that sit inside a line of text or a list item */
+.form--inline {
+  display: inline;
+}
+
 .form__input:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 1px;

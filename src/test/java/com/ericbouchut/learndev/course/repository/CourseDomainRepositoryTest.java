@@ -199,6 +199,32 @@ class CourseDomainRepositoryTest extends AbstractPostgresIT {
     }
 
     @Test
+    void swapping_two_lesson_positions_through_a_temporary_value_satisfies_the_constraint() {
+        // Arrange (Given): two lessons at positions 1 and 2; the unique
+        // constraint is NOT deferrable, so a direct swap would collide
+        User instructor = newUser("instructor8");
+        Course course = newCourse(instructor, "Reorder course");
+        Lesson first = newLesson(course, 1, "First");
+        Lesson second = newLesson(course, 2, "Second");
+
+        // Act (When): the three-step swap used by InstructorCourseService
+        // (A to a temporary negative position, B to A's, A to B's)
+        first.setPosition(-1);
+        lessonRepository.saveAndFlush(first);
+        second.setPosition(1);
+        lessonRepository.saveAndFlush(second);
+        first.setPosition(2);
+        lessonRepository.saveAndFlush(first);
+        entityManager.clear();
+
+        // Assert (Then): the reading order is swapped
+        Course reloaded = courseRepository.findById(course.getCourseId()).orElseThrow();
+        assertThat(lessonRepository.findByCourseOrderByPositionAsc(reloaded))
+                .extracting(Lesson::getTitle)
+                .containsExactly("Second", "First");
+    }
+
+    @Test
     void deleting_an_instructor_with_courses_is_rejected() {
         // Arrange (Given): an instructor who teaches a course
         User instructor = newUser("instructor5");
