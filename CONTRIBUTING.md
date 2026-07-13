@@ -330,6 +330,10 @@ learn-dev/
     │   ├── java/com/ericbouchut/learndev/
     │   │   ├── LearnDevApplication.java                  # Spring Boot entry point
     │   │   │
+    │   │   ├── admin/                                    # Administration area (/admin/**, ROLE_ADMIN)
+    │   │   │   ├── AdminController.java                  # Account list/creation, content moderation
+    │   │   │   └── AccountAdminService.java              # Instructor creation, archive/reactivate, guards
+    │   │   │
     │   │   ├── audit/                                    # Security audit trail (audit_logs table)
     │   │   │   ├── AuditService.java                     # Records auditable events (reset requests, ...)
     │   │   │   ├── entity/
@@ -338,7 +342,7 @@ learn-dev/
     │   │   │       └── AuditLogRepository.java
     │   │   │
     │   │   ├── auth/                                     # Authentication (registration, login, password reset)
-    │   │   │   ├── AuthController.java                   # Web pages: home, login, dashboard, register
+    │   │   │   ├── AuthController.java                   # Web pages: home, login, register
     │   │   │   ├── CustomUserDetailsService.java         # Loads user + roles from DB for Spring Security
     │   │   │   ├── PasswordResetController.java          # Forgot password and reset password pages
     │   │   │   ├── PasswordResetMailer.java              # Sends the reset link over SMTP
@@ -358,7 +362,31 @@ learn-dev/
     │   │   │
     │   │   ├── common/                                   # Concerns shared across features
     │   │   │   └── config/
-    │   │   │       └── SecurityConfig.java               # Spring Security filter chain, form login, PasswordEncoder
+    │   │   │       ├── CacheConfig.java                  # Caffeine cache (rendered lesson Markdown)
+    │   │   │       └── SecurityConfig.java               # Spring Security filter chain, role gates, PasswordEncoder
+    │   │   │
+    │   │   ├── course/                                   # Course domain and its web layers
+    │   │   │   ├── CourseController.java                 # Student catalogue, detail, lessons, enroll/drop
+    │   │   │   ├── CourseService.java                    # Student visibility rules (read side)
+    │   │   │   ├── DashboardController.java              # The student's courses (GET /dashboard)
+    │   │   │   ├── EnrollmentService.java                # Enroll/drop lifecycle (idempotent)
+    │   │   │   ├── InstructorCourseController.java       # Authoring area (/instructor/**, ROLE_INSTRUCTOR)
+    │   │   │   ├── InstructorCourseService.java          # Ownership, publish/archive/restore, reorder, roster
+    │   │   │   ├── MarkdownRenderer.java                 # Lesson Markdown to sanitized HTML (ADR-0013, ADR-0014)
+    │   │   │   ├── dto/
+    │   │   │   │   ├── CourseForm.java
+    │   │   │   │   └── LessonForm.java
+    │   │   │   ├── entity/
+    │   │   │   │   ├── Course.java                       # Maps to the courses table
+    │   │   │   │   ├── Enrollment.java                   # Join entity on the enrollments table
+    │   │   │   │   ├── EnrollmentId.java                 # (user, course) composite key
+    │   │   │   │   ├── EnrollmentStatus.java             # ENROLLED, IN_PROGRESS, COMPLETED, DROPPED
+    │   │   │   │   ├── Lesson.java                       # Maps to the lessons table
+    │   │   │   │   └── PublicationStatus.java            # DRAFT, PUBLISHED, ARCHIVED
+    │   │   │   └── repository/
+    │   │   │       ├── CourseRepository.java
+    │   │   │       ├── EnrollmentRepository.java
+    │   │   │       └── LessonRepository.java
     │   │   │
     │   │   ├── legal/                                    # Legal pages
     │   │   │   └── LegalController.java                  # Privacy policy page (French)
@@ -389,8 +417,22 @@ learn-dev/
     │       │   ├── css/                                  # Design system: base.css, theme and font stylesheets
     │       │   └── fonts/                                # Self-hosted webfonts (OFL license files alongside)
     │       └── templates/                                # Thymeleaf views (server-rendered HTML)
+    │           ├── admin/                                # Administration pages (accounts, moderation)
+    │           │   ├── courses.html
+    │           │   ├── user-form.html
+    │           │   └── users.html
+    │           ├── courses/                              # Student course pages
+    │           │   ├── catalog.html
+    │           │   ├── detail.html
+    │           │   └── lesson.html
+    │           ├── error/                                # Styled error pages (403, 404, 500)
     │           ├── fragments/
     │           │   └── layout.html                       # Shared head, header (nav), and footer fragments
+    │           ├── instructor/                           # Authoring pages
+    │           │   ├── course-form.html
+    │           │   ├── courses.html
+    │           │   ├── lesson-form.html
+    │           │   └── students.html
     │           ├── dashboard.html
     │           ├── forgot-password.html
     │           ├── home.html
