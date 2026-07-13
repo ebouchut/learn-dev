@@ -249,6 +249,29 @@ For each service (`postgres`, `mongo`, and `mailpit`):
 > The containers run inside that hidden *VM*, not directly on macOS/Windows.
 
 
+## Package for production (Docker)
+
+The [Dockerfile](Dockerfile) builds a self-contained application image in
+two stages (Maven build, then a minimal JRE runtime running as a non-root
+user, `prod` profile active by default):
+
+```shell
+docker build -t learn-dev .
+docker run --rm -p 8080:8080 --env-file .env.prod learn-dev
+```
+
+The runtime configuration comes entirely from environment variables (see
+[.env.example](.env.example)): the PostgreSQL coordinates and credentials,
+and the SMTP relay (`SMTP_*`) used by the password-reset and
+email-verification emails. The prod profile assumes a TLS-terminating
+reverse proxy in front of the app: it honors `X-Forwarded-*` headers and
+marks the session cookie `Secure`.
+
+> [!NOTE]
+> Packaging is local only: the image is not pushed to a registry, and no
+> Maven artifact is deployed to any public repository (the `pom.xml`
+> deliberately has no `distributionManagement`).
+
 ## Stop the Application
 
 This command stops all the application services containers 

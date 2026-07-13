@@ -1,0 +1,15 @@
+# Build output and caches
+target/
+venv/
+
+# VCS, IDE, agent state
+.git/
+.idea/
+.claude/
+
+# Secrets: the FIFO/file is provided at runtime, never baked into the image
+.env
+
+# Docs, design assets, CI: not needed inside the image
+docs/
+.github/
