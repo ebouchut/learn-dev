@@ -48,6 +48,9 @@ com.ericbouchut.learndev
 ├── auth      # AuthController, RegistrationService, CustomUserDetailsService,
 │             # PasswordResetController/Service/Mailer, entity/PasswordResetToken,
 │             # dto/*Form, exception/Duplicate*Exception
+├── course    # entity/Course, Lesson, Enrollment (+EnrollmentId,
+│             # EnrollmentStatus, PublicationStatus), repository/*,
+│             # MarkdownRenderer (lesson Markdown to sanitized, cached HTML)
 ├── legal     # LegalController (privacy policy page)
 ├── user      # entity/User, repository/UserRepository
 ├── role      # entity/Role, repository/RoleRepository
@@ -112,7 +115,7 @@ invalidates any others, and records the outcome in `audit_logs` through
 ## Data architecture
 
 - **Relational core (PostgreSQL).** Users, roles, password-reset tokens, the
-  audit trail, and (upcoming) courses/lessons. Users use a **UUID** primary key
+  audit trail, courses, lessons, and enrollments. Users use a **UUID** primary key
   to avoid enumeration; other tables use `BIGINT` identity
   (see [ADR-0003](docs/adr/0003-uuid-pk-for-users-bigint-elsewhere.md)).
 - **Document store (MongoDB).** Provisioned and configured for future content
@@ -158,8 +161,10 @@ as a static singleton container (see [ADR-0008](docs/adr/0008-share-singleton-te
 
 ## Direction of travel
 
-- The course and lesson domain (course catalogue, enrollment, Markdown lesson
-  content).
+- The course web layer on top of the shipped domain: student catalogue,
+  enrollment and lesson reading, instructor authoring and rosters, admin
+  account and content lifecycle (see
+  [docs/plans/2026-07-12-course-management-by-role.md](docs/plans/2026-07-12-course-management-by-role.md)).
 - Possible extraction of microservices, with service-to-service authentication
   ([ADR-0002](docs/adr/0002-service-to-service-auth-via-service-token.md)).
 - A `SUPERADMIN` role (deferred under YAGNI; issue #65).
