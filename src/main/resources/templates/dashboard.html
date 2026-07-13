@@ -12,10 +12,26 @@
 
     <section aria-labelledby="courses-title">
       <h2 id="courses-title">Your courses</h2>
-      <p class="feature-card__text">
-        No courses yet. Course enrollment arrives with the course catalog;
-        this is where your progress will live.
+
+      <p th:if="${#lists.isEmpty(enrollments)}">
+        You are not enrolled in any course yet.
+        <a th:href="@{/courses}">Browse the courses</a> to get started.
       </p>
+
+      <ul class="course-list" th:unless="${#lists.isEmpty(enrollments)}">
+        <li class="course-card" th:each="enrollment : ${enrollments}">
+          <h3 class="course-card__title">
+            <a th:href="@{/courses/{id}(id=${enrollment.course.courseId})}"
+               th:text="${enrollment.course.title}">Course title</a>
+          </h3>
+          <p class="course-card__meta">
+            <span th:text="${#strings.capitalize(#strings.toLowerCase(
+                #strings.replace(enrollment.status.name(), '_', ' ')))}">Enrolled</span>
+            &middot; since
+            <span th:text="${#temporals.format(enrollment.enrolledAt, 'd MMMM yyyy')}">date</span>
+          </p>
+        </li>
+      </ul>
     </section>
   </main>
 

@@ -152,6 +152,53 @@ class CourseDomainRepositoryTest extends AbstractPostgresIT {
     }
 
     @Test
+    void finds_only_the_published_lessons_of_a_course_in_reading_order() {
+        // Arrange (Given): a course with published and draft lessons
+        User instructor = newUser("instructor6");
+        Course course = newCourse(instructor, "Publication filter");
+        Lesson second = newLesson(course, 2, "Published second");
+        Lesson first = newLesson(course, 1, "Published first");
+        newLesson(course, 3, "Still a draft");
+        first.setStatus(PublicationStatus.PUBLISHED);
+        second.setStatus(PublicationStatus.PUBLISHED);
+        lessonRepository.saveAndFlush(first);
+        lessonRepository.saveAndFlush(second);
+        entityManager.clear();
+
+        // Act (When): fetch the published lessons only
+        Course reloaded = courseRepository.findById(course.getCourseId()).orElseThrow();
+        var published = lessonRepository
+                .findByCourseAndStatusOrderByPositionAsc(reloaded, PublicationStatus.PUBLISHED);
+
+        // Assert (Then): the draft is filtered out, order is by position
+        assertThat(published)
+                .extracting(Lesson::getTitle)
+                .containsExactly("Published first", "Published second");
+    }
+
+    @Test
+    void finds_the_enrollment_of_a_user_in_a_course() {
+        // Arrange (Given): a student enrolled in one of two courses
+        User instructor = newUser("instructor7");
+        User student = newUser("student7");
+        Course joined = newCourse(instructor, "Joined course");
+        Course other = newCourse(instructor, "Other course");
+        enrollmentRepository.saveAndFlush(new Enrollment(student, joined));
+        entityManager.clear();
+
+        // Act (When): look enrollments up by (user, course)
+        User reloadedStudent = userRepository.findById(student.getUserId()).orElseThrow();
+        Course reloadedJoined = courseRepository.findById(joined.getCourseId()).orElseThrow();
+        Course reloadedOther = courseRepository.findById(other.getCourseId()).orElseThrow();
+
+        // Assert (Then): present for the joined course, empty for the other
+        assertThat(enrollmentRepository.findByUserAndCourse(reloadedStudent, reloadedJoined))
+                .isPresent();
+        assertThat(enrollmentRepository.findByUserAndCourse(reloadedStudent, reloadedOther))
+                .isEmpty();
+    }
+
+    @Test
     void deleting_an_instructor_with_courses_is_rejected() {
         // Arrange (Given): an instructor who teaches a course
         User instructor = newUser("instructor5");

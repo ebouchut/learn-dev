@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Lesson — learn-dev')}"></head>
+<body>
+  <th:block th:replace="~{fragments/layout :: header('courses')}"></th:block>
+
+  <main class="site-main" id="main" tabindex="-1">
+    <p class="course-card__meta">
+      <a th:href="@{/courses/{id}(id=${course.courseId})}"
+         th:text="${course.title}">Course title</a>
+    </p>
+
+    <article>
+      <h1 class="page-title" th:text="${lesson.title}">Lesson title</h1>
+      <!-- contentHtml is rendered and sanitized by MarkdownRenderer (ADR-0013). -->
+      <div th:utext="${contentHtml}">Lesson content</div>
+    </article>
+
+    <nav aria-label="Lesson">
+      <p>
+        <a class="button button--ghost" th:if="${previousLesson}"
+           th:href="@{/courses/{c}/lessons/{l}(c=${course.courseId}, l=${previousLesson.lessonId})}">
+          Previous: <span th:text="${previousLesson.title}">previous lesson</span></a>
+        <a class="button button--primary" th:if="${nextLesson}"
+           th:href="@{/courses/{c}/lessons/{l}(c=${course.courseId}, l=${nextLesson.lessonId})}">
+          Next: <span th:text="${nextLesson.title}">next lesson</span></a>
+      </p>
+    </nav>
+  </main>
+
+  <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+</html>

@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * <b>Web</b> endpoints for authentication pages:
- * home, login and dashboard views, and the registration form
+ * home and login views, and the registration form
  * (display and submission).
+ * The dashboard lives in the course package (it renders enrollments).
  * Spring Security handles the login POST and logout itself.
  * This controller renders the pages around them.
  */
@@ -45,15 +46,6 @@ public class AuthController {
     @GetMapping("/auth/login")
     public String login() {
         return "login";
-    }
-
-    /**
-     * Display the dashboard page.
-     * @return the name of the dashboard template
-     */
-    @GetMapping("/dashboard")
-    public String dashboard() {
-        return "dashboard";
     }
 
     /**

@@ -1,6 +1,9 @@
 package com.ericbouchut.learndev.common.config;
 
 import com.ericbouchut.learndev.support.AbstractPostgresIT;
+import com.ericbouchut.learndev.user.entity.User;
+import com.ericbouchut.learndev.user.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -8,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,6 +37,22 @@ class SecurityMatrixTest extends AbstractPostgresIT {
     @Autowired
     MockMvc mvc;
 
+    @Autowired
+    UserRepository userRepository;
+
+    // The catalogue controller resolves the domain user, so the gate-pass
+    // check needs a real users row, not just a mock principal.
+    @BeforeEach
+    void seedStudent() {
+        if (userRepository.findByUsername("matrix-student").isEmpty()) {
+            User student = new User();
+            student.setUsername("matrix-student");
+            student.setEmail("matrix-student@example.com");
+            student.setPassword("hashed");
+            userRepository.save(student);
+        }
+    }
+
     // Anonymous: every gated prefix redirects to the login page.
 
     @Test
@@ -47,9 +67,9 @@ class SecurityMatrixTest extends AbstractPostgresIT {
     // Student: may pass the /courses gate, denied on instructor and admin.
 
     @Test
-    @WithMockUser(roles = "STUDENT")
     void student_passes_courses_gate() throws Exception {
-        mvc.perform(get("/courses")).andExpect(status().isNotFound());
+        mvc.perform(get("/courses").with(user("matrix-student").roles("STUDENT")))
+                .andExpect(status().isOk());
     }
 
     @Test
