@@ -7,6 +7,7 @@ import com.ericbouchut.learndev.course.entity.Course;
 import com.ericbouchut.learndev.course.entity.Lesson;
 import com.ericbouchut.learndev.course.entity.PublicationStatus;
 import com.ericbouchut.learndev.course.repository.CourseRepository;
+import com.ericbouchut.learndev.course.repository.EnrollmentRepository;
 import com.ericbouchut.learndev.course.repository.LessonRepository;
 import com.ericbouchut.learndev.user.entity.User;
 import org.junit.jupiter.api.Test;
@@ -29,9 +30,11 @@ class InstructorCourseServiceTest {
 
     private final CourseRepository courses = mock(CourseRepository.class);
     private final LessonRepository lessons = mock(LessonRepository.class);
+    private final EnrollmentRepository enrollments = mock(EnrollmentRepository.class);
+    private final EnrollmentService enrollmentService = mock(EnrollmentService.class);
     private final AuditService audit = mock(AuditService.class);
-    private final InstructorCourseService service =
-            new InstructorCourseService(courses, lessons, audit);
+    private final InstructorCourseService service = new InstructorCourseService(
+            courses, lessons, enrollments, enrollmentService, audit);
 
     private final User owner = userWithId();
     private final User stranger = userWithId();

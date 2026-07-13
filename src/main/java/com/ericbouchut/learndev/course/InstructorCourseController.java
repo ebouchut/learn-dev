@@ -8,6 +8,7 @@ import com.ericbouchut.learndev.user.entity.User;
 import com.ericbouchut.learndev.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,8 +17,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.UUID;
 
 /**
  * <b>Web</b> endpoints of the instructor authoring area under
@@ -370,6 +373,51 @@ public class InstructorCourseController {
             instructorCourses.moveLessonDown(course, lesson);
         }
         return "redirect:/instructor/courses/" + courseId + "/edit";
+    }
+
+    /**
+     * Display the roster of the course: every enrollment with its status
+     * and lifecycle dates.
+     *
+     * @param courseId  the course whose roster to show
+     * @param principal the logged-in instructor (ownership check)
+     * @param model     receives the course and its enrollments
+     * @return the roster view name
+     */
+    @GetMapping("/{courseId}/students")
+    public String roster(
+            @PathVariable Long courseId,
+            Principal principal,
+            Model model
+    ) {
+        Course course = instructorCourses.ownedCourse(courseId, currentUser(principal));
+        model.addAttribute("course", course);
+        model.addAttribute("enrollments", instructorCourses.roster(course));
+        return "instructor/students";
+    }
+
+    /**
+     * Remove a student from the course (PRG with a {@code dropped} flag).
+     *
+     * @param courseId  the course to remove the student from
+     * @param userId    the student to remove
+     * @param principal the logged-in instructor (ownership check)
+     * @param request   provides the client IP for the audit trail
+     * @return a redirect to the roster
+     */
+    @PostMapping("/{courseId}/students/{userId}/drop")
+    public String dropStudent(
+            @PathVariable Long courseId,
+            @PathVariable UUID userId,
+            Principal principal,
+            HttpServletRequest request
+    ) {
+        User instructor = currentUser(principal);
+        Course course = instructorCourses.ownedCourse(courseId, instructor);
+        User student = users.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        instructorCourses.dropStudent(course, student, instructor, request.getRemoteAddr());
+        return "redirect:/instructor/courses/" + courseId + "/students?dropped";
     }
 
     private User currentUser(Principal principal) {

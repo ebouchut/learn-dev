@@ -4,9 +4,11 @@ import com.ericbouchut.learndev.audit.AuditService;
 import com.ericbouchut.learndev.course.dto.CourseForm;
 import com.ericbouchut.learndev.course.dto.LessonForm;
 import com.ericbouchut.learndev.course.entity.Course;
+import com.ericbouchut.learndev.course.entity.Enrollment;
 import com.ericbouchut.learndev.course.entity.Lesson;
 import com.ericbouchut.learndev.course.entity.PublicationStatus;
 import com.ericbouchut.learndev.course.repository.CourseRepository;
+import com.ericbouchut.learndev.course.repository.EnrollmentRepository;
 import com.ericbouchut.learndev.course.repository.LessonRepository;
 import com.ericbouchut.learndev.user.entity.User;
 import org.springframework.http.HttpStatus;
@@ -33,15 +35,21 @@ public class InstructorCourseService {
 
     private final CourseRepository courses;
     private final LessonRepository lessons;
+    private final EnrollmentRepository enrollments;
+    private final EnrollmentService enrollmentService;
     private final AuditService audit;
 
     public InstructorCourseService(
             CourseRepository courses,
             LessonRepository lessons,
+            EnrollmentRepository enrollments,
+            EnrollmentService enrollmentService,
             AuditService audit
     ) {
         this.courses = courses;
         this.lessons = lessons;
+        this.enrollments = enrollments;
+        this.enrollmentService = enrollmentService;
         this.audit = audit;
     }
 
@@ -217,6 +225,24 @@ public class InstructorCourseService {
         lessons.saveAndFlush(neighbor);
         current.setPosition(neighborPosition);
         lessons.saveAndFlush(current);
+    }
+
+    /** The roster of a course: every enrollment, dropped ones included. */
+    public List<Enrollment> roster(Course course) {
+        return enrollments.findByCourse(course);
+    }
+
+    /**
+     * Remove a student from the course on the instructor's behalf. Reuses
+     * the student-side drop rules (idempotent, COMPLETED untouched) and
+     * audits the action separately from a self-drop.
+     */
+    @Transactional
+    public void dropStudent(Course course, User student, User actor, String ipAddress) {
+        enrollmentService.drop(student, course);
+        audit.record("ENROLLMENT_DROPPED_BY_INSTRUCTOR", actor, ipAddress, true,
+                "Student " + student.getUserId() + " dropped from course "
+                        + course.getCourseId());
     }
 
     private int nextPosition(Course course) {

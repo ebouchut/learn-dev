@@ -98,6 +98,11 @@
       </form>
     </section>
 
+    <p th:if="${course != null}">
+      <a th:href="@{/instructor/courses/{id}/students(id=${course.courseId})}">
+        View the students of this course</a>
+    </p>
+
     <section aria-labelledby="lessons-title" th:if="${course != null && lessons != null}">
       <h2 id="lessons-title">Lessons</h2>
 
