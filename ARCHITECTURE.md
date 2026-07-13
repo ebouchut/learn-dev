@@ -44,13 +44,16 @@ controller, service, entity, and repository live together:
 
 ```
 com.ericbouchut.learndev
+├── admin     # AdminController, AccountAdminService: accounts and content moderation
 ├── audit     # AuditService, entity/AuditLog: security audit trail (audit_logs)
 ├── auth      # AuthController, RegistrationService, CustomUserDetailsService,
 │             # PasswordResetController/Service/Mailer, entity/PasswordResetToken,
 │             # dto/*Form, exception/Duplicate*Exception
 ├── course    # entity/Course, Lesson, Enrollment (+EnrollmentId,
 │             # EnrollmentStatus, PublicationStatus), repository/*,
-│             # MarkdownRenderer (lesson Markdown to sanitized, cached HTML)
+│             # MarkdownRenderer (lesson Markdown to sanitized, cached HTML),
+│             # CourseController/DashboardController (student side),
+│             # InstructorCourseController (authoring), the course services
 ├── legal     # LegalController (privacy policy page)
 ├── user      # entity/User, repository/UserRepository
 ├── role      # entity/Role, repository/RoleRepository
@@ -161,10 +164,11 @@ as a static singleton container (see [ADR-0008](docs/adr/0008-share-singleton-te
 
 ## Direction of travel
 
-- The course web layer on top of the shipped domain: student catalogue,
-  enrollment and lesson reading, instructor authoring and rosters, admin
-  account and content lifecycle (see
-  [docs/plans/2026-07-12-course-management-by-role.md](docs/plans/2026-07-12-course-management-by-role.md)).
+- Email verification (the `email_tokens` table and `users.is_verified` are
+  still dormant) and account lockout (`failed_login_attempts` is never
+  incremented).
+- Production packaging: an application container image and a hardened prod
+  profile (secure session cookie, real SMTP).
 - Possible extraction of microservices, with service-to-service authentication
   ([ADR-0002](docs/adr/0002-service-to-service-auth-via-service-token.md)).
 - A `SUPERADMIN` role (deferred under YAGNI; issue #65).

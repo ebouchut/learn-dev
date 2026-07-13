@@ -59,8 +59,11 @@ and [Thymeleaf](https://en.wikipedia.org/wiki/Thymeleaf) frontend.
 
 The frontend is **server-rendered**: there is no separate frontend application.
 
-- [Thymeleaf](https://www.thymeleaf.org/) templates rendered by the backend
-  (home, login, register, and dashboard pages)
+- [Thymeleaf](https://www.thymeleaf.org/) templates rendered by the backend:
+  public pages (home, login, register, privacy), the student area (dashboard,
+  course catalogue, course and lesson pages), the instructor authoring area
+  (courses, lessons, roster), the admin area (accounts, course moderation),
+  and styled error pages
 - [thymeleaf-extras-springsecurity6](https://github.com/thymeleaf/thymeleaf-extras-springsecurity)
   to display authentication data (such as the logged-in username) in the pages
 - Server-side form handling with bean validation (no JavaScript framework yet)
@@ -432,7 +435,9 @@ visit [this link](https://github.com/users/ebouchut/projects/7/views/3).
   (🇫🇷 French version: [GLOSSAIRE.md](GLOSSAIRE.md)).
 - [Architecture Decision Records](docs/adr/README.md) — A list of design decisions and their trade-offs.
 - [docs/rgaa.md](docs/rgaa.md) — accessibility (RGAA) criteria map: what is expected for the DWWM,
-  how and where each criterion is fulfilled.
+  how and where each criterion is fulfilled;
+  [docs/rgaa-audit.md](docs/rgaa-audit.md) is the tooled self-audit report
+  (Lighthouse, axe-core, keyboard walkthrough).
 - [Mockups and wireframes (Figma)](https://www.figma.com/design/2q1Rt5NGbQ1w8gRtRGoF4A) —
   read-only Figma file with the high-fidelity mockups (Catppuccin theme) and the
   low-fidelity wireframes of the frontend pages; the browsable HTML mockups and
