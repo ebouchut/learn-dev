@@ -26,9 +26,41 @@ class MarkdownRendererTest {
         String html = markdownRenderer.render(markdown);
 
         // Assert (Then): structural HTML with the language hint preserved
-        assertThat(html).contains("<h1>Indexes</h1>");
+        // (the heading is demoted one level, see the renderer Javadoc)
+        assertThat(html).contains("<h2>Indexes</h2>");
         assertThat(html).contains("<strong>bold</strong>");
         assertThat(html).contains("<code class=\"language-java\">");
+    }
+
+    @Test
+    void demotes_headings_one_level_capped_at_h6() {
+        // Arrange (Given): authored levels 1 through 6; the lesson page owns
+        // the only h1 (RGAA 9.1), so authored levels must shift down
+        String markdown = "# One\n\n## Two\n\n##### Five\n\n###### Six";
+
+        // Act (When)
+        String html = markdownRenderer.render(markdown);
+
+        // Assert (Then): every level is one deeper, h6 stays h6
+        assertThat(html).contains("<h2>One</h2>");
+        assertThat(html).contains("<h3>Two</h3>");
+        assertThat(html).contains("<h6>Five</h6>");
+        assertThat(html).contains("<h6>Six</h6>");
+        assertThat(html).doesNotContain("<h1");
+        assertThat(html).doesNotContain("<h7");
+    }
+
+    @Test
+    void demoted_headings_keep_their_inline_formatting() {
+        // Arrange (Given): a heading with inline emphasis and code
+        String markdown = "# The `for` loop is **great**";
+
+        // Act (When)
+        String html = markdownRenderer.render(markdown);
+
+        // Assert (Then): children render inside the demoted tag
+        assertThat(html).contains(
+                "<h2>The <code>for</code> loop is <strong>great</strong></h2>");
     }
 
     @Test
