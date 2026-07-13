@@ -6,7 +6,15 @@
 
   <main class="site-main site-main--narrow" id="main" tabindex="-1">
     <p class="alert alert--success" role="status" th:if="${param.registered}">
-      Account created, please log in.
+      Account created, please log in. We sent you an email to verify your
+      address.
+    </p>
+    <p class="alert alert--success" role="status" th:if="${param.verified}">
+      Your email address is verified. Thank you!
+    </p>
+    <p class="alert alert--error" role="alert" th:if="${param['verify-invalid']}">
+      This verification link is invalid, expired, or has already been used.
+      Log in and use the resend button on your dashboard.
     </p>
     <p class="alert alert--success" role="status" th:if="${param.reset}">
       Your password has been changed, please log in.

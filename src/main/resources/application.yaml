@@ -65,6 +65,12 @@ learndev:
   mail:
     # Sender address for transactional emails (password reset)
     from: noreply@learn-dev.local
+  lockout:
+    # Consecutive failed logins before the account is locked
+    max-attempts: 5
+  email-verification:
+    # How long a verification link stays valid
+    token-ttl: 24h
   password-reset:
     # How long a reset token stays valid
     token-ttl: 30m
