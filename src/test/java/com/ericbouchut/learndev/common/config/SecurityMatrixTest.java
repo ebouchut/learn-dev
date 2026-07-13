@@ -49,7 +49,7 @@ class SecurityMatrixTest extends AbstractPostgresIT {
     @Test
     @WithMockUser(roles = "STUDENT")
     void student_passes_courses_gate() throws Exception {
-        mvc.perform(get("/courses")).andExpect(status().isNotFound());
+        mvc.perform(get("/courses")).andExpect(status().isOk());
     }
 
     @Test

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Courses — learn-dev')}"></head>
+<body>
+  <th:block th:replace="~{fragments/layout :: header('courses')}"></th:block>
+
+  <main class="site-main" id="main" tabindex="-1">
+    <h1 class="page-title">Courses</h1>
+
+    <p th:if="${#lists.isEmpty(courses)}">
+      No course is published yet. Come back soon!
+    </p>
+
+    <ul class="course-list" th:unless="${#lists.isEmpty(courses)}">
+      <li class="course-card" th:each="course : ${courses}">
+        <h2 class="course-card__title">
+          <a th:href="@{/courses/{id}(id=${course.courseId})}"
+             th:text="${course.title}">Course title</a>
+        </h2>
+        <p class="course-card__meta">
+          By <span th:text="${course.instructor.username}">instructor</span>
+        </p>
+        <p th:if="${course.description}" th:text="${course.description}">
+          Course description
+        </p>
+      </li>
+    </ul>
+  </main>
+
+  <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+</html>

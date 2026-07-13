@@ -4,8 +4,8 @@
   - head(title): document head with the design stylesheets
   - header(current): skip link + banner + auth-aware navigation;
     `current` names the nav entry of the calling page ('home', 'login',
-    'register', 'dashboard', 'instructor', 'admin' or null) and drives
-    aria-current="page"
+    'register', 'dashboard', 'courses', 'instructor', 'admin' or null) and
+    drives aria-current="page"
   - footer: site footer
   Each page keeps its own <html lang> (privacy.html is lang="fr").
 -->
@@ -39,6 +39,8 @@
           <ul class="nav__list" sec:authorize="isAuthenticated()">
             <li><a class="nav__link" th:href="@{/dashboard}"
                    th:attr="aria-current=${current == 'dashboard'} ? 'page' : null">Dashboard</a></li>
+            <li><a class="nav__link" th:href="@{/courses}"
+                   th:attr="aria-current=${current == 'courses'} ? 'page' : null">Courses</a></li>
             <li sec:authorize="hasRole('INSTRUCTOR')">
               <a class="nav__link" th:href="@{/instructor/courses}"
                  th:attr="aria-current=${current == 'instructor'} ? 'page' : null">Instructor</a></li>
