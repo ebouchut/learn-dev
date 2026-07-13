@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('New instructor — learn-dev')}"></head>
+<body>
+  <th:block th:replace="~{fragments/layout :: header('admin')}"></th:block>
+
+  <!-- th:object on main puts the form-backing bean in scope for the whole
+       page, so #fields works in the alert ABOVE the form too. -->
+  <main class="site-main site-main--narrow" id="main" tabindex="-1" th:object="${form}">
+    <p class="alert alert--error" role="alert" th:if="${#fields.hasAnyErrors()}">
+      The account could not be created. Check the highlighted fields below.
+    </p>
+
+    <div class="form-card">
+      <h1 class="form-card__title">Create an instructor account</h1>
+
+      <form th:action="@{/admin/users/new-instructor}" method="post">
+        <div class="form__group">
+          <label class="form__label" for="username">Username</label>
+          <span class="form__hint" id="username-hint">3 to 50 characters.</span>
+          <input class="form__input" type="text" th:field="*{username}" required
+                 th:classappend="${#fields.hasErrors('username')} ? 'form__input--invalid'"
+                 th:attr="aria-invalid=${#fields.hasErrors('username')} ? 'true' : null,
+                          aria-describedby=${#fields.hasErrors('username')} ? 'username-hint username-error' : 'username-hint'">
+          <span class="form__error" id="username-error"
+                th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+        </div>
+
+        <div class="form__group">
+          <label class="form__label" for="email">Email</label>
+          <input class="form__input" type="email" th:field="*{email}" required
+                 th:classappend="${#fields.hasErrors('email')} ? 'form__input--invalid'"
+                 th:attr="aria-invalid=${#fields.hasErrors('email')} ? 'true' : null,
+                          aria-describedby=${#fields.hasErrors('email')} ? 'email-error' : null">
+          <span class="form__error" id="email-error"
+                th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+        </div>
+
+        <div class="form__group">
+          <label class="form__label" for="password">Initial password</label>
+          <span class="form__hint" id="password-hint">
+            8 to 100 characters. Hand it over securely; the instructor can
+            change it via the password reset.
+          </span>
+          <input class="form__input" type="password" th:field="*{password}"
+                 autocomplete="new-password" required
+                 th:classappend="${#fields.hasErrors('password')} ? 'form__input--invalid'"
+                 th:attr="aria-invalid=${#fields.hasErrors('password')} ? 'true' : null,
+                          aria-describedby=${#fields.hasErrors('password')} ? 'password-hint password-error' : 'password-hint'">
+          <span class="form__error" id="password-error"
+                th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+        </div>
+
+        <button class="button button--primary" type="submit">Create the account</button>
+      </form>
+    </div>
+
+    <p><a th:href="@{/admin/users}">Back to the accounts</a></p>
+  </main>
+
+  <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+</html>

@@ -18,10 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Access matrix for the role-gated URL prefixes: anonymous users are sent to
- * the login page, the wrong role is denied (403), and the right role passes
- * the gate. The admin controller does not exist yet, so its "passes the
- * gate" is asserted as 404 (the request reached MVC dispatch); tighten it to
- * 200 when the admin phase lands.
+ * the login page, the wrong role is denied (403), and the right role reaches
+ * its area (200).
  *
  * <p>Named with the {@code Test} suffix (not {@code IT}) so Surefire runs it
  * as part of {@code mvn test}; this project does not use the Failsafe plugin.
@@ -102,9 +100,10 @@ class SecurityMatrixTest extends AbstractPostgresIT {
     // Admin: may pass the /admin gate; not an instructor, so denied there.
 
     @Test
-    @WithMockUser(roles = "ADMIN")
     void admin_passes_admin_gate() throws Exception {
-        mvc.perform(get("/admin/users")).andExpect(status().isNotFound());
+        mvc.perform(get("/admin/users")
+                        .with(user("matrix-admin").roles("ADMIN")))
+                .andExpect(status().isOk());
     }
 
     @Test

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Accounts — learn-dev')}"></head>
+<body>
+  <th:block th:replace="~{fragments/layout :: header('admin')}"></th:block>
+
+  <main class="site-main" id="main" tabindex="-1">
+    <p class="alert alert--success" role="status" th:if="${param.created}">
+      Instructor account created. Hand the initial password over securely;
+      the instructor can change it via "Forgot your password?".
+    </p>
+    <p class="alert alert--info" role="status" th:if="${param.archived}">
+      Account archived. The user can no longer log in.
+    </p>
+    <p class="alert alert--success" role="status" th:if="${param.reactivated}">
+      Account reactivated.
+    </p>
+
+    <h1 class="page-title">Accounts</h1>
+
+    <p>
+      <a class="button button--primary" th:href="@{/admin/users/new-instructor}">
+        Create an instructor account</a>
+    </p>
+
+    <table class="table">
+      <caption class="visually-hidden">Every account on the platform</caption>
+      <thead>
+        <tr>
+          <th scope="col">Username</th>
+          <th scope="col">Email</th>
+          <th scope="col">Roles</th>
+          <th scope="col">Status</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="account : ${accounts}">
+          <td th:text="${account.username}">username</td>
+          <td th:text="${account.email}">email</td>
+          <td th:text="${#strings.listJoin(account.roles.![roleName], ', ')}">STUDENT</td>
+          <td th:text="${account.active} ? 'Active' : 'Archived'">Active</td>
+          <td>
+            <!-- The self-archive guard lives in the service; hiding the
+                 button for the logged-in admin avoids offering a dead end. -->
+            <form th:if="${account.active && account.username != #authentication.name}"
+                  th:action="@{/admin/users/{id}/archive(id=${account.userId})}" method="post">
+              <button class="button button--ghost" type="submit">Archive
+                <span class="visually-hidden" th:text="': ' + ${account.username}"></span></button>
+            </form>
+            <form th:unless="${account.active}"
+                  th:action="@{/admin/users/{id}/reactivate(id=${account.userId})}" method="post">
+              <button class="button button--primary" type="submit">Reactivate
+                <span class="visually-hidden" th:text="': ' + ${account.username}"></span></button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+
+  <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+</html>
