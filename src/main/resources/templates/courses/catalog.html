@@ -19,6 +19,8 @@
         </h2>
         <p class="course-card__meta">
           By <span th:text="${course.instructor.username}">instructor</span>
+          <span th:if="${enrollmentByCourseId.containsKey(course.courseId)}">
+            &middot; You are enrolled</span>
         </p>
         <p th:if="${course.description}" th:text="${course.description}">
           Course description

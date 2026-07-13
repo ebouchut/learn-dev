@@ -5,6 +5,16 @@
   <th:block th:replace="~{fragments/layout :: header('courses')}"></th:block>
 
   <main class="site-main" id="main" tabindex="-1">
+    <p class="alert alert--success" role="status" th:if="${param.enrolled}">
+      You are enrolled in this course.
+    </p>
+    <p class="alert alert--info" role="status" th:if="${param.dropped}">
+      You have left this course.
+    </p>
+    <p class="alert alert--info" role="status" th:if="${param['enroll-required']}">
+      Register for the course to read its lessons.
+    </p>
+
     <h1 class="page-title" th:text="${course.title}">Course title</h1>
     <p class="course-card__meta">
       By <span th:text="${course.instructor.username}">instructor</span>
@@ -13,6 +23,18 @@
     <p th:if="${course.description}" th:text="${course.description}">
       Course description
     </p>
+
+    <!-- Enrolled means an active row: a DROPPED enrollment shows Register again. -->
+    <div th:with="active=${enrollment != null && enrollment.status.name() != 'DROPPED'}">
+      <form th:if="${!active && course.status.name() == 'PUBLISHED'}"
+            th:action="@{/courses/{id}/enroll(id=${course.courseId})}" method="post">
+        <button class="button button--primary" type="submit">Register for this course</button>
+      </form>
+      <form th:if="${active}"
+            th:action="@{/courses/{id}/drop(id=${course.courseId})}" method="post">
+        <button class="button button--ghost" type="submit">Quit this course</button>
+      </form>
+    </div>
 
     <section aria-labelledby="lessons-title">
       <h2 id="lessons-title">Lessons</h2>
