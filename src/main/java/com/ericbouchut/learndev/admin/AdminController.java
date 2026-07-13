@@ -3,10 +3,16 @@ package com.ericbouchut.learndev.admin;
 import com.ericbouchut.learndev.auth.dto.RegisterForm;
 import com.ericbouchut.learndev.auth.exception.DuplicateEmailException;
 import com.ericbouchut.learndev.auth.exception.DuplicateUsernameException;
+import com.ericbouchut.learndev.course.InstructorCourseService;
+import com.ericbouchut.learndev.course.entity.Course;
+import com.ericbouchut.learndev.course.entity.Lesson;
+import com.ericbouchut.learndev.course.repository.CourseRepository;
 import com.ericbouchut.learndev.user.entity.User;
 import com.ericbouchut.learndev.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,7 +22,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.springframework.web.server.ResponseStatusException;
+
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -31,10 +42,19 @@ public class AdminController {
 
     private final AccountAdminService accounts;
     private final UserRepository users;
+    private final CourseRepository courses;
+    private final InstructorCourseService instructorCourses;
 
-    public AdminController(AccountAdminService accounts, UserRepository users) {
+    public AdminController(
+            AccountAdminService accounts,
+            UserRepository users,
+            CourseRepository courses,
+            InstructorCourseService instructorCourses
+    ) {
         this.accounts = accounts;
         this.users = users;
+        this.courses = courses;
+        this.instructorCourses = instructorCourses;
     }
 
     /**
@@ -129,6 +149,84 @@ public class AdminController {
         accounts.reactivate(accounts.account(userId),
                 currentUser(principal), request.getRemoteAddr());
         return "redirect:/admin/users?reactivated";
+    }
+
+    /**
+     * Display every course, any status, any instructor, with its lessons
+     * (content moderation view).
+     *
+     * @param model receives the courses and their lessons
+     * @return the course moderation view name
+     */
+    @GetMapping("/courses")
+    public String courseList(Model model) {
+        List<Course> allCourses = courses.findAll(Sort.by("title"));
+        Map<Long, List<Lesson>> lessonsByCourseId = new HashMap<>();
+        for (Course course : allCourses) {
+            lessonsByCourseId.put(course.getCourseId(), instructorCourses.lessonsOf(course));
+        }
+        model.addAttribute("courses", allCourses);
+        model.addAttribute("lessonsByCourseId", lessonsByCourseId);
+        return "admin/courses";
+    }
+
+    /**
+     * Archive or restore any course, bypassing the instructor ownership
+     * rule (the lifecycle guards still apply). PRG back to the list.
+     *
+     * @param courseId  the course to transition
+     * @param action    {@code archive} or {@code restore}
+     * @param principal the logged-in admin
+     * @param request   provides the client IP for the audit trail
+     * @return a redirect to the course moderation view
+     */
+    @PostMapping("/courses/{courseId}/{action:archive|restore}")
+    public String transitionCourse(
+            @PathVariable Long courseId,
+            @PathVariable String action,
+            Principal principal,
+            HttpServletRequest request
+    ) {
+        User admin = currentUser(principal);
+        Course course = courses.findById(courseId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if ("archive".equals(action)) {
+            instructorCourses.archive(course, admin, request.getRemoteAddr());
+        } else {
+            instructorCourses.restore(course, admin, request.getRemoteAddr());
+        }
+        return "redirect:/admin/courses?" + action + "d";
+    }
+
+    /**
+     * Archive or restore any lesson of a course, bypassing the instructor
+     * ownership rule. PRG back to the list.
+     *
+     * @param courseId  the course the lesson belongs to
+     * @param lessonId  the lesson to transition
+     * @param action    {@code archive} or {@code restore}
+     * @param principal the logged-in admin
+     * @param request   provides the client IP for the audit trail
+     * @return a redirect to the course moderation view
+     */
+    @PostMapping("/courses/{courseId}/lessons/{lessonId}/{action:archive|restore}")
+    public String transitionLesson(
+            @PathVariable Long courseId,
+            @PathVariable Long lessonId,
+            @PathVariable String action,
+            Principal principal,
+            HttpServletRequest request
+    ) {
+        User admin = currentUser(principal);
+        Course course = courses.findById(courseId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Lesson lesson = instructorCourses.ownedLesson(course, lessonId);
+        if ("archive".equals(action)) {
+            instructorCourses.archiveLesson(lesson, admin, request.getRemoteAddr());
+        } else {
+            instructorCourses.restoreLesson(lesson, admin, request.getRemoteAddr());
+        }
+        return "redirect:/admin/courses?lesson-" + action + "d";
     }
 
     private User currentUser(Principal principal) {

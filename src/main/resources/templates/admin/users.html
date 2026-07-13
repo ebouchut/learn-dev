@@ -15,12 +15,16 @@
     <p class="alert alert--success" role="status" th:if="${param.reactivated}">
       Account reactivated.
     </p>
+    <p class="alert alert--success" role="status" th:if="${param.unlocked}">
+      Account unlocked.
+    </p>
 
     <h1 class="page-title">Accounts</h1>
 
     <p>
       <a class="button button--primary" th:href="@{/admin/users/new-instructor}">
         Create an instructor account</a>
+      <a class="button button--ghost" th:href="@{/admin/courses}">Course moderation</a>
     </p>
 
     <table class="table">
