@@ -160,6 +160,9 @@ public class PasswordResetService {
 
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setPasswordChangedAt(OffsetDateTime.now());
+        // Completing a reset proves control of the mailbox: clear any
+        // failed-login lock along with the counter.
+        LoginAttemptListener.unlock(user);
         token.setUsedAt(OffsetDateTime.now());
         // Strict single active link: consuming one kills the others too.
         invalidateOutstandingTokens(user);

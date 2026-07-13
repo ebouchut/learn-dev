@@ -43,8 +43,13 @@
           <td th:text="${account.username}">username</td>
           <td th:text="${account.email}">email</td>
           <td th:text="${#strings.listJoin(account.roles.![roleName], ', ')}">STUDENT</td>
-          <td th:text="${account.active} ? 'Active' : 'Archived'">Active</td>
+          <td th:text="${!account.active} ? 'Archived' : (${account.locked} ? 'Locked' : 'Active')">Active</td>
           <td>
+            <form class="form--inline" th:if="${account.locked}"
+                  th:action="@{/admin/users/{id}/unlock(id=${account.userId})}" method="post">
+              <button class="button button--primary" type="submit">Unlock
+                <span class="visually-hidden" th:text="': ' + ${account.username}"></span></button>
+            </form>
             <!-- The self-archive guard lives in the service; hiding the
                  button for the logged-in admin avoids offering a dead end. -->
             <form th:if="${account.active && account.username != #authentication.name}"

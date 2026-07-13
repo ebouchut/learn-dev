@@ -1,6 +1,7 @@
 package com.ericbouchut.learndev.admin;
 
 import com.ericbouchut.learndev.audit.AuditService;
+import com.ericbouchut.learndev.auth.LoginAttemptListener;
 import com.ericbouchut.learndev.auth.RegistrationService;
 import com.ericbouchut.learndev.auth.dto.RegisterForm;
 import com.ericbouchut.learndev.user.entity.User;
@@ -78,6 +79,15 @@ public class AccountAdminService {
         users.save(target);
         audit.record("ACCOUNT_ARCHIVED", actor, ipAddress, true,
                 "Account " + target.getUserId() + " archived");
+    }
+
+    /** Unlock an account locked by failed logins and reset its counter. */
+    @Transactional
+    public void unlock(User target, User actor, String ipAddress) {
+        LoginAttemptListener.unlock(target);
+        users.save(target);
+        audit.record("ACCOUNT_UNLOCKED", actor, ipAddress, true,
+                "Account " + target.getUserId() + " unlocked");
     }
 
     /** Reactivate an archived account: the user can log in again. */
