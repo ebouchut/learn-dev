@@ -3,6 +3,7 @@ package com.ericbouchut.learndev.course;
 import com.ericbouchut.learndev.course.entity.Course;
 import com.ericbouchut.learndev.course.entity.Enrollment;
 import com.ericbouchut.learndev.course.entity.EnrollmentStatus;
+import com.ericbouchut.learndev.course.entity.Lesson;
 import com.ericbouchut.learndev.user.entity.User;
 import com.ericbouchut.learndev.user.repository.UserRepository;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -28,15 +30,18 @@ public class CourseController {
 
     private final CourseService courseService;
     private final EnrollmentService enrollmentService;
+    private final MarkdownRenderer markdownRenderer;
     private final UserRepository users;
 
     public CourseController(
             CourseService courseService,
             EnrollmentService enrollmentService,
+            MarkdownRenderer markdownRenderer,
             UserRepository users
     ) {
         this.courseService = courseService;
         this.enrollmentService = enrollmentService;
+        this.markdownRenderer = markdownRenderer;
         this.users = users;
     }
 
@@ -112,6 +117,56 @@ public class CourseController {
         Course course = courseService.visibleCourse(courseId, student);
         enrollmentService.drop(student, course);
         return "redirect:/courses/" + courseId + "?dropped";
+    }
+
+    /**
+     * Display one published lesson to an enrolled student, with the lesson
+     * Markdown rendered to sanitized HTML and previous/next links in
+     * reading order. A student who is not actively enrolled is sent back to
+     * the course page with an {@code enroll-required} hint instead of a 403:
+     * the Register button is right there.
+     *
+     * @param courseId  the course the lesson belongs to
+     * @param lessonId  the lesson to read
+     * @param principal the logged-in student
+     * @param model     receives the course, lesson, rendered content, and
+     *                  the previous/next lessons (null at the edges)
+     * @return the lesson view name, or a redirect when not enrolled
+     */
+    @GetMapping("/courses/{courseId}/lessons/{lessonId}")
+    public String lesson(
+            @PathVariable Long courseId,
+            @PathVariable Long lessonId,
+            Principal principal,
+            Model model
+    ) {
+        User student = currentUser(principal);
+        Course course = courseService.visibleCourse(courseId, student);
+        boolean activelyEnrolled = enrollmentService.enrollmentFor(student, course)
+                .filter(e -> e.getStatus() != EnrollmentStatus.DROPPED)
+                .isPresent();
+        if (!activelyEnrolled) {
+            return "redirect:/courses/" + courseId + "?enroll-required";
+        }
+        Lesson lesson = courseService.publishedLesson(course, lessonId);
+        List<Lesson> lessons = courseService.publishedLessons(course);
+        int index = indexOf(lessons, lesson);
+        model.addAttribute("course", course);
+        model.addAttribute("lesson", lesson);
+        model.addAttribute("contentHtml", markdownRenderer.render(lesson.getContentMarkdown()));
+        model.addAttribute("previousLesson", index > 0 ? lessons.get(index - 1) : null);
+        model.addAttribute("nextLesson",
+                index < lessons.size() - 1 ? lessons.get(index + 1) : null);
+        return "courses/lesson";
+    }
+
+    private static int indexOf(List<Lesson> lessons, Lesson lesson) {
+        for (int i = 0; i < lessons.size(); i++) {
+            if (lessons.get(i).getLessonId().equals(lesson.getLessonId())) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private User currentUser(Principal principal) {

@@ -40,7 +40,10 @@
       <h2 id="lessons-title">Lessons</h2>
       <p th:if="${#lists.isEmpty(lessons)}">No lesson is published yet.</p>
       <ol th:unless="${#lists.isEmpty(lessons)}">
-        <li th:each="lesson : ${lessons}" th:text="${lesson.title}">Lesson title</li>
+        <li th:each="lesson : ${lessons}">
+          <a th:href="@{/courses/{c}/lessons/{l}(c=${course.courseId}, l=${lesson.lessonId})}"
+             th:text="${lesson.title}">Lesson title</a>
+        </li>
       </ol>
     </section>
 
