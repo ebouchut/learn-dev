@@ -23,8 +23,13 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
   the (user, course) pair, with a status following the student course
   progress lifecycle (see CONTRIBUTING.md).
 - **Lesson** — An individual piece of content within a course.
+- **Publish** — Make a draft course or lesson visible to students. The first
+  publication of a course stamps its `published_at` date; archiving then
+  restoring it does not reset that date.
 - **Role** — A named set of permissions granted to a user. The seeded roles are
   `STUDENT`, `INSTRUCTOR`, and `ADMIN`; `SUPERADMIN` is planned (see issue #65).
+- **Roster** — The list of students enrolled in a course, with their enrollment
+  status and dates; instructors can remove a student from it.
 
 ## Authentication and security
 
