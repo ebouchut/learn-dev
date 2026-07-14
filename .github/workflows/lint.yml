@@ -1,12 +1,17 @@
 name: Lint
 
-# Code quality check (Checkstyle, project ruleset) on every PR and push.
+# Code quality check (Checkstyle, project ruleset) and API reference (Javadoc)
+# on every PR and push.
 # Deliberately non-blocking on day one for an existing codebase:
 #   - checkstyle:checkstyle only generates a report, it never fails on violations
 #   - continue-on-error keeps even setup errors from gating merges
-# The report is uploaded as a workflow artifact for review, and on pushes
-# to dev it is also published to GitHub Pages (rendered HTML, no download):
+# Both reports are uploaded as workflow artifacts for review, and on pushes
+# to dev they are also published to GitHub Pages (rendered HTML, no download):
 # the official upload-pages-artifact + deploy-pages flow creates no commits.
+# The Javadoc rides along in this workflow on purpose: GitHub Pages serves a
+# single site artifact, so a second workflow deploying Pages would clobber the
+# Checkstyle report. Each report lives under its own path (/checkstyle/,
+# /javadoc/), so new reports can join without breaking existing URLs.
 # Tighten later: switch the goal to checkstyle:check and set
 # failOnViolation to true in pom.xml, then drop continue-on-error.
 
@@ -38,25 +43,43 @@ jobs:
           name: checkstyle-report
           path: |
             target/reports/
+            !target/reports/apidocs/
             target/checkstyle-result.xml
-      # On pushes to dev, publish the HTML report online via GitHub Pages.
-      # The site is namespaced under /checkstyle/ so future reports can
-      # join under their own paths without breaking URLs.
+      # The API reference, rendered from the Javadoc comments. Never blocking:
+      # the job already runs with continue-on-error.
+      - name: Generate the Javadoc
+        run: ./mvnw -B -ntp javadoc:javadoc
+      - name: Upload the Javadoc
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: javadoc
+          path: target/reports/apidocs/
+      # On pushes to dev, publish both HTML reports online via GitHub Pages.
+      # Each one gets its own path so they can be linked (and joined by
+      # future reports) without breaking URLs.
       - name: Assemble the Pages site
         if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
         run: |
-          mkdir -p _site/checkstyle
+          mkdir -p _site/checkstyle _site/javadoc
+          cp -R target/reports/apidocs/. _site/javadoc/
+          # Everything in target/reports/ except the Javadoc is Checkstyle's
+          # (checkstyle.html plus its css/fonts/images assets).
+          rm -rf target/reports/apidocs
           cp -R target/reports/. _site/checkstyle/
           cat > _site/index.html <<'HTML'
           <!DOCTYPE html>
           <html lang="en">
             <head>
               <meta charset="UTF-8">
-              <meta http-equiv="refresh" content="0; url=checkstyle/checkstyle.html">
               <title>learn-dev reports</title>
             </head>
             <body>
-              <p><a href="checkstyle/checkstyle.html">Checkstyle report</a></p>
+              <h1>learn-dev reports</h1>
+              <ul>
+                <li><a href="javadoc/index.html">API reference (Javadoc)</a></li>
+                <li><a href="checkstyle/checkstyle.html">Checkstyle report</a></li>
+              </ul>
             </body>
           </html>
           HTML
