@@ -452,6 +452,11 @@ visit [this link](https://github.com/users/ebouchut/projects/7/views/3).
 
 ## Documentation
 
+- [API reference (Javadoc)](https://www.ericbouchut.com/learn-dev/javadoc/index.html) —
+  the code reference rendered from the Javadoc comments, republished from `dev` on
+  each merge by the [Lint workflow](https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml);
+  build it locally with `make javadoc` (see
+  [CONTRIBUTING](CONTRIBUTING.md#generating-the-documentation)).
 - [ARCHITECTURE.md](ARCHITECTURE.md) — how the pieces fit together (layers, request flow, authentication, data, testing).
 - [docs/tech-stacks.md](docs/tech-stacks.md) — catalogue of tools, languages, and frameworks with versions used in the project.
 - [GLOSSARY.md](GLOSSARY.md) — definitions of the domain and technical terms used across the project

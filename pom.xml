@@ -56,6 +56,7 @@
         <java.version>21</java.version>
         <spring-dotenv.version>5.1.0</spring-dotenv.version>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
         <commonmark.version>0.24.0</commonmark.version>
         <jsoup.version>1.21.1</jsoup.version>
@@ -249,6 +250,30 @@
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>false</failsOnError>
                     <failOnViolation>false</failOnViolation>
+                </configuration>
+            </plugin>
+            <!--
+                API reference: Javadoc.
+                No <executions>, so the plugin stays inert during the normal
+                build (test, package) and only runs when invoked explicitly:
+                    make javadoc   (or ./mvnw javadoc:javadoc)
+                It writes the browsable API docs to target/reports/apidocs/.
+                doclint=all,-missing validates the syntax, the HTML and the
+                {@link} references, but does not complain about missing
+                @param/@return: Checkstyle already reports missing Javadoc
+                (MissingJavadocType/Method), and per ADR-0011 those quality
+                checks report rather than block.
+                Note: Javadoc reads the SOURCE, so the getters and setters
+                that Lombok generates (@Getter/@Setter) do not appear in the
+                output. Delombok is deliberately not added.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <doclint>all,-missing</doclint>
+                    <notimestamp>true</notimestamp>
                 </configuration>
             </plugin>
             <!--
