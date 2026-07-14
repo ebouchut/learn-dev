@@ -33,7 +33,12 @@ Read the [Prerequisites section of the README](README.md#prerequisites).
 
 #### Code Documentation
 
-The code reference documentation is not yet available and will be added to this repository in a future update.
+The code reference (Javadoc) is
+[published on GitHub Pages](https://www.ericbouchut.com/learn-dev/javadoc/index.html),
+rebuilt from `dev` on every merge. To read the reference for the branch you
+are working on, build it locally with `make javadoc` and open
+`target/reports/apidocs/index.html` (see
+[Generating the Documentation](#generating-the-documentation)).
 
 #### Architecture Decision Records (ADR)
 
@@ -1205,7 +1210,97 @@ coverage is reported, not yet enforced as a threshold).
 
 ### Generating the Documentation
 
-TODO: Explain how to generate the documentation
+Most of the documentation is **hand-written** and lives in the repository as
+Markdown: [README](README.md), [ARCHITECTURE](ARCHITECTURE.md), the
+[ADRs](docs/adr/README.md), the [glossaries](GLOSSARY.md), the
+[accessibility docs](docs/rgaa.md), and the plans and design notes under
+[docs/](docs/). Those you simply edit.
+
+The rest is **generated** from the code or from the database. This section is
+about those:
+
+| Documentation | Generate with | Output |
+|---|---|---|
+| API reference (Javadoc) | `make javadoc` | `target/reports/apidocs/index.html` |
+| Database diagrams (MCD, MLD, MPD) | `make diagrams` | `docs/database/merise/` |
+| Code quality report (Checkstyle) | `./mvnw -B checkstyle:checkstyle` | `target/reports/checkstyle.html` |
+| Test coverage report (JaCoCo) | `make test` | `target/site/jacoco/index.html` |
+
+The Checkstyle and JaCoCo reports have their own sections above
+([Checkstyle Report](#checkstyle-report),
+[Test Coverage Report (JaCoCo)](#test-coverage-report-jacoco)).
+The two below do not.
+
+#### API Reference (Javadoc)
+
+The API reference is the Java documentation rendered from the `/** */`
+comments in `src/main/java`. It holds one page per `public` or `protected`
+type of `com.ericbouchut.learndev` (classes, interfaces, enums, records) with
+its methods, their parameters and return values, plus package summaries, the
+class hierarchy, and a searchable index.
+
+- **Locally**: generate it, then open it:
+  ```bash
+  make javadoc
+  open target/reports/apidocs/index.html  # macOS
+  ```
+  This runs `./mvnw javadoc:javadoc`. The plugin is bound to no build phase,
+  so an ordinary `make test` or `./mvnw package` never pays the cost of
+  building it.
+- **Online**: the reference built from `dev` is
+  [published on GitHub Pages](https://www.ericbouchut.com/learn-dev/javadoc/index.html)
+  (republished by the Lint workflow on each merge to `dev`, without any commit).
+- **On CI**: every [Lint workflow run](https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml)
+  uploads it as the **`javadoc`** artifact.
+  Open a run, scroll to its **Artifacts** section, download the archive,
+  and open `index.html` inside it.
+
+Two things are worth knowing when reading the output:
+
+- **The Lombok accessors are absent.** Javadoc reads the *source*, and the
+  getters and setters of the entities are generated at compile time by Lombok
+  (`@Getter`/`@Setter`), so they never reach it. The fields they expose are
+  documented; the accessors are not.
+- **Javadoc does not police missing documentation.** It runs with
+  `doclint=all,-missing`: it fails on a malformed comment, broken HTML, or a
+  dangling `{@link}`, but says nothing about an absent `@param` or `@return`.
+  Reporting *missing* Javadoc is Checkstyle's job (`MissingJavadocType`,
+  `MissingJavadocMethod`), and per
+  [ADR-0011](docs/adr/0011-start-ci-quality-checks-as-advisory-reports.md)
+  it reports rather than blocks.
+
+#### Database Diagrams (Merise)
+
+The three Merise models are generated: the **MCD** and the **MLD** from the
+Mocodo source `docs/database/merise/learn-dev.mcd`, and the **MPD** from the
+**live database** with [tbls](https://github.com/k1LoW/tbls). What they write
+under `docs/database/merise/` is committed to the repository but remains a
+build artifact: **edit the `.mcd` source, never the generated `.svg`/`.md`.**
+
+Prerequisites (see the
+[Python Setup section of the README](README.md#python-setup)): a Python
+virtual environment with `mocodo >= 4.3.3`, and `tbls` on the `PATH`. The MPD
+additionally needs the database **running** (`docker compose up -d`), because
+tbls reads the real schema; its connection string is built from `.env`.
+
+```bash
+make mcd       # MCD → learn-dev.svg
+make mld       # MLD → learn-dev_mld.svg
+make mpd       # MPD → mpd/ (one page per table, read from the live database)
+make diagrams  # all three
+make clean     # remove the generated MCD/MLD files
+```
+
+After a schema change, regenerate the diagrams and check that the model and
+the migrations still agree:
+
+```bash
+make check-schema-drift  # fails if a Liquibase column is missing from the MCD
+```
+
+CI runs that same check on every change to a migration or to the MCD
+([Schema drift workflow](https://github.com/ebouchut/learn-dev/actions/workflows/schema-drift.yml)),
+so a diagram that has drifted from the schema blocks the merge.
 
 
 ### Running the CI Locally
