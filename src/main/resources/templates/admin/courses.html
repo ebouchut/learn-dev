@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Course moderation — learn-dev')}"></head>
+<body>
+  <th:block th:replace="~{fragments/layout :: header('admin')}"></th:block>
+
+  <main class="site-main" id="main" tabindex="-1">
+    <p class="alert alert--info" role="status" th:if="${param.archived}">
+      Course archived. It is no longer listed in the catalogue.
+    </p>
+    <p class="alert alert--success" role="status" th:if="${param.restored}">
+      Course restored as a draft.
+    </p>
+    <p class="alert alert--info" role="status" th:if="${param['lesson-archived']}">
+      Lesson archived.
+    </p>
+    <p class="alert alert--success" role="status" th:if="${param['lesson-restored']}">
+      Lesson restored as a draft.
+    </p>
+
+    <h1 class="page-title">Course moderation</h1>
+
+    <p th:if="${#lists.isEmpty(courses)}">There is no course yet.</p>
+
+    <ul class="course-list" th:unless="${#lists.isEmpty(courses)}">
+      <li class="course-card" th:each="course : ${courses}">
+        <h2 class="course-card__title" th:text="${course.title}">Course title</h2>
+        <p class="course-card__meta">
+          By <span th:text="${course.instructor.username}">instructor</span>
+          &middot; <span th:text="${#strings.capitalize(#strings.toLowerCase(course.status.name()))}">Draft</span>
+        </p>
+
+        <div>
+          <form class="form--inline" th:if="${course.status.name() != 'ARCHIVED'}"
+                th:action="@{/admin/courses/{id}/archive(id=${course.courseId})}" method="post">
+            <button class="button button--ghost" type="submit">Archive
+              <span class="visually-hidden" th:text="': ' + ${course.title}"></span></button>
+          </form>
+          <form class="form--inline" th:if="${course.status.name() == 'ARCHIVED'}"
+                th:action="@{/admin/courses/{id}/restore(id=${course.courseId})}" method="post">
+            <button class="button button--primary" type="submit">Restore as draft
+              <span class="visually-hidden" th:text="': ' + ${course.title}"></span></button>
+          </form>
+        </div>
+
+        <ol th:with="courseLessons=${lessonsByCourseId.get(course.courseId)}"
+            th:unless="${#lists.isEmpty(courseLessons)}">
+          <li th:each="lesson : ${courseLessons}">
+            <span th:text="${lesson.title}">Lesson title</span>
+            <span class="course-card__meta"
+                  th:text="'(' + ${#strings.capitalize(#strings.toLowerCase(lesson.status.name()))} + ')'">(Draft)</span>
+            <form class="form--inline" th:if="${lesson.status.name() != 'ARCHIVED'}"
+                  th:action="@{/admin/courses/{c}/lessons/{l}/archive(c=${course.courseId}, l=${lesson.lessonId})}"
+                  method="post">
+              <button class="button button--ghost" type="submit">Archive
+                <span class="visually-hidden" th:text="': ' + ${lesson.title}"></span></button>
+            </form>
+            <form class="form--inline" th:if="${lesson.status.name() == 'ARCHIVED'}"
+                  th:action="@{/admin/courses/{c}/lessons/{l}/restore(c=${course.courseId}, l=${lesson.lessonId})}"
+                  method="post">
+              <button class="button button--ghost" type="submit">Restore
+                <span class="visually-hidden" th:text="': ' + ${lesson.title}"></span></button>
+            </form>
+          </li>
+        </ol>
+      </li>
+    </ul>
+  </main>
+
+  <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+</html>
