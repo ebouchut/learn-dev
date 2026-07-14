@@ -133,6 +133,26 @@ public class AdminController {
     }
 
     /**
+     * Unlock an account locked by failed logins (PRG with an
+     * {@code unlocked} flag).
+     *
+     * @param userId    the account to unlock
+     * @param principal the logged-in admin
+     * @param request   provides the client IP for the audit trail
+     * @return a redirect to the account list
+     */
+    @PostMapping("/users/{userId}/unlock")
+    public String unlockAccount(
+            @PathVariable UUID userId,
+            Principal principal,
+            HttpServletRequest request
+    ) {
+        accounts.unlock(accounts.account(userId),
+                currentUser(principal), request.getRemoteAddr());
+        return "redirect:/admin/users?unlocked";
+    }
+
+    /**
      * Reactivate an account (PRG with a {@code reactivated} flag).
      *
      * @param userId    the account to reactivate
