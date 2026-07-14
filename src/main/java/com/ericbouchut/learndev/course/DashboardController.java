@@ -43,6 +43,7 @@ public class DashboardController {
                 enrollmentService.myEnrollments(user).stream()
                         .filter(e -> e.getStatus() != EnrollmentStatus.DROPPED)
                         .toList());
+        model.addAttribute("emailVerified", user.isVerified());
         return "dashboard";
     }
 }

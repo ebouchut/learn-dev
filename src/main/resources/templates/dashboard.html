@@ -6,6 +6,16 @@
   <th:block th:replace="~{fragments/layout :: header('dashboard')}"></th:block>
 
   <main class="site-main" id="main" tabindex="-1">
+    <p class="alert alert--success" role="status" th:if="${param['verification-sent']}">
+      Verification email sent. Check your inbox.
+    </p>
+    <div class="alert alert--info" role="status" th:unless="${emailVerified}">
+      Your email address is not verified yet. Open the link we sent you, or
+      <form class="form--inline" th:action="@{/auth/verify/resend}" method="post">
+        <button class="button button--ghost" type="submit">resend the email</button>
+      </form>
+    </div>
+
     <h1 class="page-title">
       Welcome back, <strong sec:authentication="name">user</strong> 👋
     </h1>
