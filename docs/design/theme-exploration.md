@@ -87,7 +87,10 @@ Catppuccin, closer to a reading environment than an interactive app.
 Every swatch below comes straight from the theme stylesheets;
 GitHub renders these Mermaid blocks with the real colors, so no
 image is committed. Values are the shipped (contrast-adjusted)
-tokens, not the upstream palettes.
+tokens, not the upstream palettes. A standalone HTML version for
+the dossier, with each token's computed contrast ratio and AA
+verdict, lives in [palettes.html](palettes.html) (same generator,
+`--html` flag).
 
 ### Catppuccin Latte (light)
 
