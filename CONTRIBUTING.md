@@ -667,44 +667,57 @@ physical model (MPD) with all the database details.
 
 ##### MCD Diagram
 
-*MCD* stands for 🇫🇷 **Modèle Conceptuel de Données** (Conceptual Data Model).
-The *MCD diagram* is part of the *Merise* methodology and shows the entities 
-and relationships without the (database) technical details.
+*MCD* stands for 🇫🇷 **Modèle Conceptuel de Données** in French (Conceptual Data Model).
 
-It is a high-level **business-domain** oriented diagram  
-that shows the **data (entities)**, their **relationships** and **cardinalities**,
-with **NO technical and implementation details**.
+It is a high-level **business-domain**-oriented diagram 
+shared with an ideally co-created by domain experts (i.e., the customer)
+and application developers.   
+It shows the entities with their properties and identifiers, 
+as well as the relationships and their cardinalities.  
+However, it does **NOT show technical or implementation database details**. 
+
+- Each **entity** (rectangular box) includes the names of its **properties**.  
+  The property that identifies an entity (**identifier**) is **underlined**.
+- Each **relationship** (rounded box) is linked to the entities it connects, 
+  with the cardinality on each side:
+    - **`1,N`**: one or more,
+    - **`0,N`**: zero or more,
+    - **`1,1`**: exactly one.
+
+In the **MCD** and **MLD**, the **names of entities and relationships** are **UPPERCASED**.
+
 
 > ![MCD](docs/database/merise/learn-dev.svg)
 
 
 ##### MLD Diagram
 
-*MLD* stands for 🇫🇷 **Modèle Logique de Données** (Logical Data Model).
-The **MLD diagram** is part of the _Merise_ methodology and shows 
+*MLD* stands for 🇫🇷 **Modèle Logique de Données** (Logical Data Model).  
+The **MLD diagram** is part of the *Merise* methodology and shows 
 the *Logical Data Model*.
 
-It shows the relational structure in a database-agnostic way.
+It shows the relational structure in a database-agnostic way.  
 It is a transformed version of the MCD where:
 - entities become tables, 
-- `1..N` relationships become foreign keys,
-- `N..N` relationships become junction tables,
-- `1..1` relationships become foreign keys.      
+- `1,N` relationships become foreign keys,
+- `N,N` relationships become junction tables,
+- `1,1` relationships become foreign keys.      
 
-The *MLD* is shared with domain experts and application developers.  
-*Domain experts* can verify that the relational structure accurately reflects 
-the business.       
-*Application developers* can then start creating the entities.
+A **foreign key** is marked by the **`#`** (hash sign) next to a property name (e.g., `#user_id`).
 
 > ![MLD](docs/database/merise/learn-dev_mld.svg)
 
 > [!NOTE]
 > **Regenerating the MLD:** the single source of truth is the conceptual MCD
-> (`learn-dev.mcd`). Run `make mld`: it auto-derives the logical model
-> (`learn-dev_mld.mcd`, via mocodo's `-t diagram`), emits the relational schema
-> as Markdown (`learn-dev_mld.md`, via `-t mld`), and renders the diagram
-> (`learn-dev_mld.svg`). The `learn-dev_mld.*` files are **generated artifacts —
-> do not edit them by hand**; edit only `learn-dev.mcd`.
+> ([`learn-dev.mcd`](https://github.com/ebouchut/learn-dev/blob/dev/docs/database/merise/learn-dev.mcd)).    
+> Run [`make mld`](https://github.com/ebouchut/learn-dev/blob/35eab7bdefa94b280791f15ede8b04aac95064c0/Makefile#L78-L82):
+> - auto-derives the logical model (`learn-dev_mld.mcd`, via mocodo's `-t diagram`),
+> - emits the relational schema as Markdown (`learn-dev_mld.md`, via `-t mld`), 
+> - renders the diagram (`learn-dev_mld.svg`).
+>
+> The `learn-dev_mld.*` files are **generated artifacts —
+> do not edit them by hand**.  
+> Edit only [`learn-dev.mcd`](https://github.com/ebouchut/learn-dev/blob/dev/docs/database/merise/learn-dev.mcd).
 
 
 ##### MPD Diagram
