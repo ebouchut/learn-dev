@@ -13,7 +13,7 @@
     <article>
       <h1 class="page-title" th:text="${lesson.title}">Lesson title</h1>
       <!-- contentHtml is rendered and sanitized by MarkdownRenderer (ADR-0013). -->
-      <div th:utext="${contentHtml}">Lesson content</div>
+      <div class="lesson-content" th:utext="${contentHtml}">Lesson content</div>
     </article>
 
     <nav aria-label="Lesson">

@@ -590,3 +590,85 @@ textarea.form__input {
 .reveal--2 { animation-delay: 100ms; }
 .reveal--3 { animation-delay: 200ms; }
 .reveal--4 { animation-delay: 300ms; }
+
+/* ---------- Lesson content (rendered Markdown) ---------- */
+
+/* The lesson body is instructor Markdown rendered to sanitized HTML
+   (ADR-0013): the sanitizer strips class attributes, so BEM classes can
+   never reach this markup. Element selectors scoped under the wrapper
+   are the only way to style it (deliberate, documented BEM exception). */
+
+.lesson-content h2,
+.lesson-content h3,
+.lesson-content h4 {
+  margin-top: var(--space-5);
+}
+
+/* The global heading rule stops at h3; demoted headings go down to h6. */
+.lesson-content h4,
+.lesson-content h5,
+.lesson-content h6 {
+  font-family: var(--font-display);
+  line-height: 1.2;
+  margin: var(--space-4) 0 var(--space-3);
+  letter-spacing: -0.015em;
+}
+
+.lesson-content ul,
+.lesson-content ol {
+  margin: 0 0 var(--space-3);
+  padding-left: var(--space-5);
+}
+
+.lesson-content li {
+  margin-bottom: var(--space-1);
+}
+
+.lesson-content pre {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  margin: 0 0 var(--space-3);
+  overflow-x: auto; /* long lines scroll inside the block, no page scroll (RGAA 10.11) */
+}
+
+/* Inline code gets a chip; code inside pre relies on the block styling. */
+.lesson-content :not(pre) > code {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.1em 0.35em;
+}
+
+.lesson-content blockquote {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-1) var(--space-4);
+  border-left: 4px solid var(--color-primary);
+  color: var(--color-text-muted);
+}
+
+.lesson-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 var(--space-3);
+}
+
+.lesson-content th,
+.lesson-content td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+}
+
+.lesson-content th {
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+  background: var(--color-surface);
+}
+
+.lesson-content hr {
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  margin: var(--space-5) 0;
+}
