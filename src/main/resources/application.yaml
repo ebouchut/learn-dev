@@ -1,3 +1,14 @@
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# spring-dotenv (.env loader)
+# The external secrets manager that generates .env prepends a localized
+# header, and some locales wrap the header's documentation URL onto a
+# bare, uncommented line, which dotenv-java rejects as a "Malformed
+# entry" and aborts startup. Tolerate non KEY=VALUE lines: real
+# variables still load, bogus header lines are skipped.
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+springdotenv:
+  ignore-if-malformed: true
+
 spring:
   application:
     name: learn-dev
