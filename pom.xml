@@ -135,6 +135,13 @@
             <artifactId>commonmark</artifactId>
             <version>${commonmark.version}</version>
         </dependency>
+        <!-- GFM pipe tables in lesson Markdown (extension added on demand,
+             as ADR-0013 planned) -->
+        <dependency>
+            <groupId>org.commonmark</groupId>
+            <artifactId>commonmark-ext-gfm-tables</artifactId>
+            <version>${commonmark.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>

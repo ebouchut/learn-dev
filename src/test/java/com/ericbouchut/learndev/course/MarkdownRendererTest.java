@@ -97,6 +97,20 @@ class MarkdownRendererTest {
     }
 
     @Test
+    void renders_gfm_pipe_tables_as_html_tables() {
+        // Arrange (Given): a GFM pipe table (extension, not core CommonMark)
+        String markdown = "| Concept | Example |\n|---------|---------|\n| Array | int[] |";
+
+        // Act (When)
+        String html = markdownRenderer.render(markdown);
+
+        // Assert (Then): a real table survives rendering and sanitization
+        assertThat(html).contains("<table>");
+        assertThat(html).contains("<th>Concept</th>");
+        assertThat(html).contains("<td>Array</td>");
+    }
+
+    @Test
     void blank_content_renders_to_an_empty_string() {
         assertThat(markdownRenderer.render("")).isEmpty();
         assertThat(markdownRenderer.render("   ")).isEmpty();

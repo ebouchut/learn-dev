@@ -1,6 +1,8 @@
 package com.ericbouchut.learndev.course;
 
 import com.ericbouchut.learndev.common.config.CacheConfig;
+import org.commonmark.Extension;
+import org.commonmark.ext.gfm.tables.TablesExtension;
 import org.commonmark.node.Heading;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
@@ -17,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,8 +43,15 @@ public class MarkdownRenderer {
     private static final Safelist SAFELIST = Safelist.relaxed()
             .addAttributes("code", "class");
 
-    private final Parser parser = Parser.builder().build();
+    // GFM pipe tables, added on demand as ADR-0013 planned; the sanitizer
+    // allowlist already lets table markup through (Safelist.relaxed).
+    private static final List<Extension> EXTENSIONS = List.of(TablesExtension.create());
+
+    private final Parser parser = Parser.builder()
+            .extensions(EXTENSIONS)
+            .build();
     private final HtmlRenderer renderer = HtmlRenderer.builder()
+            .extensions(EXTENSIONS)
             .nodeRendererFactory(DemotedHeadingRenderer::new)
             .build();
 
