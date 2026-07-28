@@ -33,7 +33,12 @@ Upstream palette: the official [Catppuccin palette](https://github.com/catppucci
 AnuPpuccin, an Obsidian skin of Catppuccin (GPL-3.0); no AnuPpuccin code or
 values are used, only the official Catppuccin palette, so the theme is named
 after its real upstream. Pastel accents are designed for dark backgrounds,
-so three light-mode values are darkened to pass 4.5:1.
+so five light-mode values are darkened to pass 4.5:1. Accent tokens render
+as text not only on `--color-bg` but also on the slightly darker
+`--color-surface` (site header, flash alerts, cards); the surface is the
+binding constraint, so "adjusted" values are tuned to clear 4.5:1 there
+(the ratio noted in parentheses is what the replaced value scored on its
+binding background).
 
 | Token | Light (Latte) | Ratio on bg | Dark (Mocha) | Ratio on bg |
 |---|---|---|---|---|
@@ -42,12 +47,12 @@ so three light-mode values are darkened to pass 4.5:1.
 | `--color-border` | `#ccd0da` (surface0) | | `#313244` (surface0) | |
 | `--color-text` | `#4c4f69` (text) | 7.06:1 | `#cdd6f4` (text) | 11.34:1 |
 | `--color-text-muted` | `#5c5f77` (subtext1) | 5.53:1 | `#bac2de` (subtext1) | 9.26:1 |
-| `--color-primary` | `#8839ef` (mauve) | 4.79:1 | `#cba6f7` (mauve) | 8.07:1 |
+| `--color-primary` | `#8230e8` **(adjusted** from mauve `#8839ef`, 4.45:1 on surface**)** | 5.25:1 | `#cba6f7` (mauve) | 8.07:1 |
 | `--color-link` | `#1a5cd7` **(adjusted** from blue `#1e66f5`, 4.34:1**)** | 5.22:1 | `#89b4fa` (blue) | 7.79:1 |
-| `--color-success` | `#2f7a1f` **(adjusted** from green `#40a02b`, 2.96:1**)** | 4.73:1 | `#a6e3a1` (green) | 11.03:1 |
+| `--color-success` | `#2c721d` **(adjusted** from green `#40a02b`, 2.96:1**)** | 5.26:1 | `#a6e3a1` (green) | 11.03:1 |
 | `--color-warning` | `#8f5b08` **(adjusted** from yellow `#df8e1d`, 2.31:1**)** | 5.06:1 | `#f9e2af` (yellow) | 12.91:1 |
-| `--color-error` | `#d20f39` (red) | 4.80:1 | `#f38ba8` (red) | 7.08:1 |
-| `--color-on-primary` (button text) | `#ffffff` | 5.41:1 on primary | `#11111b` (crust) | 9.23:1 on primary |
+| `--color-error` | `#c80e37` **(adjusted** from red `#d20f39`, 4.46:1 on surface**)** | 5.20:1 | `#f38ba8` (red) | 7.08:1 |
+| `--color-on-primary` (button text) | `#ffffff` | 5.94:1 on primary | `#11111b` (crust) | 9.23:1 on primary |
 | `--color-focus` | `#1e66f5` (blue, 3:1 UI requirement) | | `#89b4fa` (blue) | |
 
 Character: fresh, slightly playful pastels; the mauve primary gives the
@@ -97,8 +102,8 @@ verdict, lives in [palettes.html](palettes.html) (same generator,
 ```mermaid
 flowchart LR
   t0["bg<br/>#eff1f5"] ~~~ t1["surface<br/>#e6e9ef"] ~~~ t2["surface-deep<br/>#dce0e8"] ~~~ t3["border<br/>#ccd0da"] ~~~ t4["text<br/>#4c4f69"]
-  t5["text-muted<br/>#5c5f77"] ~~~ t6["primary<br/>#8839ef"] ~~~ t7["on-primary<br/>#ffffff"] ~~~ t8["link<br/>#1a5cd7"] ~~~ t9["success<br/>#2f7a1f"]
-  t10["warning<br/>#8f5b08"] ~~~ t11["error<br/>#d20f39"] ~~~ t12["focus<br/>#1e66f5"] ~~~ t13["primary-soft<br/>#eadcfd"] ~~~ t14["code-bg<br/>#1e1e2e"]
+  t5["text-muted<br/>#5c5f77"] ~~~ t6["primary<br/>#8230e8"] ~~~ t7["on-primary<br/>#ffffff"] ~~~ t8["link<br/>#1a5cd7"] ~~~ t9["success<br/>#2c721d"]
+  t10["warning<br/>#8f5b08"] ~~~ t11["error<br/>#c80e37"] ~~~ t12["focus<br/>#1e66f5"] ~~~ t13["primary-soft<br/>#eadcfd"] ~~~ t14["code-bg<br/>#1e1e2e"]
   t15["code-text<br/>#cdd6f4"] ~~~ t16["code-keyword<br/>#cba6f7"] ~~~ t17["code-string<br/>#a6e3a1"] ~~~ t18["code-function<br/>#89b4fa"] ~~~ t19["code-comment<br/>#9399b2"]
   style t0 fill:#eff1f5,stroke:#7f7f7f,color:#11111b
   style t1 fill:#e6e9ef,stroke:#7f7f7f,color:#11111b
@@ -106,12 +111,12 @@ flowchart LR
   style t3 fill:#ccd0da,stroke:#7f7f7f,color:#11111b
   style t4 fill:#4c4f69,stroke:#7f7f7f,color:#f8f8f8
   style t5 fill:#5c5f77,stroke:#7f7f7f,color:#f8f8f8
-  style t6 fill:#8839ef,stroke:#7f7f7f,color:#f8f8f8
+  style t6 fill:#8230e8,stroke:#7f7f7f,color:#f8f8f8
   style t7 fill:#ffffff,stroke:#7f7f7f,color:#11111b
   style t8 fill:#1a5cd7,stroke:#7f7f7f,color:#f8f8f8
-  style t9 fill:#2f7a1f,stroke:#7f7f7f,color:#f8f8f8
+  style t9 fill:#2c721d,stroke:#7f7f7f,color:#f8f8f8
   style t10 fill:#8f5b08,stroke:#7f7f7f,color:#f8f8f8
-  style t11 fill:#d20f39,stroke:#7f7f7f,color:#f8f8f8
+  style t11 fill:#c80e37,stroke:#7f7f7f,color:#f8f8f8
   style t12 fill:#1e66f5,stroke:#7f7f7f,color:#f8f8f8
   style t13 fill:#eadcfd,stroke:#7f7f7f,color:#11111b
   style t14 fill:#1e1e2e,stroke:#7f7f7f,color:#f8f8f8
