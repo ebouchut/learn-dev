@@ -67,6 +67,15 @@ class SecurityMatrixTest extends AbstractPostgresIT {
         }
     }
 
+    @Test
+    void anonymous_can_fetch_the_root_level_icons() throws Exception {
+        // Browsers request tab and bookmark icons outside any page context,
+        // often before login; a redirect here breaks the tab icon.
+        for (String path : new String[] {"/favicon.svg", "/favicon.ico", "/apple-touch-icon.png"}) {
+            mvc.perform(get(path)).andExpect(status().isOk());
+        }
+    }
+
     // Student: may pass the /courses gate, denied on instructor and admin.
 
     @Test

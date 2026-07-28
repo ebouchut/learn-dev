@@ -15,6 +15,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title th:text="${title}">learn-dev</title>
+  <!-- ico first with a fixed size so SVG-capable browsers prefer the
+       scalable icon; the SVG adapts to dark tabs by itself. -->
+  <link rel="icon" th:href="@{/favicon.ico}" sizes="32x32">
+  <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+  <link rel="apple-touch-icon" th:href="@{/apple-touch-icon.png}">
   <link rel="stylesheet" th:href="@{/css/fonts.css}">
   <link rel="stylesheet" th:href="@{/css/theme-catppuccin.css}">
   <link rel="stylesheet" th:href="@{/css/base.css}">
