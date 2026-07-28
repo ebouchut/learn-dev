@@ -21,10 +21,12 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -55,6 +57,14 @@ public class MarkdownRenderer {
     private static final Pattern ALERT_DIV_CLASS =
             Pattern.compile("^markdown-alert markdown-alert-[a-z]+$");
     private static final Pattern ALERT_TYPE_VALUE = Pattern.compile("^[a-z]+$");
+
+    // A level-1 ATX heading per CommonMark: up to 3 leading spaces, one #,
+    // whitespace, the text, then an optional closing run of #s that only
+    // counts when preceded by whitespace.
+    private static final Pattern LEADING_ATX_TITLE =
+            Pattern.compile("^ {0,3}#\\s+(.*?)(?:\\s+#+)?\\s*$");
+    private static final Pattern SETEXT_H1_UNDERLINE =
+            Pattern.compile("^ {0,3}=+\\s*$");
 
     /**
      * Alert types accepted in lessons: the five GFM types keep their GitHub
@@ -144,6 +154,45 @@ public class MarkdownRenderer {
             }
         }
         return doc.body().html();
+    }
+
+    /**
+     * Drops a leading level-1 heading whose text repeats the lesson title,
+     * so the common habit of starting a document with its title does not
+     * render as an {@code h2} duplicating the page {@code h1} (see
+     * ADR-0014). Handles the ATX form ({@code # Title}, closing {@code #}s
+     * tolerated) and the setext form ({@code Title} underlined with
+     * {@code =}); the match is trimmed and case-insensitive. Callers apply
+     * this BEFORE {@link #render(String)} so the render cache stays keyed
+     * by the exact rendered input; the stored Markdown is never modified.
+     */
+    public static String stripLeadingTitleHeading(String markdown, String title) {
+        if (markdown == null || title == null || title.isBlank()) {
+            return markdown;
+        }
+        String[] lines = markdown.split("\n", -1);
+        int first = 0;
+        while (first < lines.length && lines[first].isBlank()) {
+            first++;
+        }
+        if (first == lines.length) {
+            return markdown;
+        }
+        String wanted = title.strip();
+        Matcher atx = LEADING_ATX_TITLE.matcher(lines[first]);
+        if (atx.matches() && atx.group(1).strip().equalsIgnoreCase(wanted)) {
+            return joinFrom(lines, first + 1);
+        }
+        if (first + 1 < lines.length
+                && lines[first].strip().equalsIgnoreCase(wanted)
+                && SETEXT_H1_UNDERLINE.matcher(lines[first + 1]).matches()) {
+            return joinFrom(lines, first + 2);
+        }
+        return markdown;
+    }
+
+    private static String joinFrom(String[] lines, int from) {
+        return String.join("\n", Arrays.asList(lines).subList(from, lines.length));
     }
 
     /**

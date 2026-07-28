@@ -122,9 +122,11 @@ public class CourseController {
     /**
      * Display one published lesson to an enrolled student, with the lesson
      * Markdown rendered to sanitized HTML and previous/next links in
-     * reading order. A student who is not actively enrolled is sent back to
-     * the course page with an {@code enroll-required} hint instead of a 403:
-     * the Register button is right there.
+     * reading order. A leading heading that repeats the lesson title is
+     * skipped: the page already renders the title as its {@code h1}. A
+     * student who is not actively enrolled is sent back to the course page
+     * with an {@code enroll-required} hint instead of a 403: the Register
+     * button is right there.
      *
      * @param courseId  the course the lesson belongs to
      * @param lessonId  the lesson to read
@@ -153,7 +155,9 @@ public class CourseController {
         int index = indexOf(lessons, lesson);
         model.addAttribute("course", course);
         model.addAttribute("lesson", lesson);
-        model.addAttribute("contentHtml", markdownRenderer.render(lesson.getContentMarkdown()));
+        model.addAttribute("contentHtml", markdownRenderer.render(
+                MarkdownRenderer.stripLeadingTitleHeading(
+                        lesson.getContentMarkdown(), lesson.getTitle())));
         model.addAttribute("previousLesson", index > 0 ? lessons.get(index - 1) : null);
         model.addAttribute("nextLesson",
                 index < lessons.size() - 1 ? lessons.get(index + 1) : null);

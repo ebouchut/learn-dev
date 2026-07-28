@@ -55,6 +55,12 @@ audits exist to catch.
 - Trade-off: the rendered HTML no longer matches what a generic CommonMark
   renderer would produce for the same source (a surprise when comparing with
   an external preview)
+- Amendment (2026-07-28, issue #117): demotion turns the common habit of
+  starting a document with its own title into an `h2` that duplicates the
+  page `h1`, so the lesson route now strips a leading level-1 heading whose
+  text equals the lesson title before rendering
+  (`MarkdownRenderer.stripLeadingTitleHeading`); the stored Markdown is
+  untouched
 
 ## Pros and Cons of the Options
 

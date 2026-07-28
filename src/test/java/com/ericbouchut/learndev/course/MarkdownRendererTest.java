@@ -197,4 +197,85 @@ class MarkdownRendererTest {
         assertThat(markdownRenderer.render("")).isEmpty();
         assertThat(markdownRenderer.render("   ")).isEmpty();
     }
+
+    @Test
+    void strips_a_leading_atx_heading_matching_the_lesson_title() {
+        // Arrange (Given): the common habit of repeating the title on top,
+        // with leading blank lines, odd spacing, and a closing hash run
+        String markdown = "\n\n#  Java Basics  ##\n\nFirst paragraph.";
+
+        // Act (When)
+        String stripped = MarkdownRenderer.stripLeadingTitleHeading(markdown, "Java Basics");
+
+        // Assert (Then): only the duplicate heading is gone
+        assertThat(stripped).doesNotContain("Java Basics");
+        assertThat(stripped).contains("First paragraph.");
+    }
+
+    @Test
+    void strips_a_matching_title_heading_case_insensitively() {
+        String markdown = "# JAVA BASICS\nBody.";
+
+        String stripped = MarkdownRenderer.stripLeadingTitleHeading(markdown, "Java Basics");
+
+        assertThat(stripped).isEqualTo("Body.");
+    }
+
+    @Test
+    void strips_a_leading_setext_heading_matching_the_lesson_title() {
+        // Arrange (Given): the setext form, title underlined with equals
+        String markdown = "Java Basics\n====\n\nBody.";
+
+        // Act (When)
+        String stripped = MarkdownRenderer.stripLeadingTitleHeading(markdown, "Java Basics");
+
+        // Assert (Then)
+        assertThat(stripped).isEqualTo("\nBody.");
+    }
+
+    @Test
+    void keeps_a_leading_heading_with_a_different_text() {
+        // Arrange (Given): a real first heading, not a title duplicate
+        String markdown = "# Introduction\nBody.";
+
+        // Act (When)
+        String stripped = MarkdownRenderer.stripLeadingTitleHeading(markdown, "Java Basics");
+
+        // Assert (Then): untouched, the author meant this heading
+        assertThat(stripped).isEqualTo(markdown);
+    }
+
+    @Test
+    void keeps_deeper_headings_even_when_they_match_the_title() {
+        // Arrange (Given): only a level-1 heading duplicates the page h1
+        String markdown = "## Java Basics\nBody.";
+
+        // Act (When)
+        String stripped = MarkdownRenderer.stripLeadingTitleHeading(markdown, "Java Basics");
+
+        // Assert (Then)
+        assertThat(stripped).isEqualTo(markdown);
+    }
+
+    @Test
+    void strips_the_title_heading_despite_windows_line_endings() {
+        // Arrange (Given): textarea submissions carry \r\n line endings,
+        // so this is what stored lesson content actually looks like
+        String markdown = "# Java Basics\r\n\r\nBody.";
+
+        // Act (When)
+        String stripped = MarkdownRenderer.stripLeadingTitleHeading(markdown, "Java Basics");
+
+        // Assert (Then): the heading goes, the \r\n rhythm stays
+        assertThat(stripped).isEqualTo("\r\nBody.");
+    }
+
+    @Test
+    void title_stripping_tolerates_null_and_blank_input() {
+        assertThat(MarkdownRenderer.stripLeadingTitleHeading(null, "T")).isNull();
+        assertThat(MarkdownRenderer.stripLeadingTitleHeading("# T\nBody.", null))
+                .isEqualTo("# T\nBody.");
+        assertThat(MarkdownRenderer.stripLeadingTitleHeading("# T\nBody.", "  "))
+                .isEqualTo("# T\nBody.");
+    }
 }

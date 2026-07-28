@@ -38,6 +38,8 @@
         <label class="form__label" for="contentMarkdown">Content (Markdown)</label>
         <span class="form__hint" id="contentMarkdown-hint">
           Markdown is rendered and sanitized before students see it.
+          The lesson page already shows the title above the content,
+          so there is no need to repeat it as a first heading.
         </span>
         <textarea class="form__input" th:field="*{contentMarkdown}" rows="14"
                   aria-describedby="contentMarkdown-hint"></textarea>
