@@ -40,6 +40,9 @@
           Markdown is rendered and sanitized before students see it.
           The lesson page already shows the title above the content,
           so there is no need to repeat it as a first heading.
+          Fenced <code>```mermaid</code> blocks render as diagrams;
+          add an <code>accTitle:</code> line inside so screen readers
+          announce a title for the diagram.
         </span>
         <textarea class="form__input" th:field="*{contentMarkdown}" rows="14"
                   aria-describedby="contentMarkdown-hint"></textarea>

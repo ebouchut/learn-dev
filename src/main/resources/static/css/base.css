@@ -802,3 +802,26 @@ textarea.form__input {
   --alert-accent: var(--color-text-muted);
   --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z%22%2F%3E%3C%2Fsvg%3E");
 }
+
+/* Mermaid diagrams (ADR-0016): the figure and toggle are injected
+   client-side by lesson-mermaid.js, so BEM classes are fine here,
+   unlike the sanitized Markdown output styled above. */
+.lesson-content .lesson-mermaid {
+  margin: 0 0 var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow-x: auto; /* wide diagrams scroll here, never the page (RGAA 10.11) */
+  text-align: center;
+}
+
+.lesson-content .lesson-mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.lesson-content .lesson-mermaid__toggle {
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-sm);
+}

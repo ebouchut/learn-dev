@@ -29,5 +29,11 @@
   </main>
 
   <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+
+  <!-- Client-side diagram rendering (ADR-0016): lesson-mermaid.js loads
+       the Mermaid bundle below only when the lesson contains a
+       mermaid fence. Version also pinned in pom.xml (mermaid.version). -->
+  <script defer th:src="@{/js/lesson-mermaid.js}"
+          th:attr="data-mermaid-src=@{/webjars/mermaid/11.15.0/dist/mermaid.min.js}"></script>
 </body>
 </html>
