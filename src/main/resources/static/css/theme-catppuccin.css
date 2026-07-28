@@ -3,8 +3,10 @@
   Palette: Catppuccin Latte (light) / Mocha (dark), official values from
   https://github.com/catppuccin/palette
   Values marked "adjusted" are darkened from upstream to reach the WCAG 2.1
-  AA contrast ratio of 4.5:1 on --color-bg; every pair is documented with
-  its computed ratio in docs/design/theme-exploration.md
+  AA contrast ratio of 4.5:1 on every background they sit on as text:
+  --color-bg AND the slightly darker --color-surface (header, flash alerts,
+  cards). Every pair is documented with its computed ratio in
+  docs/design/theme-exploration.md
   Both themes define the SAME token names: switching theme = swapping the
   <link> to theme-soft-paper.css (no runtime switcher in v1).
 */
@@ -19,12 +21,12 @@
   --color-border: #ccd0da;        /* surface0 */
   --color-text: #4c4f69;          /* text, 7.06:1 */
   --color-text-muted: #5c5f77;    /* subtext1, 5.53:1 */
-  --color-primary: #8839ef;       /* mauve, 4.79:1 */
-  --color-on-primary: #ffffff;    /* 5.41:1 on primary */
-  --color-link: #1a5cd7;          /* adjusted from blue #1e66f5, 5.22:1 */
-  --color-success: #2f7a1f;       /* adjusted from green #40a02b, 4.73:1 */
-  --color-warning: #8f5b08;       /* adjusted from yellow #df8e1d, 5.06:1 */
-  --color-error: #d20f39;         /* red, 4.80:1 */
+  --color-primary: #8230e8;       /* adjusted from mauve #8839ef, 4.88:1 on surface */
+  --color-on-primary: #ffffff;    /* 5.94:1 on primary */
+  --color-link: #1a5cd7;          /* adjusted from blue #1e66f5, 4.86:1 on surface */
+  --color-success: #2c721d;       /* adjusted from green #40a02b, 4.89:1 on surface */
+  --color-warning: #8f5b08;       /* adjusted from yellow #df8e1d, 4.71:1 on surface */
+  --color-error: #c80e37;         /* adjusted from red #d20f39, 4.83:1 on surface */
   --color-focus: #1e66f5;         /* blue, UI 3:1 requirement */
   --color-primary-soft: #eadcfd;  /* decorative wash behind hero art */
 
