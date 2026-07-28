@@ -142,6 +142,13 @@
             <artifactId>commonmark-ext-gfm-tables</artifactId>
             <version>${commonmark.version}</version>
         </dependency>
+        <!-- GFM/Obsidian-style alerts ("> [!NOTE]") in lesson Markdown;
+             needs commonmark >= 0.29.0 for custom types, titles, nesting -->
+        <dependency>
+            <groupId>org.commonmark</groupId>
+            <artifactId>commonmark-ext-gfm-alerts</artifactId>
+            <version>${commonmark.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>

@@ -2,6 +2,7 @@ package com.ericbouchut.learndev.course;
 
 import com.ericbouchut.learndev.common.config.CacheConfig;
 import org.commonmark.Extension;
+import org.commonmark.ext.gfm.alerts.AlertsExtension;
 import org.commonmark.ext.gfm.tables.TablesExtension;
 import org.commonmark.node.Heading;
 import org.commonmark.node.Node;
@@ -11,6 +12,8 @@ import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.renderer.html.HtmlWriter;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.safety.Safelist;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Converts lesson Markdown to HTML that is safe to serve.
@@ -39,13 +43,64 @@ import java.util.Set;
 public class MarkdownRenderer {
 
     // The class attribute on code keeps CommonMark's language-* hints
-    // (```java fences) available to a future syntax highlighter.
+    // (```java fences) available to a future syntax highlighter. The div/p
+    // class and data-alert-type attributes exist only for alerts, and
+    // stripUnknownAlertClasses() rejects every value the alert renderer
+    // does not emit, so raw HTML in a lesson cannot borrow site classes.
     private static final Safelist SAFELIST = Safelist.relaxed()
-            .addAttributes("code", "class");
+            .addAttributes("code", "class")
+            .addAttributes("div", "class", "data-alert-type")
+            .addAttributes("p", "class");
 
-    // GFM pipe tables, added on demand as ADR-0013 planned; the sanitizer
-    // allowlist already lets table markup through (Safelist.relaxed).
-    private static final List<Extension> EXTENSIONS = List.of(TablesExtension.create());
+    private static final Pattern ALERT_DIV_CLASS =
+            Pattern.compile("^markdown-alert markdown-alert-[a-z]+$");
+    private static final Pattern ALERT_TYPE_VALUE = Pattern.compile("^[a-z]+$");
+
+    /**
+     * Alert types accepted in lessons: the five GFM types keep their GitHub
+     * identity (IMPORTANT and CAUTION stay standalone), and the rest of the
+     * Obsidian callout set joins them, aliases included, each with its
+     * default title.
+     */
+    private static final Map<String, String> ALERT_TYPES = Map.ofEntries(
+            Map.entry("NOTE", "Note"),
+            Map.entry("TIP", "Tip"),
+            Map.entry("IMPORTANT", "Important"),
+            Map.entry("WARNING", "Warning"),
+            Map.entry("CAUTION", "Caution"),
+            Map.entry("ABSTRACT", "Abstract"),
+            Map.entry("SUMMARY", "Summary"),
+            Map.entry("TLDR", "TL;DR"),
+            Map.entry("INFO", "Info"),
+            Map.entry("TODO", "Todo"),
+            Map.entry("HINT", "Hint"),
+            Map.entry("SUCCESS", "Success"),
+            Map.entry("CHECK", "Check"),
+            Map.entry("DONE", "Done"),
+            Map.entry("QUESTION", "Question"),
+            Map.entry("HELP", "Help"),
+            Map.entry("FAQ", "FAQ"),
+            Map.entry("ATTENTION", "Attention"),
+            Map.entry("FAILURE", "Failure"),
+            Map.entry("FAIL", "Fail"),
+            Map.entry("MISSING", "Missing"),
+            Map.entry("DANGER", "Danger"),
+            Map.entry("ERROR", "Error"),
+            Map.entry("BUG", "Bug"),
+            Map.entry("EXAMPLE", "Example"),
+            Map.entry("QUOTE", "Quote"),
+            Map.entry("CITE", "Cite"));
+
+    // GFM pipe tables and alerts, added on demand as ADR-0013 planned; the
+    // sanitizer allowlist lets table markup through (Safelist.relaxed) and
+    // is extended above for the alert markup.
+    private static final List<Extension> EXTENSIONS = List.of(
+            TablesExtension.create(),
+            AlertsExtension.builder()
+                    .setAllowedTypes(ALERT_TYPES)
+                    .allowCustomTitles(true)
+                    .allowNestedAlerts(true)
+                    .build());
 
     private final Parser parser = Parser.builder()
             .extensions(EXTENSIONS)
@@ -62,7 +117,33 @@ public class MarkdownRenderer {
             return "";
         }
         String html = renderer.render(parser.parse(markdown));
-        return Jsoup.clean(html, SAFELIST);
+        return stripUnknownAlertClasses(Jsoup.clean(html, SAFELIST));
+    }
+
+    /**
+     * Second sanitization pass: the allowlist admits {@code class} on
+     * {@code div}/{@code p} so alerts stay styleable, but only the exact
+     * values the alert renderer emits may survive. Anything else (for
+     * example raw HTML trying to wear a site class like {@code alert} or
+     * {@code site-header}) is stripped.
+     */
+    private static String stripUnknownAlertClasses(String html) {
+        Document doc = Jsoup.parseBodyFragment(html);
+        doc.outputSettings().prettyPrint(false);
+        for (Element div : doc.select("div[class], div[data-alert-type]")) {
+            if (!ALERT_DIV_CLASS.matcher(div.className()).matches()) {
+                div.removeAttr("class");
+            }
+            if (!ALERT_TYPE_VALUE.matcher(div.attr("data-alert-type")).matches()) {
+                div.removeAttr("data-alert-type");
+            }
+        }
+        for (Element p : doc.select("p[class]")) {
+            if (!"markdown-alert-title".equals(p.className())) {
+                p.removeAttr("class");
+            }
+        }
+        return doc.body().html();
     }
 
     /**

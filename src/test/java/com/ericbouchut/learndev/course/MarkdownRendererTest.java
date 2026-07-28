@@ -111,6 +111,88 @@ class MarkdownRendererTest {
     }
 
     @Test
+    void renders_gfm_alerts_with_type_class_and_default_title() {
+        // Arrange (Given): a GFM alert, uppercase marker as GitHub writes it
+        String markdown = "> [!NOTE]\n> Take notes.";
+
+        // Act (When)
+        String html = markdownRenderer.render(markdown);
+
+        // Assert (Then): the typed div and the default title survive
+        // rendering and both sanitization passes
+        assertThat(html).contains("markdown-alert markdown-alert-note");
+        assertThat(html).contains("<p class=\"markdown-alert-title\">Note</p>");
+        assertThat(html).contains("Take notes.");
+    }
+
+    @Test
+    void renders_obsidian_callout_types_and_aliases_case_insensitively() {
+        // Arrange (Given): an Obsidian-only type and a lowercase alias whose
+        // default title is not just the capitalized marker
+        String markdown = "> [!bug]\n> Off by one.\n\n> [!tldr]\n> Short version.";
+
+        // Act (When)
+        String html = markdownRenderer.render(markdown);
+
+        // Assert (Then): both resolve to their registered type and title
+        assertThat(html).contains("markdown-alert markdown-alert-bug");
+        assertThat(html).contains("<p class=\"markdown-alert-title\">Bug</p>");
+        assertThat(html).contains("markdown-alert markdown-alert-tldr");
+        assertThat(html).contains("<p class=\"markdown-alert-title\">TL;DR</p>");
+    }
+
+    @Test
+    void renders_custom_alert_titles_with_inline_formatting() {
+        // Arrange (Given): a title after the marker (allowCustomTitles)
+        String markdown = "> [!tip] Use **bold** wisely\n> Body text.";
+
+        // Act (When)
+        String html = markdownRenderer.render(markdown);
+
+        // Assert (Then): the custom title replaces the default and its
+        // inline Markdown is rendered
+        assertThat(html).contains("markdown-alert markdown-alert-tip");
+        assertThat(html).contains("Use <strong>bold</strong> wisely");
+        assertThat(html).doesNotContain(">Tip</p>");
+    }
+
+    @Test
+    void renders_alerts_nested_inside_alerts() {
+        // Arrange (Given): a warning inside a note (allowNestedAlerts);
+        // without nesting the inner marker would degrade to literal text
+        String markdown = "> [!note]\n> Outer.\n> > [!warning]\n> > Inner.";
+
+        // Act (When)
+        String html = markdownRenderer.render(markdown);
+
+        // Assert (Then): both alerts materialize as typed divs
+        assertThat(html).contains("markdown-alert markdown-alert-note");
+        assertThat(html).contains("markdown-alert markdown-alert-warning");
+        assertThat(html).doesNotContain("[!warning]");
+    }
+
+    @Test
+    void strips_class_spoofing_while_alert_classes_survive() {
+        // Arrange (Given): raw HTML trying to wear site classes next to a
+        // genuine alert; the allowlist admits class on div/p, so only the
+        // second sanitization pass stands between this and the stylesheet
+        String markdown = "<div class=\"site-header\">spoof</div>\n\n"
+                + "<p class=\"alert alert--error\">spoof</p>\n\n"
+                + "<div data-alert-type=\"NOT_A_TYPE\">spoof</div>\n\n"
+                + "> [!note]\n> Legit.";
+
+        // Act (When)
+        String html = markdownRenderer.render(markdown);
+
+        // Assert (Then): spoofed values are stripped, alert markup is kept
+        assertThat(html).doesNotContain("site-header");
+        assertThat(html).doesNotContain("alert--error");
+        assertThat(html).doesNotContain("NOT_A_TYPE");
+        assertThat(html).contains("markdown-alert markdown-alert-note");
+        assertThat(html).contains("<p class=\"markdown-alert-title\">Note</p>");
+    }
+
+    @Test
     void blank_content_renders_to_an_empty_string() {
         assertThat(markdownRenderer.render("")).isEmpty();
         assertThat(markdownRenderer.render("   ")).isEmpty();
