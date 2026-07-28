@@ -45,3 +45,4 @@ NNNN-short-title-in-kebab-case.md
 | [0012](0012-publish-test-coverage-to-codecov.md) | Publish test coverage to Codecov | accepted |
 | [0013](0013-render-lesson-markdown-with-commonmark-java.md) | Render lesson Markdown with commonmark-java, sanitized by jsoup | accepted |
 | [0014](0014-demote-markdown-headings-in-lesson-rendering.md) | Demote Markdown headings one level in lesson rendering | accepted |
+| [0015](0015-render-lesson-alerts-with-commonmark-alerts.md) | Render lesson alerts with the commonmark-java alerts extension | accepted |

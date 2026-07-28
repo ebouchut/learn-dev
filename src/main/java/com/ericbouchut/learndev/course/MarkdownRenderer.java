@@ -1,6 +1,9 @@
 package com.ericbouchut.learndev.course;
 
 import com.ericbouchut.learndev.common.config.CacheConfig;
+import org.commonmark.Extension;
+import org.commonmark.ext.gfm.alerts.AlertsExtension;
+import org.commonmark.ext.gfm.tables.TablesExtension;
 import org.commonmark.node.Heading;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
@@ -9,6 +12,8 @@ import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.renderer.html.HtmlWriter;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.safety.Safelist;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -16,9 +21,13 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Converts lesson Markdown to HTML that is safe to serve.
@@ -36,12 +45,78 @@ import java.util.Set;
 public class MarkdownRenderer {
 
     // The class attribute on code keeps CommonMark's language-* hints
-    // (```java fences) available to a future syntax highlighter.
+    // (```java fences) available to a future syntax highlighter. The div/p
+    // class and data-alert-type attributes exist only for alerts, and
+    // stripUnknownAlertClasses() rejects every value the alert renderer
+    // does not emit, so raw HTML in a lesson cannot borrow site classes.
     private static final Safelist SAFELIST = Safelist.relaxed()
-            .addAttributes("code", "class");
+            .addAttributes("code", "class")
+            .addAttributes("div", "class", "data-alert-type")
+            .addAttributes("p", "class");
 
-    private final Parser parser = Parser.builder().build();
+    private static final Pattern ALERT_DIV_CLASS =
+            Pattern.compile("^markdown-alert markdown-alert-[a-z]+$");
+    private static final Pattern ALERT_TYPE_VALUE = Pattern.compile("^[a-z]+$");
+
+    // A level-1 ATX heading per CommonMark: up to 3 leading spaces, one #,
+    // whitespace, the text, then an optional closing run of #s that only
+    // counts when preceded by whitespace.
+    private static final Pattern LEADING_ATX_TITLE =
+            Pattern.compile("^ {0,3}#\\s+(.*?)(?:\\s+#+)?\\s*$");
+    private static final Pattern SETEXT_H1_UNDERLINE =
+            Pattern.compile("^ {0,3}=+\\s*$");
+
+    /**
+     * Alert types accepted in lessons: the five GFM types keep their GitHub
+     * identity (IMPORTANT and CAUTION stay standalone), and the rest of the
+     * Obsidian callout set joins them, aliases included, each with its
+     * default title.
+     */
+    private static final Map<String, String> ALERT_TYPES = Map.ofEntries(
+            Map.entry("NOTE", "Note"),
+            Map.entry("TIP", "Tip"),
+            Map.entry("IMPORTANT", "Important"),
+            Map.entry("WARNING", "Warning"),
+            Map.entry("CAUTION", "Caution"),
+            Map.entry("ABSTRACT", "Abstract"),
+            Map.entry("SUMMARY", "Summary"),
+            Map.entry("TLDR", "TL;DR"),
+            Map.entry("INFO", "Info"),
+            Map.entry("TODO", "Todo"),
+            Map.entry("HINT", "Hint"),
+            Map.entry("SUCCESS", "Success"),
+            Map.entry("CHECK", "Check"),
+            Map.entry("DONE", "Done"),
+            Map.entry("QUESTION", "Question"),
+            Map.entry("HELP", "Help"),
+            Map.entry("FAQ", "FAQ"),
+            Map.entry("ATTENTION", "Attention"),
+            Map.entry("FAILURE", "Failure"),
+            Map.entry("FAIL", "Fail"),
+            Map.entry("MISSING", "Missing"),
+            Map.entry("DANGER", "Danger"),
+            Map.entry("ERROR", "Error"),
+            Map.entry("BUG", "Bug"),
+            Map.entry("EXAMPLE", "Example"),
+            Map.entry("QUOTE", "Quote"),
+            Map.entry("CITE", "Cite"));
+
+    // GFM pipe tables and alerts, added on demand as ADR-0013 planned; the
+    // sanitizer allowlist lets table markup through (Safelist.relaxed) and
+    // is extended above for the alert markup.
+    private static final List<Extension> EXTENSIONS = List.of(
+            TablesExtension.create(),
+            AlertsExtension.builder()
+                    .setAllowedTypes(ALERT_TYPES)
+                    .allowCustomTitles(true)
+                    .allowNestedAlerts(true)
+                    .build());
+
+    private final Parser parser = Parser.builder()
+            .extensions(EXTENSIONS)
+            .build();
     private final HtmlRenderer renderer = HtmlRenderer.builder()
+            .extensions(EXTENSIONS)
             .nodeRendererFactory(DemotedHeadingRenderer::new)
             .build();
 
@@ -52,7 +127,72 @@ public class MarkdownRenderer {
             return "";
         }
         String html = renderer.render(parser.parse(markdown));
-        return Jsoup.clean(html, SAFELIST);
+        return stripUnknownAlertClasses(Jsoup.clean(html, SAFELIST));
+    }
+
+    /**
+     * Second sanitization pass: the allowlist admits {@code class} on
+     * {@code div}/{@code p} so alerts stay styleable, but only the exact
+     * values the alert renderer emits may survive. Anything else (for
+     * example raw HTML trying to wear a site class like {@code alert} or
+     * {@code site-header}) is stripped.
+     */
+    private static String stripUnknownAlertClasses(String html) {
+        Document doc = Jsoup.parseBodyFragment(html);
+        doc.outputSettings().prettyPrint(false);
+        for (Element div : doc.select("div[class], div[data-alert-type]")) {
+            if (!ALERT_DIV_CLASS.matcher(div.className()).matches()) {
+                div.removeAttr("class");
+            }
+            if (!ALERT_TYPE_VALUE.matcher(div.attr("data-alert-type")).matches()) {
+                div.removeAttr("data-alert-type");
+            }
+        }
+        for (Element p : doc.select("p[class]")) {
+            if (!"markdown-alert-title".equals(p.className())) {
+                p.removeAttr("class");
+            }
+        }
+        return doc.body().html();
+    }
+
+    /**
+     * Drops a leading level-1 heading whose text repeats the lesson title,
+     * so the common habit of starting a document with its title does not
+     * render as an {@code h2} duplicating the page {@code h1} (see
+     * ADR-0014). Handles the ATX form ({@code # Title}, closing {@code #}s
+     * tolerated) and the setext form ({@code Title} underlined with
+     * {@code =}); the match is trimmed and case-insensitive. Callers apply
+     * this BEFORE {@link #render(String)} so the render cache stays keyed
+     * by the exact rendered input; the stored Markdown is never modified.
+     */
+    public static String stripLeadingTitleHeading(String markdown, String title) {
+        if (markdown == null || title == null || title.isBlank()) {
+            return markdown;
+        }
+        String[] lines = markdown.split("\n", -1);
+        int first = 0;
+        while (first < lines.length && lines[first].isBlank()) {
+            first++;
+        }
+        if (first == lines.length) {
+            return markdown;
+        }
+        String wanted = title.strip();
+        Matcher atx = LEADING_ATX_TITLE.matcher(lines[first]);
+        if (atx.matches() && atx.group(1).strip().equalsIgnoreCase(wanted)) {
+            return joinFrom(lines, first + 1);
+        }
+        if (first + 1 < lines.length
+                && lines[first].strip().equalsIgnoreCase(wanted)
+                && SETEXT_H1_UNDERLINE.matcher(lines[first + 1]).matches()) {
+            return joinFrom(lines, first + 2);
+        }
+        return markdown;
+    }
+
+    private static String joinFrom(String[] lines, int from) {
+        return String.join("\n", Arrays.asList(lines).subList(from, lines.length));
     }
 
     /**
