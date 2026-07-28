@@ -63,8 +63,10 @@ learning platform a distinctive identity without feeling corporate.
 Upstream: [nickmilo/soft-paper](https://github.com/nickmilo/soft-paper)
 (Obsidian theme). Interesting finding: Soft Paper is itself built on
 Catppuccin variables; its light palette is a custom warm paper set and its
-dark palette is essentially **Catppuccin Frappe**. Three light-mode
-semantic colors are darkened to pass 4.5:1.
+dark palette is essentially **Catppuccin Frappe**. Five light-mode
+semantic colors are darkened to pass 4.5:1, with the same surface
+constraint as Candidate A (the primary doubles as the link color here,
+so one adjustment covers both tokens).
 
 | Token | Light (paper) | Ratio on bg | Dark (Frappe) | Ratio on bg |
 |---|---|---|---|---|
@@ -73,8 +75,8 @@ semantic colors are darkened to pass 4.5:1.
 | `--color-border` | `#dcd3cb` | | `#414459` | |
 | `--color-text` | `#575279` | 5.89:1 | `#c6ceef` | 7.90:1 |
 | `--color-text-muted` | `#525252` | 6.32:1 | `#b5bddc` | 6.61:1 |
-| `--color-primary` | `#286983` | 4.94:1 | `#8caaee` | 5.34:1 |
-| `--color-link` | `#286983` | 4.94:1 | `#8caaee` | 5.34:1 |
+| `--color-primary` | `#256278` **(adjusted** from `#286983`, 4.48:1 on surface**)** | 5.49:1 | `#8caaee` | 5.34:1 |
+| `--color-link` | `#256278` **(adjusted** from `#286983`, 4.48:1 on surface**)** | 5.49:1 | `#8caaee` | 5.34:1 |
 | `--color-success` | `#2f6a4a` **(adjusted** from `#3f7d5b`, 3.96:1**)** | 5.18:1 | `#67c48f` | 5.79:1 |
 | `--color-warning` | `#7d570c` **(adjusted** from `#96690f`, 3.93:1**)** | 5.25:1 | `#c9be3e` | 6.40:1 |
 | `--color-error` | `#94425a` **(adjusted** from `#a34e63`, 4.44:1**)** | 5.34:1 | `#e78284` | 4.65:1 |
@@ -162,7 +164,7 @@ flowchart LR
 ```mermaid
 flowchart LR
   t0["bg<br/>#eee6dd"] ~~~ t1["surface<br/>#e6dbd1"] ~~~ t2["surface-deep<br/>#ddd0c6"] ~~~ t3["border<br/>#dcd3cb"] ~~~ t4["text<br/>#575279"]
-  t5["text-muted<br/>#525252"] ~~~ t6["primary<br/>#286983"] ~~~ t7["on-primary<br/>#ffffff"] ~~~ t8["link<br/>#286983"] ~~~ t9["success<br/>#2f6a4a"]
+  t5["text-muted<br/>#525252"] ~~~ t6["primary<br/>#256278"] ~~~ t7["on-primary<br/>#ffffff"] ~~~ t8["link<br/>#256278"] ~~~ t9["success<br/>#2f6a4a"]
   t10["warning<br/>#7d570c"] ~~~ t11["error<br/>#94425a"] ~~~ t12["focus<br/>#286983"] ~~~ t13["primary-soft<br/>#dfe9ec"] ~~~ t14["code-bg<br/>#303446"]
   t15["code-text<br/>#c6ceef"] ~~~ t16["code-keyword<br/>#bb93d6"] ~~~ t17["code-string<br/>#67c48f"] ~~~ t18["code-function<br/>#8caaee"] ~~~ t19["code-comment<br/>#838ba7"]
   style t0 fill:#eee6dd,stroke:#7f7f7f,color:#11111b
@@ -171,9 +173,9 @@ flowchart LR
   style t3 fill:#dcd3cb,stroke:#7f7f7f,color:#11111b
   style t4 fill:#575279,stroke:#7f7f7f,color:#f8f8f8
   style t5 fill:#525252,stroke:#7f7f7f,color:#f8f8f8
-  style t6 fill:#286983,stroke:#7f7f7f,color:#f8f8f8
+  style t6 fill:#256278,stroke:#7f7f7f,color:#f8f8f8
   style t7 fill:#ffffff,stroke:#7f7f7f,color:#11111b
-  style t8 fill:#286983,stroke:#7f7f7f,color:#f8f8f8
+  style t8 fill:#256278,stroke:#7f7f7f,color:#f8f8f8
   style t9 fill:#2f6a4a,stroke:#7f7f7f,color:#f8f8f8
   style t10 fill:#7d570c,stroke:#7f7f7f,color:#f8f8f8
   style t11 fill:#94425a,stroke:#7f7f7f,color:#f8f8f8
