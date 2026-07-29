@@ -37,11 +37,10 @@ and [Thymeleaf](https://en.wikipedia.org/wiki/Thymeleaf) frontend.
 
 - Language: Java 21 
 - Frameworks: 
-  - Java Framework used to build (Web) Applications and REST endpoints.
-    - [Spring Boot](https://spring.io/projects/spring-boot) 3.x:
-    - Thymeleaf
+  - [Spring Boot](https://spring.io/projects/spring-boot) 3.x: a Java Framework used to build (Web) Applications (and REST endpoints)
+  - [Thymeleaf](https://www.thymeleaf.org/index.html) a server-side Java template engine for Web applications
 -  Authentication and authorization framework:
-  - [Spring Security](https://spring.io/projects/spring-security):
+  - [Spring Security](https://spring.io/projects/spring-security) 6.5.x: an authentication and access-control framework
 - Databases:
   - [PostgreSQL](https://www.postgresql.org/about/) version 17 (relational core)
   - [MongoDB](https://www.mongodb.com/) version 8, provisioned (Docker) for
@@ -52,7 +51,7 @@ and [Thymeleaf](https://en.wikipedia.org/wiki/Thymeleaf) frontend.
   - [Maven](https://maven.apache.org/what-is-maven.html)
 - Containerization:
   - [Podman](https://en.wikipedia.org/wiki/Podman) (preferred over [Docker](https://en.wikipedia.org/wiki/Docker_(software))) 
-    to containerize parts of the application as container images that can run as autonomous containers. 
+    to containerize parts of the application as container images that can run as autonomous containers 
 
 
 ### Frontend

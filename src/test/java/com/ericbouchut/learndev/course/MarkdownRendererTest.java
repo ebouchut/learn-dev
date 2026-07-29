@@ -193,6 +193,23 @@ class MarkdownRendererTest {
     }
 
     @Test
+    void preserves_mermaid_fences_for_client_side_rendering() {
+        // Arrange (Given): a mermaid fence; the server never renders
+        // diagrams, the browser does (ADR-0016), so the language class and
+        // the source must survive sanitization and no SVG may appear here
+        String markdown = "```mermaid\nflowchart LR\n  accTitle: Flow\n  A --> B\n```";
+
+        // Act (When)
+        String html = markdownRenderer.render(markdown);
+
+        // Assert (Then): the client-side contract holds
+        assertThat(html).contains("<code class=\"language-mermaid\">");
+        assertThat(html).contains("flowchart LR");
+        assertThat(html).contains("accTitle: Flow");
+        assertThat(html).doesNotContain("<svg");
+    }
+
+    @Test
     void blank_content_renders_to_an_empty_string() {
         assertThat(markdownRenderer.render("")).isEmpty();
         assertThat(markdownRenderer.render("   ")).isEmpty();
