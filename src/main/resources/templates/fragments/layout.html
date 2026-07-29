@@ -15,6 +15,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title th:text="${title}">learn-dev</title>
+  <!-- ico first with a fixed size so SVG-capable browsers prefer the
+       scalable icon; the SVG adapts to dark tabs by itself. -->
+  <link rel="icon" th:href="@{/favicon.ico}" sizes="32x32">
+  <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+  <link rel="apple-touch-icon" th:href="@{/apple-touch-icon.png}">
   <link rel="stylesheet" th:href="@{/css/fonts.css}">
   <link rel="stylesheet" th:href="@{/css/theme-catppuccin.css}">
   <link rel="stylesheet" th:href="@{/css/base.css}">
@@ -27,7 +32,17 @@
     <!-- lang="en": the chrome stays English even on French pages (RGAA 8.7) -->
     <header class="site-header" lang="en">
       <div class="site-header__inner">
-        <a class="site-header__brand" th:href="@{/}">learn<span class="site-header__brand-mark">-dev</span></a>
+        <!-- The logo is inline SVG (not an img) so stroke="currentColor"
+             follows the theme tokens; aria-hidden keeps the visible text
+             "learn-dev" as the accessible name of the link (RGAA 1.1). -->
+        <a class="site-header__brand" th:href="@{/}"><svg class="site-header__logo"
+              viewBox="0 0 24 24" aria-hidden="true" focusable="false"
+              fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8.5 5.5 2.5 12l6 6.5"/>
+            <path d="M15.5 5.5 21.5 12l-6 6.5"/>
+            <path d="M12 6v12"/>
+          </svg>learn<span class="site-header__brand-mark">-dev</span></a>
         <nav class="site-header__nav" aria-label="Main">
           <ul class="nav__list" sec:authorize="!isAuthenticated()">
             <li><a class="nav__link" th:href="@{/}"

@@ -29,6 +29,9 @@ public class SecurityConfig {
                 // response already authorized (or denied) on its way in.
                 .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                 .requestMatchers("/", "/privacy", "/auth/**", "/css/**", "/js/**", "/fonts/**").permitAll()
+                // Root-level icons: browsers fetch these outside any page
+                // context (tab icon, home-screen bookmark), often anonymously.
+                .requestMatchers("/favicon.svg", "/favicon.ico", "/apple-touch-icon.png").permitAll()
                 .requestMatchers("/instructor/**").hasRole("INSTRUCTOR")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/courses/**").authenticated()

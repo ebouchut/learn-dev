@@ -160,11 +160,20 @@ main:focus {
 }
 
 .site-header__brand {
+  display: inline-flex;
+  align-items: center;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: var(--font-size-lg);
   color: var(--color-text);
   text-decoration: none;
+}
+
+.site-header__logo {
+  width: 1.35em;
+  height: 1.35em;
+  margin-right: var(--space-2);
+  color: var(--color-primary);
 }
 
 .site-header__brand-mark {
