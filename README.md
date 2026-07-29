@@ -11,13 +11,22 @@
 
 ## Presentation
 
-> An interactive programming learning platform.  
+> Learn programming, one lesson at a time.
 
-This project aims to enable students to learn programming.
+An accessible, Markdown-first platform for programming courses 
+where instructors write lessons in plain Markdown, 
+students follow them lesson by lesson in an interface built to RGAA standards.
 
-It is also my capstone project for the [Web and Web Mobile Developer REAC certification](https://www.francecompetences.fr/recherche/rncp/37674/), which I am currently undergoing at [La Plateforme_](https://laplateforme.io).
+*Learn-dev* is a platform for publishing and following programming courses.   
+**Instructors** author lessons in plain Markdown, and the platform turns them into rich, safe pages: 
+tables, GitHub-style callouts, Mermaid diagrams, and code blocks, all sanitized server-side and rendered 
+in a light or dark theme. 
+**Students** enroll and progress lesson by lesson through an interface 
+designed to be accessible to everyone (RGAA/WCAG AA). 
 
-
+This is my capstone project 
+for the [Web and Web Mobile Developer certification](https://www.francecompetences.fr/recherche/rncp/37674/), 
+which I am currently undergoing at [La Plateforme_](https://laplateforme.io).
 
 
 ## Goals
@@ -26,12 +35,13 @@ It is also my capstone project for the [Web and Web Mobile Developer REAC certif
 - Support multiple user roles (such as Student, Instructor, Admin)
 - Demonstrate full-stack development skills using industry standards
 
+Hands-on exercises are next on the roadmap.
 
 ## Tech Stack
 
 This project is built with [Java](https://en.wikipedia.org/wiki/Java_(programming_language))/[Spring Boot](https://spring.io/projects/spring-boot) backend
 and [Thymeleaf](https://en.wikipedia.org/wiki/Thymeleaf) frontend.
-
+PostgreSQL
 
 ### Backend
 
