@@ -94,18 +94,20 @@ class AuthFlowTest extends AbstractPostgresIT {
 
     /**
      * The header identifies the signed-in account on every page: sighted
-     * users see the username, screen readers hear "Signed in as [name]"
-     * (issue #126). Anonymous visitors get no such item.
+     * users see the username in the account group next to Log out, screen
+     * readers hear "Signed in as [name]" (issue #126). Anonymous visitors
+     * get no account group at all.
      */
     @Test
     void header_shows_the_signed_in_username() throws Exception {
         mvc.perform(get("/").with(user("carol-header").roles("STUDENT")))
                 .andExpect(status().isOk())
+                .andExpect(content().string(containsString("site-header__account")))
                 .andExpect(content().string(containsString("Signed in as")))
                 .andExpect(content().string(containsString("carol-header")));
 
         mvc.perform(get("/"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(not(containsString("nav__user"))));
+                .andExpect(content().string(not(containsString("site-header__account"))));
     }
 }

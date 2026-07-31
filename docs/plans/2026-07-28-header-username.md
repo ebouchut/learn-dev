@@ -24,6 +24,13 @@
     (the `.visually-hidden` utility already exists in `base.css`; screen readers get the sentence, sighted users just see the name)
   - `base.css`: `.nav__user` as non-interactive chrome (`color: var(--color-text-muted)`, `font-size: var(--font-size-sm)`); `.nav__user-name` with `max-width: 12rem`, `overflow: hidden`, `text-overflow: ellipsis`, `white-space: nowrap`, `display: inline-block` so a 50-character username (the database cap) truncates instead of wrapping the header
   - MockMvc assertions: an authenticated page renders "Signed in as" plus the principal's username in the header; an anonymous page contains no `nav__user`
+- [ ] `fix(frontend): Separate the account group from the nav and wrap on mobile`
+  (review feedback, issue #126 reopened: the username read as just another
+  nav item, and `.nav__list` never wrapped, so the 12rem username pushed
+  the Log out button off-screen on narrow viewports; the username and Log
+  out move out of the nav into `div.site-header__account` behind a border
+  divider, `.nav__list` gains `flex-wrap: wrap`, and the username width
+  caps at `40vw` under the 46rem breakpoint)
 
 ## Verification
 
