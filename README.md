@@ -7,15 +7,13 @@
 [![schema drift status][schema-drift-image]][schema-drift-url]
 [![github issues][github-issues-image]][github-issues-url]
 
-# Learn-dev: An Interactive Programming Learning Platform
+# Learn-dev: Learn programming, one lesson at a time.
 
 ## Presentation
 
-> Learn programming, one lesson at a time.
-
-An accessible, Markdown-first platform for programming courses 
-where instructors write lessons in plain Markdown, 
-students follow them lesson by lesson in an interface built to RGAA standards.
+> An accessible, Markdown-first platform for programming courses 
+> where instructors write lessons in plain Markdown, 
+> students follow along lesson by lesson in an interface built to RGAA standards.
 
 *Learn-dev* is a platform for publishing and following programming courses.   
 **Instructors** author lessons in plain Markdown, and the platform turns them into rich, safe pages: 
@@ -24,9 +22,9 @@ in a light or dark theme.
 **Students** enroll and progress lesson by lesson through an interface 
 designed to be accessible to everyone (RGAA/WCAG AA). 
 
-This is my capstone project 
+This is also  my capstone project 
 for the [Web and Web Mobile Developer certification](https://www.francecompetences.fr/recherche/rncp/37674/), 
-which I am currently undergoing at [La Plateforme_](https://laplateforme.io).
+which I am currently pursuing at [La Plateforme_](https://laplateforme.io).
 
 
 ## Goals
@@ -46,45 +44,47 @@ PostgreSQL
 ### Backend
 
 - Language: Java 21 
-- Frameworks: 
-  - [Spring Boot](https://spring.io/projects/spring-boot) 3.x: a Java Framework used to build (Web) Applications (and REST endpoints)
-  - [Thymeleaf](https://www.thymeleaf.org/index.html) a server-side Java template engine for Web applications
--  Authentication and authorization framework:
-  - [Spring Security](https://spring.io/projects/spring-security) 6.5.x: an authentication and access-control framework
+- [Spring Boot](https://spring.io/projects/spring-boot) 3.5: a Java Framework used to build (Web) Applications (and REST endpoints)
+- [Spring Security](https://spring.io/projects/spring-security) 6.5.x: 
+  an authentication and authorization framework (configured for Role-Based Access-Control)
 - Databases:
   - [PostgreSQL](https://www.postgresql.org/about/) version 17 (relational core)
-  - [MongoDB](https://www.mongodb.com/) version 8, provisioned (Docker) for
-    future content storage; not yet wired to a feature
+  - [MongoDB](https://www.mongodb.com/) version 8, for future content storage; not yet wired to a feature
 - Database schema migrations:
-  - [Liquibase](https://www.liquibase.com/) (migrations applied at application startup)
-- Build and dependency management tool:
-  - [Maven](https://maven.apache.org/what-is-maven.html)
+  - [Liquibase](https://www.liquibase.com/) handles the migrations of the database  and schema 
+    such as changes to the database structure, and insertion of seeds). 
+    Database migrations are applied at application startup.
+- [Maven](https://maven.apache.org/what-is-maven.html) A build and dependency management tool
 - Containerization:
-  - [Podman](https://en.wikipedia.org/wiki/Podman) (preferred over [Docker](https://en.wikipedia.org/wiki/Docker_(software))) 
-    to containerize parts of the application as container images that can run as autonomous containers 
+  - [Docker](https://en.wikipedia.org/wiki/Docker_(software)) 
+    ([Podman](https://en.wikipedia.org/wiki/Podman) is preferred over Docker and is CLI compatible).
+  - *Docker Compose* helps containerize parts of the application as container images 
+    that can run as autonomous containers. It is used to provision 3 services: the two databases and the mail server.  
 
 
 ### Frontend
 
 The frontend is **server-rendered**: there is no separate frontend application.
 
-- [Thymeleaf](https://www.thymeleaf.org/) templates rendered by the backend:
+- [Thymeleaf](https://www.thymeleaf.org/) is a Java library and server-side template rendering engine for Web applications.
+  In other words, it helps build dynamic Web pages with templates rendered by the backend:
   public pages (home, login, register, privacy), the student area (dashboard,
   course catalogue, course and lesson pages), the instructor authoring area
   (courses, lessons, roster), the admin area (accounts, course moderation),
-  and styled error pages
+  and styled error pages.
 - [thymeleaf-extras-springsecurity6](https://github.com/thymeleaf/thymeleaf-extras-springsecurity)
   to display authentication data (such as the logged-in username) in the pages
 - Server-side form handling with bean validation (no JavaScript framework yet)
-- Plain HTML and CSS
+- Plain HTML, CSS, and JavaScript.
 
 
 ### Development Tools
 
 - JetBrains **IntelliJ IDEA**: **IDE** 
 - **Git**: Version control
-- [**Maven**](https://en.wikipedia.org/wiki/Apache_Maven): Build and dependency management
-- **Podman**: Containerization
+- [**Maven**](https://en.wikipedia.org/wiki/Apache_Maven): dependency and software lifecycle-management tool 
+  (meaning it build the app,launch tests, package and deploy the application) 
+- **Docker** and **Docker Compose** (**Podman** and **Podman Compose** are preferred because they are more secure and compatible) 
 
 
 ## Getting Started
