@@ -7,15 +7,13 @@
 [![schema drift status][schema-drift-image]][schema-drift-url]
 [![github issues][github-issues-image]][github-issues-url]
 
-# Learn-dev: An Interactive Programming Learning Platform
+# Learn-dev: Learn programming, one lesson at a time.
 
 ## Presentation
 
-> Learn programming, one lesson at a time.
-
-An accessible, Markdown-first platform for programming courses 
-where instructors write lessons in plain Markdown, 
-students follow them lesson by lesson in an interface built to RGAA standards.
+> An accessible, Markdown-first platform for programming courses 
+> where instructors write lessons in plain Markdown, 
+> students follow along lesson by lesson in an interface built to RGAA standards.
 
 *Learn-dev* is a platform for publishing and following programming courses.   
 **Instructors** author lessons in plain Markdown, and the platform turns them into rich, safe pages: 
@@ -24,9 +22,9 @@ in a light or dark theme.
 **Students** enroll and progress lesson by lesson through an interface 
 designed to be accessible to everyone (RGAA/WCAG AA). 
 
-This is my capstone project 
+This is also  my capstone project 
 for the [Web and Web Mobile Developer certification](https://www.francecompetences.fr/recherche/rncp/37674/), 
-which I am currently undergoing at [La Plateforme_](https://laplateforme.io).
+which I am currently pursuing at [La Plateforme_](https://laplateforme.io).
 
 
 ## Goals
