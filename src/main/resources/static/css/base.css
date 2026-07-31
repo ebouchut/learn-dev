@@ -211,6 +211,24 @@ main:focus {
   box-shadow: inset 0 -2px 0 var(--color-primary);
 }
 
+/* The signed-in username: non-interactive chrome, deliberately muted so
+   it does not compete with the nav links. */
+.nav__user {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* Usernames are user-typed (50 chars max in the schema): truncate rather
+   than let a long one wrap or stretch the header. */
+.nav__user-name {
+  display: inline-block;
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+
 /* ---------- Layout ---------- */
 
 .site-main {

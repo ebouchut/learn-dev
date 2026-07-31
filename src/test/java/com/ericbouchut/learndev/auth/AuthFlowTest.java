@@ -8,8 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -88,5 +90,22 @@ class AuthFlowTest extends AbstractPostgresIT {
                 .andExpect(content().string(containsString("could not be completed")))
                 .andExpect(content().string(containsString("aria-invalid=\"true\"")))
                 .andExpect(content().string(containsString("id=\"username-error\"")));
+    }
+
+    /**
+     * The header identifies the signed-in account on every page: sighted
+     * users see the username, screen readers hear "Signed in as [name]"
+     * (issue #126). Anonymous visitors get no such item.
+     */
+    @Test
+    void header_shows_the_signed_in_username() throws Exception {
+        mvc.perform(get("/").with(user("carol-header").roles("STUDENT")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Signed in as")))
+                .andExpect(content().string(containsString("carol-header")));
+
+        mvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("nav__user"))));
     }
 }
