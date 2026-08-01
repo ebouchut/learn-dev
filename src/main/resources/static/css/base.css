@@ -187,6 +187,9 @@ main:focus {
 .nav__list {
   list-style: none;
   display: flex;
+  /* Without wrap, a crowded row pushes trailing items (the Log out
+     button, when it lived here) off-screen on narrow viewports. */
+  flex-wrap: wrap;
   gap: var(--space-3);
   margin: 0;
   padding: 0;
@@ -209,6 +212,34 @@ main:focus {
   font-weight: 700;
   color: var(--color-primary);
   box-shadow: inset 0 -2px 0 var(--color-primary);
+}
+
+/* The account group: status and exit, deliberately outside the nav. The
+   divider separates "where you can go" from "who you are". */
+.site-header__account {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* Usernames are user-typed (50 chars max in the schema): truncate rather
+   than let a long one wrap or stretch the header. */
+.site-header__account-name {
+  display: inline-block;
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 46rem) {
+  .site-header__account-name {
+    max-width: 40vw;
+  }
 }
 
 /* ---------- Layout ---------- */

@@ -62,13 +62,21 @@
             <li sec:authorize="hasRole('ADMIN')">
               <a class="nav__link" th:href="@{/admin/users}"
                  th:attr="aria-current=${current == 'admin'} ? 'page' : null">Admin</a></li>
-            <li>
-              <form th:action="@{/auth/logout}" method="post">
-                <button class="button button--ghost" type="submit">Log out</button>
-              </form>
-            </li>
           </ul>
         </nav>
+        <!-- Account status, not navigation: who am I acting as, and the
+             way out. Lives outside the nav so assistive tech browsing the
+             Main landmark only meets real links. The username is escaped
+             by the attribute processor and truncated by CSS: user-typed
+             data must not distort or spoof the header chrome. -->
+        <div class="site-header__account" sec:authorize="isAuthenticated()">
+          <span class="site-header__account-name"><span
+              class="visually-hidden">Signed in as </span><span
+              sec:authentication="name">username</span></span>
+          <form th:action="@{/auth/logout}" method="post">
+            <button class="button button--ghost" type="submit">Log out</button>
+          </form>
+        </div>
       </div>
     </header>
   </th:block>
