@@ -865,3 +865,47 @@ textarea.form__input {
   margin-bottom: var(--space-3);
   font-size: var(--font-size-sm);
 }
+
+/* Syntax highlighting tokens (ADR-0017): spans injected client-side by
+   lesson-highlight.js. Colors reuse the accent tokens proven to clear
+   4.5:1 on the surface background in both themes, so highlighted code
+   inherits the theme's contrast guarantees and follows token retuning
+   for free. */
+.lesson-content .hljs-keyword,
+.lesson-content .hljs-built_in,
+.lesson-content .hljs-type,
+.lesson-content .hljs-selector-tag {
+  color: var(--color-primary);
+}
+
+.lesson-content .hljs-string,
+.lesson-content .hljs-regexp,
+.lesson-content .hljs-addition {
+  color: var(--color-success);
+}
+
+.lesson-content .hljs-number,
+.lesson-content .hljs-literal,
+.lesson-content .hljs-symbol,
+.lesson-content .hljs-attribute {
+  color: var(--color-warning);
+}
+
+.lesson-content .hljs-comment,
+.lesson-content .hljs-quote {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.lesson-content .hljs-title,
+.lesson-content .hljs-attr,
+.lesson-content .hljs-selector-class,
+.lesson-content .hljs-selector-id,
+.lesson-content .hljs-variable {
+  color: var(--color-link);
+}
+
+.lesson-content .hljs-meta,
+.lesson-content .hljs-deletion {
+  color: var(--color-error);
+}

@@ -61,6 +61,7 @@
         <commonmark.version>0.29.0</commonmark.version>
         <jsoup.version>1.21.1</jsoup.version>
         <mermaid.version>11.15.0</mermaid.version>
+        <highlightjs.version>11.11.1</highlightjs.version>
     </properties>
 
     <dependencies>
@@ -169,6 +170,15 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <!-- highlight.js browser bundle, self-hosted for client-side code
+             highlighting in lessons (ADR-0017). The cdn-assets artifact is
+             deliberate: the plain highlight.js webjar ships no browser
+             build since v11. lesson.html references the versioned path. -->
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>highlightjs__cdn-assets</artifactId>
+            <version>${highlightjs.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
