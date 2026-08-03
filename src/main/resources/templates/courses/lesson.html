@@ -10,11 +10,34 @@
          th:text="${course.title}">Course title</a>
     </p>
 
-    <article>
-      <h1 class="page-title" th:text="${lesson.title}">Lesson title</h1>
-      <!-- contentHtml is rendered and sanitized by MarkdownRenderer (ADR-0013). -->
-      <div class="lesson-content" th:utext="${contentHtml}">Lesson content</div>
-    </article>
+    <div class="lesson-layout">
+      <!-- The TOC precedes the content in the DOM (assistive tech meets
+           the navigation aid first); the grid places it visually right
+           on wide screens. Sticky via CSS, scroll-spy via lesson-toc.js
+           (ADR-0018). Shown from 2 entries: a one-heading TOC is noise. -->
+      <aside class="lesson-layout__toc" th:if="${#lists.size(toc) >= 2}">
+        <details class="lesson-toc">
+          <summary class="lesson-toc__summary">Contents</summary>
+          <nav aria-label="Contents">
+            <ol class="lesson-toc__list">
+              <!-- Indent level via data attribute: BEM's double underscore
+                   collides with Thymeleaf's __preprocessing__ syntax when
+                   built dynamically. -->
+              <li class="lesson-toc__item" th:each="entry : ${toc}"
+                  th:attr="data-level=${entry.level}">
+                <a class="lesson-toc__link" th:href="|#${entry.id}|"
+                   th:text="${entry.text}">Section</a>
+              </li>
+            </ol>
+          </nav>
+        </details>
+      </aside>
+      <article class="lesson-layout__content">
+        <h1 class="page-title" th:text="${lesson.title}">Lesson title</h1>
+        <!-- contentHtml is rendered and sanitized by MarkdownRenderer (ADR-0013). -->
+        <div class="lesson-content" th:utext="${contentHtml}">Lesson content</div>
+      </article>
+    </div>
 
     <nav aria-label="Lesson">
       <p>

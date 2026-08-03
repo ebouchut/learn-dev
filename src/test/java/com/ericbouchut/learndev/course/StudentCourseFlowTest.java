@@ -84,7 +84,8 @@ class StudentCourseFlowTest extends AbstractPostgresIT {
         courseRepository.save(draft);
 
         lessonOne = lesson(published, 1, "Getting started",
-                "# Hello\n\nSome **bold** content.");
+                "# Hello\n\nSome **bold** content.\n\n"
+                        + "## First steps\n\nWalk.\n\n## Going further\n\nRun.");
         lessonTwo = lesson(published, 2, "Controllers", "More content.");
         Lesson draftLesson = new Lesson();
         draftLesson.setCourse(published);
@@ -139,12 +140,24 @@ class StudentCourseFlowTest extends AbstractPostgresIT {
                 .andExpect(content().string(not(containsString("Unfinished lesson"))));
 
         // The lesson renders its Markdown as HTML and links the next lesson.
+        // The TOC nav and its anchors live in the server HTML: that is the
+        // no-JavaScript floor of ADR-0018.
         mvc.perform(get("/courses/{c}/lessons/{l}",
                         published.getCourseId(), lessonOne.getLessonId())
                         .with(user(student).roles("STUDENT")))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("<strong>bold</strong>")))
-                .andExpect(content().string(containsString("Controllers")));
+                .andExpect(content().string(containsString("Controllers")))
+                .andExpect(content().string(containsString("aria-label=\"Contents\"")))
+                .andExpect(content().string(containsString("href=\"#first-steps\"")))
+                .andExpect(content().string(containsString("<h3 id=\"first-steps\">")));
+
+        // A lesson without enough headings gets no TOC at all.
+        mvc.perform(get("/courses/{c}/lessons/{l}",
+                        published.getCourseId(), lessonTwo.getLessonId())
+                        .with(user(student).roles("STUDENT")))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("aria-label=\"Contents\""))));
 
         // The draft lesson is not readable even when enrolled.
         mvc.perform(get("/courses/{c}/lessons/{l}", published.getCourseId(),

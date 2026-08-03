@@ -159,6 +159,7 @@ public class CourseController {
                 MarkdownRenderer.stripLeadingTitleHeading(
                         lesson.getContentMarkdown(), lesson.getTitle()));
         model.addAttribute("contentHtml", rendered.html());
+        model.addAttribute("toc", rendered.toc());
         model.addAttribute("previousLesson", index > 0 ? lessons.get(index - 1) : null);
         model.addAttribute("nextLesson",
                 index < lessons.size() - 1 ? lessons.get(index + 1) : null);
