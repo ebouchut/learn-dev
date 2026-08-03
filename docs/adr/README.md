@@ -48,3 +48,4 @@ NNNN-short-title-in-kebab-case.md
 | [0015](0015-render-lesson-alerts-with-commonmark-alerts.md) | Render lesson alerts with the commonmark-java alerts extension | accepted |
 | [0016](0016-render-mermaid-diagrams-client-side.md) | Render Mermaid diagrams client-side in lessons | accepted |
 | [0017](0017-highlight-lesson-code-client-side.md) | Highlight lesson code client-side with highlight.js | accepted |
+| [0018](0018-lesson-toc-server-side-with-scroll-spy.md) | Build the lesson TOC server-side with client-side scroll-spy | accepted |

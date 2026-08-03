@@ -909,3 +909,123 @@ textarea.form__input {
 .lesson-content .hljs-deletion {
   color: var(--color-error);
 }
+
+/* Lesson layout with a sticky table of contents (ADR-0018). A sticky
+   element can only travel inside its parent box, so each breakpoint
+   pins a different element: on small screens the ASIDE pins at the
+   viewport top (its parent is the whole layout, article included, so
+   it has the full lesson height to travel); from 46rem a two-column
+   grid puts the TOC in a right rail, where the aside stretches to the
+   full row height (the grid default) and the panel INSIDE it pins.
+   minmax(0, 1fr) keeps wide code blocks from blowing the grid (they
+   scroll internally instead). */
+.lesson-layout__toc {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin-bottom: var(--space-4);
+}
+
+/* The panel scrolls internally when taller than its cap: the whole
+   TOC stays reachable while pinned. */
+.lesson-toc {
+  max-height: 60vh;
+  overflow-y: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+@media (min-width: 46rem) {
+  .lesson-layout {
+    display: grid;
+    grid-template-areas: "content toc";
+    grid-template-columns: minmax(0, 1fr) 16rem;
+    gap: var(--space-5);
+  }
+
+  .lesson-layout__toc {
+    grid-area: toc;
+    position: static;
+    z-index: auto;
+    margin-bottom: 0;
+  }
+
+  .lesson-layout__content {
+    grid-area: content;
+    min-width: 0;
+  }
+
+  .lesson-toc {
+    position: sticky;
+    top: var(--space-3);
+    max-height: calc(100vh - 2 * var(--space-3));
+    border-radius: var(--radius);
+  }
+}
+
+.lesson-toc__summary {
+  cursor: pointer;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.lesson-toc__list {
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--space-3) var(--space-3);
+  font-size: var(--font-size-sm);
+}
+
+.lesson-toc__item {
+  margin: var(--space-1) 0;
+}
+
+.lesson-toc__item[data-level="3"] {
+  padding-left: var(--space-3);
+}
+
+.lesson-toc__item[data-level="4"] {
+  padding-left: var(--space-5);
+}
+
+.lesson-toc__link {
+  text-decoration: none;
+  color: var(--color-link);
+}
+
+.lesson-toc__link:hover {
+  text-decoration: underline;
+}
+
+
+/* Scroll-spy state (written by lesson-toc.js as aria-current, styled
+   only off the attribute so visual and assistive state cannot drift). */
+.lesson-toc__link[aria-current] {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* Jumped-to headings breathe below the viewport edge; on small screens
+   they also clear the pinned TOC bar. */
+.lesson-content h2,
+.lesson-content h3,
+.lesson-content h4 {
+  scroll-margin-top: var(--space-4);
+}
+
+@media (max-width: 46rem) {
+  .lesson-content h2,
+  .lesson-content h3,
+  .lesson-content h4 {
+    scroll-margin-top: 3.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
