@@ -910,48 +910,58 @@ textarea.form__input {
   color: var(--color-error);
 }
 
-/* Lesson layout with a sticky table of contents (ADR-0018). Mobile
-   first: TOC bar above the content; from 46rem a two-column grid puts
-   the TOC in a pinned right rail. minmax(0, 1fr) keeps wide code
-   blocks from blowing the grid (they scroll internally instead). The
-   aside deliberately stretches to the full row height (the grid
-   default): the sticky element inside it needs that tall containing
-   block to travel through, otherwise it never pins. */
-.lesson-layout {
-  display: grid;
-  grid-template-areas:
-    "toc"
-    "content";
-  gap: var(--space-4);
-}
-
+/* Lesson layout with a sticky table of contents (ADR-0018). A sticky
+   element can only travel inside its parent box, so each breakpoint
+   pins a different element: on small screens the ASIDE pins at the
+   viewport top (its parent is the whole layout, article included, so
+   it has the full lesson height to travel); from 46rem a two-column
+   grid puts the TOC in a right rail, where the aside stretches to the
+   full row height (the grid default) and the panel INSIDE it pins.
+   minmax(0, 1fr) keeps wide code blocks from blowing the grid (they
+   scroll internally instead). */
 .lesson-layout__toc {
-  grid-area: toc;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin-bottom: var(--space-4);
 }
 
-.lesson-layout__content {
-  grid-area: content;
-  min-width: 0;
+/* The panel scrolls internally when taller than its cap: the whole
+   TOC stays reachable while pinned. */
+.lesson-toc {
+  max-height: 60vh;
+  overflow-y: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0 0 var(--radius) var(--radius);
 }
 
 @media (min-width: 46rem) {
   .lesson-layout {
+    display: grid;
     grid-template-areas: "content toc";
     grid-template-columns: minmax(0, 1fr) 16rem;
     gap: var(--space-5);
   }
-}
 
-/* The panel pins below the viewport top and scrolls internally when
-   the TOC is taller than the screen. */
-.lesson-toc {
-  position: sticky;
-  top: var(--space-3);
-  max-height: calc(100vh - 2 * var(--space-3));
-  overflow-y: auto;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  .lesson-layout__toc {
+    grid-area: toc;
+    position: static;
+    z-index: auto;
+    margin-bottom: 0;
+  }
+
+  .lesson-layout__content {
+    grid-area: content;
+    min-width: 0;
+  }
+
+  .lesson-toc {
+    position: sticky;
+    top: var(--space-3);
+    max-height: calc(100vh - 2 * var(--space-3));
+    border-radius: var(--radius);
+  }
 }
 
 .lesson-toc__summary {
@@ -990,17 +1000,6 @@ textarea.form__input {
   text-decoration: underline;
 }
 
-/* On small screens the closed summary is a slim bar pinned to the
-   viewport top: the TOC stays one tap away at any scroll position.
-   Opaque background: content scrolls underneath a pinned element. */
-@media (max-width: 46rem) {
-  .lesson-toc {
-    top: 0;
-    z-index: 5;
-    max-height: 60vh;
-    border-radius: 0 0 var(--radius) var(--radius);
-  }
-}
 
 /* Scroll-spy state (written by lesson-toc.js as aria-current, styled
    only off the attribute so visual and assistive state cannot drift). */
