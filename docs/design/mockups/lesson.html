@@ -15,19 +15,27 @@
 
   <header class="site-header">
     <div class="site-header__inner">
-      <a class="site-header__brand" href="home.html">learn<span class="site-header__brand-mark">-dev</span></a>
+      <a class="site-header__brand" href="home.html"><svg class="site-header__logo"
+            viewBox="0 0 24 24" aria-hidden="true" focusable="false"
+            fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8.5 5.5 2.5 12l6 6.5"/>
+          <path d="M15.5 5.5 21.5 12l-6 6.5"/>
+          <path d="M12 6v12"/>
+        </svg>learn<span class="site-header__brand-mark">-dev</span></a>
       <nav class="site-header__nav" aria-label="Main">
         <ul class="nav__list">
           <li><a class="nav__link" href="dashboard.html">Dashboard</a></li>
           <li><a class="nav__link" href="courses.html" aria-current="page">Courses</a></li>
-          <li>
-            <!-- Logout is a POST in the real app (CSRF); styled as a ghost button -->
-            <form action="#" method="post">
-              <button class="button button--ghost" type="submit">Log out</button>
-            </form>
-          </li>
         </ul>
       </nav>
+      <div class="site-header__account">
+        <span class="site-header__account-name"><span
+            class="visually-hidden">Signed in as </span>student</span>
+        <form action="#" method="post">
+          <button class="button button--ghost" type="submit">Log out</button>
+        </form>
+      </div>
     </div>
   </header>
 
