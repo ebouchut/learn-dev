@@ -4,7 +4,9 @@
   theme): custom warm paper light palette; the dark side is essentially
   Catppuccin Frappe.
   Values marked "adjusted" are darkened from upstream to reach WCAG 2.1 AA
-  4.5:1 on --color-bg; ratios documented in docs/design/theme-exploration.md
+  4.5:1 on every background they sit on as text: --color-bg AND the darker
+  --color-surface (header, flash alerts, cards); ratios documented in
+  docs/design/theme-exploration.md
   Same token names as theme-catppuccin.css: to activate this theme, point
   the <link> in the page head at this file instead.
 */
@@ -19,9 +21,9 @@
   --color-border: #dcd3cb;
   --color-text: #575279;          /* 5.89:1 */
   --color-text-muted: #525252;    /* 6.32:1 */
-  --color-primary: #286983;       /* 4.94:1 */
-  --color-on-primary: #ffffff;    /* 6.11:1 on primary */
-  --color-link: #286983;          /* 4.94:1 */
+  --color-primary: #256278;       /* adjusted from #286983, 4.98:1 on surface */
+  --color-on-primary: #ffffff;    /* 6.78:1 on primary */
+  --color-link: #256278;          /* adjusted from #286983, 4.98:1 on surface */
   --color-success: #2f6a4a;       /* adjusted from #3f7d5b, 5.18:1 */
   --color-warning: #7d570c;       /* adjusted from #96690f, 5.25:1 */
   --color-error: #94425a;         /* adjusted from #a34e63, 5.34:1 */
