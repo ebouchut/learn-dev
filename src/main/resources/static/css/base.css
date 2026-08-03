@@ -1001,3 +1001,32 @@ textarea.form__input {
     border-radius: 0 0 var(--radius) var(--radius);
   }
 }
+
+/* Scroll-spy state (written by lesson-toc.js as aria-current, styled
+   only off the attribute so visual and assistive state cannot drift). */
+.lesson-toc__link[aria-current] {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* Jumped-to headings breathe below the viewport edge; on small screens
+   they also clear the pinned TOC bar. */
+.lesson-content h2,
+.lesson-content h3,
+.lesson-content h4 {
+  scroll-margin-top: var(--space-4);
+}
+
+@media (max-width: 46rem) {
+  .lesson-content h2,
+  .lesson-content h3,
+  .lesson-content h4 {
+    scroll-margin-top: 3.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

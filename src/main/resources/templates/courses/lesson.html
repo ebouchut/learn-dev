@@ -63,5 +63,8 @@
        code fence. Version also pinned in pom.xml (highlightjs.version). -->
   <script defer th:src="@{/js/lesson-highlight.js}"
           th:attr="data-hljs-src=@{/webjars/highlightjs__cdn-assets/11.11.1/highlight.min.js}"></script>
+  <!-- TOC enhancement (ADR-0018): opens the panel on wide screens and
+       marks the current section with aria-current while scrolling. -->
+  <script defer th:src="@{/js/lesson-toc.js}"></script>
 </body>
 </html>
