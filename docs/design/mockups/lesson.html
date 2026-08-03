@@ -45,14 +45,27 @@
 
     <article>
       <!-- Sanitized HTML from MarkdownRenderer; authored "# ..." arrives as h2 (ADR-0014) -->
-      <h2>Why lists matter</h2>
-      <p>Lists hold <em>ordered</em> values. Try <code>mylist.append(42)</code>.</p>
-      <ul>
-        <li>they keep insertion order</li>
-        <li>they grow as needed</li>
-      </ul>
-      <pre><code class="language-python">numbers = [1, 2, 3]
-numbers.append(4)</code></pre>
+      <div class="lesson-content">
+        <h2>Why lists matter</h2>
+        <p>Lists hold <em>ordered</em> values. Try <code>mylist.append(42)</code>.</p>
+        <ul>
+          <li>they keep insertion order</li>
+          <li>they grow as needed</li>
+        </ul>
+        <!-- GFM/Obsidian alert, as emitted by the alerts extension -->
+        <div class="markdown-alert markdown-alert-note" data-alert-type="note">
+          <p class="markdown-alert-title">Note</p>
+          <p>Alerts carry a title, an icon, and an accent color per type.</p>
+        </div>
+        <!-- Code block with highlight.js token spans, as produced client-side -->
+        <pre><code class="language-python hljs"><span class="hljs-keyword">def</span> <span class="hljs-title">grow</span>(numbers):
+    numbers.append(<span class="hljs-number">4</span>)  <span class="hljs-comment"># lists grow as needed</span>
+    <span class="hljs-keyword">return</span> numbers</code></pre>
+        <div class="markdown-alert markdown-alert-tip" data-alert-type="tip">
+          <p class="markdown-alert-title">Name things by intent</p>
+          <p>Custom titles are inline-parsed, exactly as on the lesson page.</p>
+        </div>
+      </div>
     </article>
 
     <nav aria-label="Lesson">
