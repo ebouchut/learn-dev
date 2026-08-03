@@ -15,9 +15,32 @@
     return;
   }
 
-  if (window.matchMedia("(min-width: 46rem)").matches) {
+  var wideScreen = window.matchMedia("(min-width: 46rem)");
+  if (wideScreen.matches) {
     toc.open = true;
   }
+
+  // On narrow viewports the open panel is pinned over the content, so
+  // picking a section must collapse it or it hides the very heading
+  // the reader jumped to. Collapsing also shifts the layout, and the
+  // browser's own anchor scroll loses that race, so the jump is driven
+  // here: collapse first, then scroll from the settled layout. The
+  // desktop rail never overlaps and keeps the default behavior.
+  // Evaluated at click time: the viewport may have changed.
+  toc.addEventListener("click", function (event) {
+    var link = event.target.closest(".lesson-toc__link");
+    if (!link || wideScreen.matches) {
+      return;
+    }
+    var heading = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+    if (!heading) {
+      return;
+    }
+    event.preventDefault();
+    toc.open = false;
+    history.pushState(null, "", link.hash);
+    heading.scrollIntoView({ block: "start" });
+  });
 
   var sections = [];
   toc.querySelectorAll(".lesson-toc__link").forEach(function (link) {
