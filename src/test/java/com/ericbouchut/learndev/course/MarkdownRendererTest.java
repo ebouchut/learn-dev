@@ -23,11 +23,11 @@ class MarkdownRendererTest {
         String markdown = "# Indexes\n\nSome **bold** text.\n\n```java\nint x = 1;\n```";
 
         // Act (When)
-        String html = markdownRenderer.render(markdown);
+        String html = markdownRenderer.render(markdown).html();
 
         // Assert (Then): structural HTML with the language hint preserved
         // (the heading is demoted one level, see the renderer Javadoc)
-        assertThat(html).contains("<h2>Indexes</h2>");
+        assertThat(html).contains("<h2 id=\"indexes\">Indexes</h2>");
         assertThat(html).contains("<strong>bold</strong>");
         assertThat(html).contains("<code class=\"language-java\">");
     }
@@ -39,11 +39,11 @@ class MarkdownRendererTest {
         String markdown = "# One\n\n## Two\n\n##### Five\n\n###### Six";
 
         // Act (When)
-        String html = markdownRenderer.render(markdown);
+        String html = markdownRenderer.render(markdown).html();
 
         // Assert (Then): every level is one deeper, h6 stays h6
-        assertThat(html).contains("<h2>One</h2>");
-        assertThat(html).contains("<h3>Two</h3>");
+        assertThat(html).contains("<h2 id=\"one\">One</h2>");
+        assertThat(html).contains("<h3 id=\"two\">Two</h3>");
         assertThat(html).contains("<h6>Five</h6>");
         assertThat(html).contains("<h6>Six</h6>");
         assertThat(html).doesNotContain("<h1");
@@ -56,11 +56,12 @@ class MarkdownRendererTest {
         String markdown = "# The `for` loop is **great**";
 
         // Act (When)
-        String html = markdownRenderer.render(markdown);
+        String html = markdownRenderer.render(markdown).html();
 
         // Assert (Then): children render inside the demoted tag
         assertThat(html).contains(
-                "<h2>The <code>for</code> loop is <strong>great</strong></h2>");
+                "<h2 id=\"the-for-loop-is-great\">"
+                        + "The <code>for</code> loop is <strong>great</strong></h2>");
     }
 
     @Test
@@ -72,7 +73,7 @@ class MarkdownRendererTest {
                 + "<a href=\"javascript:alert(2)\">click</a>";
 
         // Act (When)
-        String html = markdownRenderer.render(hostile);
+        String html = markdownRenderer.render(hostile).html();
 
         // Assert (Then): nothing executable survives the allowlist
         assertThat(html).doesNotContain("<script");
@@ -87,8 +88,8 @@ class MarkdownRendererTest {
         String markdown = "Cache **me** once.";
 
         // Act (When)
-        String first = markdownRenderer.render(markdown);
-        String second = markdownRenderer.render(markdown);
+        var first = markdownRenderer.render(markdown);
+        var second = markdownRenderer.render(markdown);
 
         // Assert (Then): the second call returns the cached instance itself,
         // proving the renderer did not run again
@@ -102,7 +103,7 @@ class MarkdownRendererTest {
         String markdown = "| Concept | Example |\n|---------|---------|\n| Array | int[] |";
 
         // Act (When)
-        String html = markdownRenderer.render(markdown);
+        String html = markdownRenderer.render(markdown).html();
 
         // Assert (Then): a real table survives rendering and sanitization
         assertThat(html).contains("<table>");
@@ -116,7 +117,7 @@ class MarkdownRendererTest {
         String markdown = "> [!NOTE]\n> Take notes.";
 
         // Act (When)
-        String html = markdownRenderer.render(markdown);
+        String html = markdownRenderer.render(markdown).html();
 
         // Assert (Then): the typed div and the default title survive
         // rendering and both sanitization passes
@@ -132,7 +133,7 @@ class MarkdownRendererTest {
         String markdown = "> [!bug]\n> Off by one.\n\n> [!tldr]\n> Short version.";
 
         // Act (When)
-        String html = markdownRenderer.render(markdown);
+        String html = markdownRenderer.render(markdown).html();
 
         // Assert (Then): both resolve to their registered type and title
         assertThat(html).contains("markdown-alert markdown-alert-bug");
@@ -147,7 +148,7 @@ class MarkdownRendererTest {
         String markdown = "> [!tip] Use **bold** wisely\n> Body text.";
 
         // Act (When)
-        String html = markdownRenderer.render(markdown);
+        String html = markdownRenderer.render(markdown).html();
 
         // Assert (Then): the custom title replaces the default and its
         // inline Markdown is rendered
@@ -163,7 +164,7 @@ class MarkdownRendererTest {
         String markdown = "> [!note]\n> Outer.\n> > [!warning]\n> > Inner.";
 
         // Act (When)
-        String html = markdownRenderer.render(markdown);
+        String html = markdownRenderer.render(markdown).html();
 
         // Assert (Then): both alerts materialize as typed divs
         assertThat(html).contains("markdown-alert markdown-alert-note");
@@ -182,7 +183,7 @@ class MarkdownRendererTest {
                 + "> [!note]\n> Legit.";
 
         // Act (When)
-        String html = markdownRenderer.render(markdown);
+        String html = markdownRenderer.render(markdown).html();
 
         // Assert (Then): spoofed values are stripped, alert markup is kept
         assertThat(html).doesNotContain("site-header");
@@ -200,7 +201,7 @@ class MarkdownRendererTest {
         String markdown = "```mermaid\nflowchart LR\n  accTitle: Flow\n  A --> B\n```";
 
         // Act (When)
-        String html = markdownRenderer.render(markdown);
+        String html = markdownRenderer.render(markdown).html();
 
         // Assert (Then): the client-side contract holds
         assertThat(html).contains("<code class=\"language-mermaid\">");
@@ -211,8 +212,58 @@ class MarkdownRendererTest {
 
     @Test
     void blank_content_renders_to_an_empty_string() {
-        assertThat(markdownRenderer.render("")).isEmpty();
-        assertThat(markdownRenderer.render("   ")).isEmpty();
+        assertThat(markdownRenderer.render("").html()).isEmpty();
+        assertThat(markdownRenderer.render("").toc()).isEmpty();
+        assertThat(markdownRenderer.render("   ").html()).isEmpty();
+    }
+
+    @Test
+    void mints_anchor_ids_and_toc_entries_for_rendered_h2_to_h4() {
+        // Arrange (Given): authored levels 1..4 render as h2..h5 after
+        // demotion; the TOC covers rendered h2..h4 only
+        String markdown = "# Intro\n\n## Setup\n\n### Details\n\n#### Deep";
+
+        // Act (When)
+        var rendered = markdownRenderer.render(markdown);
+
+        // Assert (Then): ids are stamped and entries match, h5 excluded
+        assertThat(rendered.html()).contains("<h2 id=\"intro\">");
+        assertThat(rendered.html()).contains("<h3 id=\"setup\">");
+        assertThat(rendered.html()).contains("<h4 id=\"details\">");
+        assertThat(rendered.html()).contains("<h5>Deep</h5>");
+        assertThat(rendered.toc()).containsExactly(
+                new MarkdownRenderer.TocEntry("intro", "Intro", 2),
+                new MarkdownRenderer.TocEntry("setup", "Setup", 3),
+                new MarkdownRenderer.TocEntry("details", "Details", 4));
+    }
+
+    @Test
+    void slugs_fold_accents_and_deduplicate_repeated_headings() {
+        // Arrange (Given): French accents and two identical headings
+        String markdown = "# Écrans et modèles\n\n# Setup\n\n# Setup";
+
+        // Act (When)
+        var rendered = markdownRenderer.render(markdown);
+
+        // Assert (Then): ASCII slugs, second duplicate gets a suffix
+        assertThat(rendered.toc()).extracting(MarkdownRenderer.TocEntry::id)
+                .containsExactly("ecrans-et-modeles", "setup", "setup-2");
+    }
+
+    @Test
+    void author_supplied_ids_are_stripped_and_replaced_by_minted_slugs() {
+        // Arrange (Given): raw HTML trying to clobber the skip-link target;
+        // the sanitizer strips the id, then our pass mints a safe slug
+        String markdown = "<h2 id=\"main\">Own Heading</h2>";
+
+        // Act (When)
+        var rendered = markdownRenderer.render(markdown);
+
+        // Assert (Then): the author id is gone, the minted slug is there
+        assertThat(rendered.html()).doesNotContain("id=\"main\"");
+        assertThat(rendered.html()).contains("<h2 id=\"own-heading\">");
+        assertThat(rendered.toc()).extracting(MarkdownRenderer.TocEntry::id)
+                .containsExactly("own-heading");
     }
 
     @Test

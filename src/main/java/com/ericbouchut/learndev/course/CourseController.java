@@ -155,9 +155,10 @@ public class CourseController {
         int index = indexOf(lessons, lesson);
         model.addAttribute("course", course);
         model.addAttribute("lesson", lesson);
-        model.addAttribute("contentHtml", markdownRenderer.render(
+        MarkdownRenderer.RenderedMarkdown rendered = markdownRenderer.render(
                 MarkdownRenderer.stripLeadingTitleHeading(
-                        lesson.getContentMarkdown(), lesson.getTitle())));
+                        lesson.getContentMarkdown(), lesson.getTitle()));
+        model.addAttribute("contentHtml", rendered.html());
         model.addAttribute("previousLesson", index > 0 ? lessons.get(index - 1) : null);
         model.addAttribute("nextLesson",
                 index < lessons.size() - 1 ? lessons.get(index + 1) : null);

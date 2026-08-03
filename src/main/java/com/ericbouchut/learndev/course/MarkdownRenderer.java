@@ -21,9 +21,13 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -120,14 +124,36 @@ public class MarkdownRenderer {
             .nodeRendererFactory(DemotedHeadingRenderer::new)
             .build();
 
+    /** Sanitized lesson HTML plus its table of contents (ADR-0018). */
+    public record RenderedMarkdown(String html, List<TocEntry> toc) { }
+
+    /** One TOC entry: minted anchor id, heading text, rendered level. */
+    public record TocEntry(String id, String text, int level) { }
+
     @Cacheable(cacheNames = CacheConfig.RENDERED_MARKDOWN_CACHE,
             key = "T(com.ericbouchut.learndev.course.MarkdownRenderer).cacheKey(#markdown)")
-    public String render(String markdown) {
+    public RenderedMarkdown render(String markdown) {
         if (markdown == null || markdown.isBlank()) {
-            return "";
+            return new RenderedMarkdown("", List.of());
         }
         String html = renderer.render(parser.parse(markdown));
-        return stripUnknownAlertClasses(Jsoup.clean(html, SAFELIST));
+        return postProcess(Jsoup.clean(html, SAFELIST));
+    }
+
+    /**
+     * Post-sanitization pass, one parse for both jobs: narrow the class
+     * allowlist to the exact alert values, then mint heading anchors and
+     * collect the table of contents. Ids are stamped here, AFTER the
+     * sanitizer stripped any author-supplied id, so raw HTML can never
+     * clobber page anchors like the {@code #main} skip-link target
+     * (ADR-0018); the allowlist itself stays id-free.
+     */
+    private static RenderedMarkdown postProcess(String html) {
+        Document doc = Jsoup.parseBodyFragment(html);
+        doc.outputSettings().prettyPrint(false);
+        stripUnknownAlertClasses(doc);
+        List<TocEntry> toc = mintHeadingAnchors(doc);
+        return new RenderedMarkdown(doc.body().html(), List.copyOf(toc));
     }
 
     /**
@@ -137,9 +163,7 @@ public class MarkdownRenderer {
      * example raw HTML trying to wear a site class like {@code alert} or
      * {@code site-header}) is stripped.
      */
-    private static String stripUnknownAlertClasses(String html) {
-        Document doc = Jsoup.parseBodyFragment(html);
-        doc.outputSettings().prettyPrint(false);
+    private static void stripUnknownAlertClasses(Document doc) {
         for (Element div : doc.select("div[class], div[data-alert-type]")) {
             if (!ALERT_DIV_CLASS.matcher(div.className()).matches()) {
                 div.removeAttr("class");
@@ -153,7 +177,35 @@ public class MarkdownRenderer {
                 p.removeAttr("class");
             }
         }
-        return doc.body().html();
+    }
+
+    /**
+     * Stamps a slug id on every rendered {@code h2..h4} and returns the
+     * matching TOC entries. Slugs fold accents, lowercase, hyphenate, and
+     * deduplicate with numeric suffixes so anchors stay unique within a
+     * lesson.
+     */
+    private static List<TocEntry> mintHeadingAnchors(Document doc) {
+        List<TocEntry> toc = new ArrayList<>();
+        Map<String, Integer> seen = new HashMap<>();
+        for (Element heading : doc.select("h2, h3, h4")) {
+            String text = heading.text();
+            String slug = slugify(text);
+            int count = seen.merge(slug, 1, Integer::sum);
+            String id = count == 1 ? slug : slug + "-" + count;
+            heading.attr("id", id);
+            toc.add(new TocEntry(id, text, heading.tagName().charAt(1) - '0'));
+        }
+        return toc;
+    }
+
+    private static String slugify(String text) {
+        String folded = Normalizer.normalize(text, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}+", "");
+        String slug = folded.toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("(^-+)|(-+$)", "");
+        return slug.isEmpty() ? "section" : slug;
     }
 
     /**
