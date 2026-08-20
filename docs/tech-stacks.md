@@ -24,6 +24,7 @@ definitions see [GLOSSARY.md](../GLOSSARY.md).
 | Spring Security | via Boot | Authentication and authorization (session form login). |
 | Spring Data JPA | via Boot | Repository abstraction over the relational store. |
 | Spring Boot Actuator | via Boot | Operational endpoints (health, info). |
+| Spring Mail (`spring-boot-starter-mail`) | via Boot | Sends the password reset email over SMTP (`JavaMailSender`). |
 | Bean Validation (Hibernate Validator) | via Boot | Declarative form/DTO constraints enforced with `@Valid`. |
 
 ## View layer
@@ -33,6 +34,14 @@ definitions see [GLOSSARY.md](../GLOSSARY.md).
 | Thymeleaf | via Boot | Server-side HTML template engine. |
 | thymeleaf-extras-springsecurity6 | via Boot | `sec:` dialect to read the authenticated user in templates. |
 | HTML / CSS / JavaScript | — | Front-end markup, styling, and behaviour. |
+
+## Content rendering
+
+| Technology | Version | Why here |
+|------------|---------|----------|
+| commonmark-java | 0.24.0 | Converts lesson Markdown to HTML (CommonMark reference implementation). See [ADR-0013](adr/0013-render-lesson-markdown-with-commonmark-java.md). |
+| jsoup | 1.21.1 | Sanitizes the rendered HTML against an allowlist (XSS defense). |
+| Spring Cache + Caffeine | via Boot | Caches rendered lesson HTML, keyed by content hash. |
 
 ## Persistence and data
 
@@ -49,7 +58,7 @@ definitions see [GLOSSARY.md](../GLOSSARY.md).
 | Technology | Version | Why here |
 |------------|---------|----------|
 | spring-dotenv (`springboot3-dotenv`) | BOM-managed | Loads `./.env` at startup from the working directory. |
-| 1Password Environments | — | Provisions `.env` (a FIFO) and the `gh` token; never edited by hand. |
+| External secrets manager | — | Provisions `.env` (a FIFO) and the `gh` token; never edited by hand. |
 
 ## Build and dependency management
 
@@ -75,13 +84,22 @@ definitions see [GLOSSARY.md](../GLOSSARY.md).
 
 All tests run under the Maven Surefire plugin (no Failsafe); see [ADR-0009](adr/0009-run-tests-under-surefire-not-failsafe.md).
 
+## Continuous integration and code quality
+
+| Technology | Version | Why here |
+|------------|---------|----------|
+| GitHub Actions | — | CI: one focused workflow per concern (build, test, lint, schema drift). See [ADR-0010](adr/0010-structure-ci-as-focused-workflows-per-concern.md). |
+| Checkstyle (maven-checkstyle-plugin) | 3.6.0 | Advisory linting against the project ruleset (`config/checkstyle/checkstyle.xml`). See [ADR-0011](adr/0011-start-ci-quality-checks-as-advisory-reports.md). |
+| JaCoCo | 0.8.15 | Test coverage measurement; report produced by every `mvn test`. |
+| Codecov | — | Hosts the coverage reports: README badge, dashboard, PR comments (informational statuses). See [ADR-0012](adr/0012-publish-test-coverage-to-codecov.md). |
+
 ## Containers and local infrastructure
 
 | Technology | Version | Why here |
 |------------|---------|----------|
 | Podman | — | Daemonless container engine; the `docker` drop-in on the dev machine. |
 | Docker Compose | — | Runs Postgres and Mongo locally (`docker compose up -d`). |
-| Mailpit | — | Planned local fake SMTP catcher for the email flow. See [ADR-0004](adr/0004-use-mailpit-as-local-smtp-catcher.md). |
+| Mailpit | — | Local fake SMTP catcher: receives the password reset email in dev (web UI on port 8025). See [ADR-0004](adr/0004-use-mailpit-as-local-smtp-catcher.md). |
 
 ## Documentation and modelling tooling
 

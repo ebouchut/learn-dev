@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson — learn-dev</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Sora:wght@600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme-catppuccin.css">
+  <link rel="stylesheet" href="css/base.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-header__brand" href="home.html"><svg class="site-header__logo"
+            viewBox="0 0 24 24" aria-hidden="true" focusable="false"
+            fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8.5 5.5 2.5 12l6 6.5"/>
+          <path d="M15.5 5.5 21.5 12l-6 6.5"/>
+          <path d="M12 6v12"/>
+        </svg>learn<span class="site-header__brand-mark">-dev</span></a>
+      <nav class="site-header__nav" aria-label="Main">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="dashboard.html">Dashboard</a></li>
+          <li><a class="nav__link" href="courses.html" aria-current="page">Courses</a></li>
+        </ul>
+      </nav>
+      <div class="site-header__account">
+        <span class="site-header__account-name"><span
+            class="visually-hidden">Signed in as </span>student</span>
+        <form action="#" method="post">
+          <button class="button button--ghost" type="submit">Log out</button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <main class="site-main" id="main" tabindex="-1">
+    <p class="course-card__meta"><a href="course.html">Python for curious minds</a></p>
+
+    <div class="lesson-layout">
+      <!-- Sticky TOC: pinned rail on wide screens, pinned collapsed bar on
+           small ones; details/summary works without JavaScript. -->
+      <aside class="lesson-layout__toc">
+        <details class="lesson-toc" open>
+          <summary class="lesson-toc__summary">Contents</summary>
+          <nav aria-label="Contents">
+            <ol class="lesson-toc__list">
+              <li class="lesson-toc__item" data-level="2">
+                <a class="lesson-toc__link" aria-current="true"
+                   href="#why-lists-matter">Why lists matter</a></li>
+              <li class="lesson-toc__item" data-level="2">
+                <a class="lesson-toc__link" href="#growing-lists">Growing lists</a></li>
+              <li class="lesson-toc__item" data-level="3">
+                <a class="lesson-toc__link" href="#append">Appending</a></li>
+            </ol>
+          </nav>
+        </details>
+      </aside>
+      <div class="lesson-layout__content">
+        <h1 class="page-title">Lists in five minutes</h1>
+
+        <article>
+      <!-- Sanitized HTML from MarkdownRenderer; authored "# ..." arrives as h2 (ADR-0014) -->
+      <div class="lesson-content">
+        <h2 id="why-lists-matter">Why lists matter</h2>
+        <p>Lists hold <em>ordered</em> values. Try <code>mylist.append(42)</code>.</p>
+        <ul>
+          <li>they keep insertion order</li>
+          <li>they grow as needed</li>
+        </ul>
+        <!-- GFM/Obsidian alert, as emitted by the alerts extension -->
+        <div class="markdown-alert markdown-alert-note" data-alert-type="note">
+          <p class="markdown-alert-title">Note</p>
+          <p>Alerts carry a title, an icon, and an accent color per type.</p>
+        </div>
+        <h2 id="growing-lists">Growing lists</h2>
+        <p>Lists change size as your data does.</p>
+        <h3 id="append">Appending</h3>
+        <!-- Code block with highlight.js token spans, as produced client-side -->
+        <pre><code class="language-python hljs"><span class="hljs-keyword">def</span> <span class="hljs-title">grow</span>(numbers):
+    numbers.append(<span class="hljs-number">4</span>)  <span class="hljs-comment"># lists grow as needed</span>
+    <span class="hljs-keyword">return</span> numbers</code></pre>
+        <div class="markdown-alert markdown-alert-tip" data-alert-type="tip">
+          <p class="markdown-alert-title">Name things by intent</p>
+          <p>Custom titles are inline-parsed, exactly as on the lesson page.</p>
+        </div>
+      </div>
+    </article>
+      </div>
+    </div>
+
+    <nav aria-label="Lesson">
+      <a class="button button--primary" href="lesson.html">Next: Loops without tears</a>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p>learn-dev, an interactive programming learning platform.</p>
+      <p><a href="https://github.com/ebouchut/learn-dev">Source on GitHub</a></p>
+    </div>
+  </footer>
+</body>
+</html>

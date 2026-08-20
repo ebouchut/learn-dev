@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!--
+  Shared layout fragments (plain th:fragment, no layout dialect):
+  - head(title): document head with the design stylesheets
+  - header(current): skip link + banner + auth-aware navigation;
+    `current` names the nav entry of the calling page ('home', 'login',
+    'register', 'dashboard', 'courses', 'instructor', 'admin' or null) and
+    drives aria-current="page"
+  - footer: site footer
+  Each page keeps its own <html lang> (privacy.html is lang="fr").
+-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${title}">learn-dev</title>
+  <!-- ico first with a fixed size so SVG-capable browsers prefer the
+       scalable icon; the SVG adapts to dark tabs by itself. -->
+  <link rel="icon" th:href="@{/favicon.ico}" sizes="32x32">
+  <link rel="icon" th:href="@{/favicon.svg}" type="image/svg+xml">
+  <link rel="apple-touch-icon" th:href="@{/apple-touch-icon.png}">
+  <link rel="stylesheet" th:href="@{/css/fonts.css}">
+  <link rel="stylesheet" th:href="@{/css/theme-catppuccin.css}">
+  <link rel="stylesheet" th:href="@{/css/base.css}">
+</head>
+<body>
+
+  <th:block th:fragment="header(current)">
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <!-- lang="en": the chrome stays English even on French pages (RGAA 8.7) -->
+    <header class="site-header" lang="en">
+      <div class="site-header__inner">
+        <!-- The logo is inline SVG (not an img) so stroke="currentColor"
+             follows the theme tokens; aria-hidden keeps the visible text
+             "learn-dev" as the accessible name of the link (RGAA 1.1). -->
+        <a class="site-header__brand" th:href="@{/}"><svg class="site-header__logo"
+              viewBox="0 0 24 24" aria-hidden="true" focusable="false"
+              fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8.5 5.5 2.5 12l6 6.5"/>
+            <path d="M15.5 5.5 21.5 12l-6 6.5"/>
+            <path d="M12 6v12"/>
+          </svg>learn<span class="site-header__brand-mark">-dev</span></a>
+        <nav class="site-header__nav" aria-label="Main">
+          <ul class="nav__list" sec:authorize="!isAuthenticated()">
+            <li><a class="nav__link" th:href="@{/}"
+                   th:attr="aria-current=${current == 'home'} ? 'page' : null">Home</a></li>
+            <li><a class="nav__link" th:href="@{/auth/login}"
+                   th:attr="aria-current=${current == 'login'} ? 'page' : null">Log in</a></li>
+            <li><a class="button button--primary" th:href="@{/auth/register}">Sign up</a></li>
+          </ul>
+          <ul class="nav__list" sec:authorize="isAuthenticated()">
+            <li><a class="nav__link" th:href="@{/dashboard}"
+                   th:attr="aria-current=${current == 'dashboard'} ? 'page' : null">Dashboard</a></li>
+            <li><a class="nav__link" th:href="@{/courses}"
+                   th:attr="aria-current=${current == 'courses'} ? 'page' : null">Courses</a></li>
+            <li sec:authorize="hasRole('INSTRUCTOR')">
+              <a class="nav__link" th:href="@{/instructor/courses}"
+                 th:attr="aria-current=${current == 'instructor'} ? 'page' : null">Instructor</a></li>
+            <li sec:authorize="hasRole('ADMIN')">
+              <a class="nav__link" th:href="@{/admin/users}"
+                 th:attr="aria-current=${current == 'admin'} ? 'page' : null">Admin</a></li>
+          </ul>
+        </nav>
+        <!-- Account status, not navigation: who am I acting as, and the
+             way out. Lives outside the nav so assistive tech browsing the
+             Main landmark only meets real links. The username is escaped
+             by the attribute processor and truncated by CSS: user-typed
+             data must not distort or spoof the header chrome. -->
+        <div class="site-header__account" sec:authorize="isAuthenticated()">
+          <span class="site-header__account-name"><span
+              class="visually-hidden">Signed in as </span><span
+              sec:authentication="name">username</span></span>
+          <form th:action="@{/auth/logout}" method="post">
+            <button class="button button--ghost" type="submit">Log out</button>
+          </form>
+        </div>
+      </div>
+    </header>
+  </th:block>
+
+  <footer class="site-footer" th:fragment="footer" lang="en">
+    <div class="site-footer__inner">
+      <p>learn-dev, an interactive programming learning platform.</p>
+      <p>
+        <a th:href="@{/privacy}" hreflang="fr">Privacy policy (RGPD)</a>
+        &middot;
+        <a href="https://github.com/ebouchut/learn-dev">Source on GitHub</a>
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>

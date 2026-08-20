@@ -5,6 +5,11 @@ project. For the concrete tools and versions, see [docs/tech-stacks.md](docs/tec
 for how the pieces fit together, see [ARCHITECTURE.md](ARCHITECTURE.md); for the
 rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 
+> [!NOTE]
+> 🇫🇷 French version: [GLOSSAIRE.md](GLOSSAIRE.md).
+> The two files are translations of each other: when you add, change, or
+> remove an entry in one, apply the same change to the other.
+
 ## Domain terms
 
 - **Archive** — Unpublish a course or lesson so it is no longer available to
@@ -13,13 +18,25 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 - **Deactivate** — Disable an account (for example an instructor or student) so it
   can no longer be used, without deleting it. See also *disabled account*.
 - **Drop a course** — A student withdrawing from a course before finishing it.
-- **Enrollment** — The relationship linking a student to a course they have joined.
+- **Enrollment** — The relationship linking a student to a course they have
+  joined. Persisted as a *join entity* on the `enrollments` table, keyed by
+  the (user, course) pair, with a status following the student course
+  progress lifecycle (see CONTRIBUTING.md).
 - **Lesson** — An individual piece of content within a course.
+- **Publish** — Make a draft course or lesson visible to students. The first
+  publication of a course stamps its `published_at` date; archiving then
+  restoring it does not reset that date.
 - **Role** — A named set of permissions granted to a user. The seeded roles are
   `STUDENT`, `INSTRUCTOR`, and `ADMIN`; `SUPERADMIN` is planned (see issue #65).
+- **Roster** — The list of students enrolled in a course, with their enrollment
+  status and dates; instructors can remove a student from it.
 
 ## Authentication and security
 
+- **Account enumeration** — Probing a login, registration, or password reset
+  form to learn whether an account exists (for example from an "unknown email"
+  error message). Countered by answering with the same neutral message either
+  way, as the password reset flow does.
 - **Authority** — In Spring Security, a single granted permission string held by an
   authenticated user. Roles are represented as authorities prefixed with `ROLE_`
   (for example the `ADMIN` role becomes the authority `ROLE_ADMIN`).
@@ -40,6 +57,9 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
   from a *disabled account*.
 - **Principal** — The currently authenticated entity (typically the user) within a
   security context.
+- **Rate limiting** — Capping how many times an operation may be performed in a
+  time window, to slow down abuse and brute force. Here: password reset
+  requests are limited per user and per IP address.
 - **SameSite** — A cookie attribute controlling whether the browser sends the cookie
   on cross-site requests. Set to `Lax` here as CSRF defense in depth.
 - **Secure (cookie)** — A cookie attribute that restricts the cookie to HTTPS.
@@ -50,6 +70,21 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 - **XSS (Cross-Site Scripting)** — Injection of malicious scripts into pages viewed
   by other users. Mitigated by Thymeleaf's automatic output escaping and `HttpOnly`.
 
+## Design and frontend
+
+- **BEM (Block Element Modifier)** — The CSS class-naming convention
+  `block__element--modifier` (for example `.form__input--invalid`): a block is a
+  standalone component, an element only makes sense inside its block, a modifier
+  is a variant or state. Keeps every selector at single-class specificity;
+  detailed in [docs/design/mockups-explained.md](docs/design/mockups-explained.md).
+- **Design token** — A named, reusable design decision (a color, spacing step,
+  font size, radius) defined once and referenced by name instead of repeating the
+  raw value. Implemented as CSS custom properties in the theme stylesheets
+  (`--color-primary` consumed via `var(...)` in `base.css`) and mirrored as Figma
+  variables. Swapping token values re-themes the whole UI without touching any
+  component. Not related to security tokens (CSRF, JWT) or the database's
+  reset/email tokens.
+
 ## Persistence and data modelling
 
 - **Changelog / Changeset (Liquibase)** — A changelog is the ordered list of
@@ -57,6 +92,12 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 - **ERD (Entity-Relationship Diagram)** — A diagram of entities and their
   relationships (rendered here with Mermaid).
 - **Hibernate** — The JPA implementation (ORM) used to map Java entities to tables.
+- **Join entity** — A many-to-many association promoted to a full JPA entity
+  because the relationship carries state of its own (for example `Enrollment`
+  with its status and timestamps). Its primary key is the composite of the two
+  foreign keys (`@EmbeddedId`), and `@MapsId` lets the two `@ManyToOne`
+  references reuse those key columns. Contrast with a plain join *table* like
+  `user_roles`, which stays invisible behind `@ManyToMany`.
 - **JPA (Jakarta Persistence API)** — The standard Java API for object-relational
   mapping; implemented by Hibernate.
 - **JSESSIONID** — The default name of the servlet session cookie.
@@ -78,20 +119,62 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 
 - **ADR (Architecture Decision Record)** — A short, numbered, append-only document
   capturing one design decision and its trade-offs, in MADR format.
+- **axe-core** — The open-source accessibility rules engine behind most
+  automated audits (used by Lighthouse and browser extensions). Run here
+  against the rendered pages with the WCAG 2.1 A/AA rule set; results in
+  [docs/rgaa-audit.md](docs/rgaa-audit.md).
 - **Bean Validation** — The Jakarta standard for declaring constraints
   (`@NotBlank`, `@Email`, `@Size`) on form/DTO fields, enforced with `@Valid`.
+- **Caffeine** — A high-performance in-memory cache library for Java. Used
+  behind Spring's cache abstraction (`@Cacheable`) to hold rendered lesson
+  HTML, capped at 1000 entries (see
+  [ADR-0013](docs/adr/0013-render-lesson-markdown-with-commonmark-java.md)).
+- **Checkstyle** — A static-analysis tool that checks Java source against a
+  style ruleset. Runs here with the bundled Google ruleset (`google_checks.xml`)
+  in report-only mode (see [ADR-0011](docs/adr/0011-start-ci-quality-checks-as-advisory-reports.md)).
+- **Code coverage** — The percentage of code exercised by the test suite.
+  Measured here by JaCoCo and published to Codecov; reported, not yet
+  enforced as a threshold.
+- **Codecov** — A hosted service that ingests coverage reports from CI,
+  renders a dashboard and a README badge, and comments on PRs with the
+  project and patch coverage. Statuses are informational here (see
+  [ADR-0012](docs/adr/0012-publish-test-coverage-to-codecov.md)).
+- **CommonMark** — A strict, unambiguous specification of Markdown, and by
+  extension its reference Java implementation (commonmark-java), which
+  converts lesson Markdown to HTML (see
+  [ADR-0013](docs/adr/0013-render-lesson-markdown-with-commonmark-java.md)).
 - **DTO (Data Transfer Object)** — An object carrying data across a boundary,
   deliberately separate from entities. A `...Form` DTO backs an HTML form.
 - **Failsafe** — The Maven plugin that runs `*IT` integration tests in the `verify`
   phase. This project does **not** use it (see [ADR-0009](docs/adr/0009-run-tests-under-surefire-not-failsafe.md)).
 - **FIFO (named pipe)** — A special file that streams data on read. The project's
-  `.env` is a FIFO filled by 1Password; shell `source` cannot read it (0-byte stat).
+  `.env` is a FIFO filled by an external secrets manager; shell `source` cannot
+  read it (0-byte stat).
 - **HikariCP** — The JDBC connection pool bundled with Spring Boot.
 - **Integration test** — A test that boots a Spring context and exercises multiple
   layers together (here `@SpringBootTest` against a real Postgres container).
+- **JaCoCo (Java Code Coverage)** — The code-coverage tool for Java. Its Maven
+  plugin instruments the tests (`prepare-agent`) and writes an HTML/XML report to
+  `target/site/jacoco/` during the `test` phase; CI uploads it as a workflow artifact.
+- **jsoup** — A Java HTML parser and sanitizer. Its `Safelist` allowlist
+  strips dangerous markup (scripts, event handlers, frames) from the rendered
+  lesson HTML: XSS defense that does not depend on trusting authors (see
+  [ADR-0013](docs/adr/0013-render-lesson-markdown-with-commonmark-java.md)).
+- **Lighthouse** — Google's page auditing tool (bundled with Chrome). Its
+  accessibility category scores a rendered page against a subset of
+  axe-core rules; every learn-dev page scores 100 in
+  [docs/rgaa-audit.md](docs/rgaa-audit.md).
+- **Linter** — A tool that flags style and quality issues in source code without
+  running it (static analysis). The project's linter is Checkstyle.
 - **Lombok** — A library that generates boilerplate (getters, constructors) from
   annotations at compile time.
 - **MADR (Markdown ADR)** — The lightweight ADR template format used in `docs/adr/`.
+- **Markdown** — A lightweight plain-text markup format. Lesson content is
+  authored in Markdown (the `content_markdown` column) and rendered to
+  sanitized HTML at display time.
+- **Maven Wrapper (`mvnw`)** — A committed launcher script that downloads and runs
+  the project's pinned Maven version, so builds do not depend on a locally
+  installed Maven (used by CI: `./mvnw -B -ntp ...`).
 - **Slice test** — A test that loads only one layer of the context (for example
   `@DataJpaTest` for the persistence layer).
 - **Smoke test** — A minimal test that the application context starts at all
@@ -107,15 +190,40 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
 
 ## Infrastructure and process
 
+- **Advisory check** — A CI check that reports problems without blocking the
+  merge (report-only goal and/or `continue-on-error`). Linting and coverage
+  start advisory here (see [ADR-0011](docs/adr/0011-start-ci-quality-checks-as-advisory-reports.md)).
+- **CI (Continuous Integration)** — Automatically building and testing every
+  change (each PR and push) to catch regressions early. Implemented with
+  GitHub Actions (issues #45 to #48).
 - **Docker Compose** — Declarative multi-container orchestration; here it runs
   Postgres and Mongo. `docker` on the dev machine is Podman.
 - **GitButler** — The version-control tool wrapping Git; used via the `but` CLI when
   the current branch is `gitbutler/workspace`.
+- **GitHub Actions** — GitHub's CI service. Each workflow is a YAML file under
+  `.github/workflows/`; this project uses one focused workflow per concern
+  (see [ADR-0010](docs/adr/0010-structure-ci-as-focused-workflows-per-concern.md)).
+- **Mailpit** — A fake SMTP server for development: it accepts every email the
+  app sends, delivers nothing, and shows the messages in a web UI
+  (http://localhost:8025) and a REST API. Runs as a Docker Compose service
+  (see [ADR-0004](docs/adr/0004-use-mailpit-as-local-smtp-catcher.md)).
 - **Podman** — A daemonless container engine, used as the `docker` drop-in.
+- **Runner** — The machine that executes a GitHub Actions job (`ubuntu-latest`
+  here); it ships with a Docker daemon, which Testcontainers uses directly.
+- **SMTP (Simple Mail Transfer Protocol)** — The protocol used to send email.
+  The app talks SMTP to Mailpit in development (port 1025) and would talk it
+  to a real provider in production.
 - **Spring profile** — A named configuration set (for example `dev`) selecting
   profile-specific properties and Liquibase contexts.
+- **Temurin** — The Eclipse Adoptium distribution of the OpenJDK; the Java 21
+  build used locally (via SDKMAN) and on CI (via `actions/setup-java`).
 - **Thymeleaf** — The server-side HTML template engine. Its Spring Security
   **dialect** (`sec:` namespace) exposes the authenticated user to templates.
+- **Workflow (GitHub Actions)** — A YAML file declaring when (triggers) and how
+  (jobs, steps) CI runs. This project has `build.yml`, `test.yml`, `lint.yml`,
+  and `schema-drift.yml`.
+- **Workflow artifact** — A file or folder uploaded from a workflow run and
+  downloadable from the run page (here: the Checkstyle XML and JaCoCo reports).
 
 ## Certification
 
@@ -125,3 +233,6 @@ rationale behind design decisions, see the [ADRs](docs/adr/README.md).
   capstone targets.
 - **REAC (Referentiel Emploi Activites Competences)** — The official competency
   reference framework defining what the certification assesses.
+- **RGAA (Referentiel general d'amelioration de l'accessibilite)** — The French
+  accessibility framework: WCAG 2.1 AA restated as 106 testable criteria in 13
+  themes. How learn-dev addresses it is mapped in [docs/rgaa.md](docs/rgaa.md).

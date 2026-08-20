@@ -1,0 +1,1068 @@
+{
+  "name": "learndev",
+  "tables": [
+    {
+      "name": "public.users",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false,
+          "default": "gen_random_uuid()"
+        },
+        {
+          "name": "username",
+          "type": "varchar(50)",
+          "nullable": false
+        },
+        {
+          "name": "email",
+          "type": "varchar(255)",
+          "nullable": false
+        },
+        {
+          "name": "password",
+          "type": "varchar(255)",
+          "nullable": false
+        },
+        {
+          "name": "first_name",
+          "type": "varchar(100)",
+          "nullable": true
+        },
+        {
+          "name": "last_name",
+          "type": "varchar(100)",
+          "nullable": true
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": false,
+          "default": "true"
+        },
+        {
+          "name": "is_verified",
+          "type": "boolean",
+          "nullable": false,
+          "default": "false"
+        },
+        {
+          "name": "is_locked",
+          "type": "boolean",
+          "nullable": false,
+          "default": "false"
+        },
+        {
+          "name": "failed_login_attempts",
+          "type": "integer",
+          "nullable": false,
+          "default": "0"
+        },
+        {
+          "name": "last_login_at",
+          "type": "timestamp with time zone",
+          "nullable": true
+        },
+        {
+          "name": "password_changed_at",
+          "type": "timestamp with time zone",
+          "nullable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "users_pkey",
+          "def": "CREATE UNIQUE INDEX users_pkey ON public.users USING btree (user_id)",
+          "table": "public.users",
+          "columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "users_username_key",
+          "def": "CREATE UNIQUE INDEX users_username_key ON public.users USING btree (username)",
+          "table": "public.users",
+          "columns": [
+            "username"
+          ]
+        },
+        {
+          "name": "users_email_key",
+          "def": "CREATE UNIQUE INDEX users_email_key ON public.users USING btree (email)",
+          "table": "public.users",
+          "columns": [
+            "email"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "users_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (user_id)",
+          "table": "public.users",
+          "referenced_table": "",
+          "columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "users_username_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (username)",
+          "table": "public.users",
+          "referenced_table": "",
+          "columns": [
+            "username"
+          ]
+        },
+        {
+          "name": "users_email_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (email)",
+          "table": "public.users",
+          "referenced_table": "",
+          "columns": [
+            "email"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.roles",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "role_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "role_name",
+          "type": "varchar(50)",
+          "nullable": false
+        },
+        {
+          "name": "description",
+          "type": "varchar(255)",
+          "nullable": true
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "nullable": false,
+          "default": "true"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "roles_pkey",
+          "def": "CREATE UNIQUE INDEX roles_pkey ON public.roles USING btree (role_id)",
+          "table": "public.roles",
+          "columns": [
+            "role_id"
+          ]
+        },
+        {
+          "name": "roles_role_name_key",
+          "def": "CREATE UNIQUE INDEX roles_role_name_key ON public.roles USING btree (role_name)",
+          "table": "public.roles",
+          "columns": [
+            "role_name"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "roles_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (role_id)",
+          "table": "public.roles",
+          "referenced_table": "",
+          "columns": [
+            "role_id"
+          ]
+        },
+        {
+          "name": "roles_role_name_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (role_name)",
+          "table": "public.roles",
+          "referenced_table": "",
+          "columns": [
+            "role_name"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.user_roles",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "role_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "assigned_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "assigned_by",
+          "type": "uuid",
+          "nullable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "user_roles_pkey",
+          "def": "CREATE UNIQUE INDEX user_roles_pkey ON public.user_roles USING btree (user_id, role_id)",
+          "table": "public.user_roles",
+          "columns": [
+            "user_id",
+            "role_id"
+          ]
+        },
+        {
+          "name": "idx_user_roles_role_id",
+          "def": "CREATE INDEX idx_user_roles_role_id ON public.user_roles USING btree (role_id)",
+          "table": "public.user_roles",
+          "columns": [
+            "role_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "user_roles_assigned_by_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (assigned_by) REFERENCES users(user_id) ON DELETE SET NULL",
+          "table": "public.user_roles",
+          "referenced_table": "public.users",
+          "columns": [
+            "assigned_by"
+          ],
+          "referenced_columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "user_roles_user_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE",
+          "table": "public.user_roles",
+          "referenced_table": "public.users",
+          "columns": [
+            "user_id"
+          ],
+          "referenced_columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "user_roles_role_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE",
+          "table": "public.user_roles",
+          "referenced_table": "public.roles",
+          "columns": [
+            "role_id"
+          ],
+          "referenced_columns": [
+            "role_id"
+          ]
+        },
+        {
+          "name": "user_roles_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (user_id, role_id)",
+          "table": "public.user_roles",
+          "referenced_table": "",
+          "columns": [
+            "user_id",
+            "role_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.email_tokens",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "token_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "token",
+          "type": "varchar(255)",
+          "nullable": false
+        },
+        {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "nullable": false
+        },
+        {
+          "name": "used_at",
+          "type": "timestamp with time zone",
+          "nullable": true
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "email_tokens_pkey",
+          "def": "CREATE UNIQUE INDEX email_tokens_pkey ON public.email_tokens USING btree (token_id)",
+          "table": "public.email_tokens",
+          "columns": [
+            "token_id"
+          ]
+        },
+        {
+          "name": "email_tokens_token_key",
+          "def": "CREATE UNIQUE INDEX email_tokens_token_key ON public.email_tokens USING btree (token)",
+          "table": "public.email_tokens",
+          "columns": [
+            "token"
+          ]
+        },
+        {
+          "name": "idx_email_tokens_user_id",
+          "def": "CREATE INDEX idx_email_tokens_user_id ON public.email_tokens USING btree (user_id)",
+          "table": "public.email_tokens",
+          "columns": [
+            "user_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "email_tokens_user_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE",
+          "table": "public.email_tokens",
+          "referenced_table": "public.users",
+          "columns": [
+            "user_id"
+          ],
+          "referenced_columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "email_tokens_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (token_id)",
+          "table": "public.email_tokens",
+          "referenced_table": "",
+          "columns": [
+            "token_id"
+          ]
+        },
+        {
+          "name": "email_tokens_token_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (token)",
+          "table": "public.email_tokens",
+          "referenced_table": "",
+          "columns": [
+            "token"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.reset_tokens",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "token_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "token",
+          "type": "varchar(255)",
+          "nullable": false
+        },
+        {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "nullable": false
+        },
+        {
+          "name": "used_at",
+          "type": "timestamp with time zone",
+          "nullable": true
+        },
+        {
+          "name": "ip_address",
+          "type": "inet",
+          "nullable": true
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "reset_tokens_pkey",
+          "def": "CREATE UNIQUE INDEX reset_tokens_pkey ON public.reset_tokens USING btree (token_id)",
+          "table": "public.reset_tokens",
+          "columns": [
+            "token_id"
+          ]
+        },
+        {
+          "name": "reset_tokens_token_key",
+          "def": "CREATE UNIQUE INDEX reset_tokens_token_key ON public.reset_tokens USING btree (token)",
+          "table": "public.reset_tokens",
+          "columns": [
+            "token"
+          ]
+        },
+        {
+          "name": "idx_reset_tokens_user_id",
+          "def": "CREATE INDEX idx_reset_tokens_user_id ON public.reset_tokens USING btree (user_id)",
+          "table": "public.reset_tokens",
+          "columns": [
+            "user_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "reset_tokens_user_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE",
+          "table": "public.reset_tokens",
+          "referenced_table": "public.users",
+          "columns": [
+            "user_id"
+          ],
+          "referenced_columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "reset_tokens_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (token_id)",
+          "table": "public.reset_tokens",
+          "referenced_table": "",
+          "columns": [
+            "token_id"
+          ]
+        },
+        {
+          "name": "reset_tokens_token_key",
+          "type": "UNIQUE",
+          "def": "UNIQUE (token)",
+          "table": "public.reset_tokens",
+          "referenced_table": "",
+          "columns": [
+            "token"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.audit_logs",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "log_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "action_type",
+          "type": "varchar(100)",
+          "nullable": false
+        },
+        {
+          "name": "entity_type",
+          "type": "varchar(100)",
+          "nullable": true
+        },
+        {
+          "name": "entity_id",
+          "type": "varchar(64)",
+          "nullable": true
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "ip_address",
+          "type": "inet",
+          "nullable": true
+        },
+        {
+          "name": "user_agent",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "was_successful",
+          "type": "boolean",
+          "nullable": false,
+          "default": "true"
+        },
+        {
+          "name": "error_message",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "metadata",
+          "type": "jsonb",
+          "nullable": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "audit_logs_pkey",
+          "def": "CREATE UNIQUE INDEX audit_logs_pkey ON public.audit_logs USING btree (log_id)",
+          "table": "public.audit_logs",
+          "columns": [
+            "log_id"
+          ]
+        },
+        {
+          "name": "idx_audit_logs_user_id",
+          "def": "CREATE INDEX idx_audit_logs_user_id ON public.audit_logs USING btree (user_id)",
+          "table": "public.audit_logs",
+          "columns": [
+            "user_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "audit_logs_user_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL",
+          "table": "public.audit_logs",
+          "referenced_table": "public.users",
+          "columns": [
+            "user_id"
+          ],
+          "referenced_columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "audit_logs_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (log_id)",
+          "table": "public.audit_logs",
+          "referenced_table": "",
+          "columns": [
+            "log_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.courses",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "course_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "title",
+          "type": "varchar(255)",
+          "nullable": false
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "nullable": true
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": false,
+          "default": "'DRAFT'::character varying"
+        },
+        {
+          "name": "published_at",
+          "type": "timestamp with time zone",
+          "nullable": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "instructor_id",
+          "type": "uuid",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "courses_pkey",
+          "def": "CREATE UNIQUE INDEX courses_pkey ON public.courses USING btree (course_id)",
+          "table": "public.courses",
+          "columns": [
+            "course_id"
+          ]
+        },
+        {
+          "name": "idx_courses_instructor_id",
+          "def": "CREATE INDEX idx_courses_instructor_id ON public.courses USING btree (instructor_id)",
+          "table": "public.courses",
+          "columns": [
+            "instructor_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "chk_courses_status",
+          "type": "CHECK",
+          "def": "CHECK (((status)::text = ANY ((ARRAY['DRAFT'::character varying, 'PUBLISHED'::character varying, 'ARCHIVED'::character varying])::text[])))",
+          "table": "public.courses",
+          "referenced_table": "",
+          "columns": [
+            "status"
+          ]
+        },
+        {
+          "name": "courses_instructor_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (instructor_id) REFERENCES users(user_id) ON DELETE RESTRICT",
+          "table": "public.courses",
+          "referenced_table": "public.users",
+          "columns": [
+            "instructor_id"
+          ],
+          "referenced_columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "courses_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (course_id)",
+          "table": "public.courses",
+          "referenced_table": "",
+          "columns": [
+            "course_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.lessons",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "lesson_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "title",
+          "type": "varchar(255)",
+          "nullable": false
+        },
+        {
+          "name": "content_markdown",
+          "type": "text",
+          "nullable": false,
+          "default": "''::text"
+        },
+        {
+          "name": "position",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": false,
+          "default": "'DRAFT'::character varying"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "course_id",
+          "type": "bigint",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "lessons_pkey",
+          "def": "CREATE UNIQUE INDEX lessons_pkey ON public.lessons USING btree (lesson_id)",
+          "table": "public.lessons",
+          "columns": [
+            "lesson_id"
+          ]
+        },
+        {
+          "name": "uq_lessons_course_position",
+          "def": "CREATE UNIQUE INDEX uq_lessons_course_position ON public.lessons USING btree (course_id, \"position\")",
+          "table": "public.lessons",
+          "columns": [
+            "course_id",
+            "position"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "chk_lessons_status",
+          "type": "CHECK",
+          "def": "CHECK (((status)::text = ANY ((ARRAY['DRAFT'::character varying, 'PUBLISHED'::character varying, 'ARCHIVED'::character varying])::text[])))",
+          "table": "public.lessons",
+          "referenced_table": "",
+          "columns": [
+            "status"
+          ]
+        },
+        {
+          "name": "lessons_course_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE",
+          "table": "public.lessons",
+          "referenced_table": "public.courses",
+          "columns": [
+            "course_id"
+          ],
+          "referenced_columns": [
+            "course_id"
+          ]
+        },
+        {
+          "name": "lessons_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (lesson_id)",
+          "table": "public.lessons",
+          "referenced_table": "",
+          "columns": [
+            "lesson_id"
+          ]
+        },
+        {
+          "name": "uq_lessons_course_position",
+          "type": "UNIQUE",
+          "def": "UNIQUE (course_id, \"position\")",
+          "table": "public.lessons",
+          "referenced_table": "",
+          "columns": [
+            "course_id",
+            "position"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "public.enrollments",
+      "type": "BASE TABLE",
+      "columns": [
+        {
+          "name": "user_id",
+          "type": "uuid",
+          "nullable": false
+        },
+        {
+          "name": "course_id",
+          "type": "bigint",
+          "nullable": false
+        },
+        {
+          "name": "status",
+          "type": "varchar(20)",
+          "nullable": false,
+          "default": "'ENROLLED'::character varying"
+        },
+        {
+          "name": "enrolled_at",
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "default": "now()"
+        },
+        {
+          "name": "completed_at",
+          "type": "timestamp with time zone",
+          "nullable": true
+        },
+        {
+          "name": "dropped_at",
+          "type": "timestamp with time zone",
+          "nullable": true
+        }
+      ],
+      "indexes": [
+        {
+          "name": "enrollments_pkey",
+          "def": "CREATE UNIQUE INDEX enrollments_pkey ON public.enrollments USING btree (user_id, course_id)",
+          "table": "public.enrollments",
+          "columns": [
+            "user_id",
+            "course_id"
+          ]
+        },
+        {
+          "name": "idx_enrollments_course_id",
+          "def": "CREATE INDEX idx_enrollments_course_id ON public.enrollments USING btree (course_id)",
+          "table": "public.enrollments",
+          "columns": [
+            "course_id"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "chk_enrollments_status",
+          "type": "CHECK",
+          "def": "CHECK (((status)::text = ANY ((ARRAY['ENROLLED'::character varying, 'IN_PROGRESS'::character varying, 'COMPLETED'::character varying, 'DROPPED'::character varying])::text[])))",
+          "table": "public.enrollments",
+          "referenced_table": "",
+          "columns": [
+            "status"
+          ]
+        },
+        {
+          "name": "enrollments_user_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE",
+          "table": "public.enrollments",
+          "referenced_table": "public.users",
+          "columns": [
+            "user_id"
+          ],
+          "referenced_columns": [
+            "user_id"
+          ]
+        },
+        {
+          "name": "enrollments_course_id_fkey",
+          "type": "FOREIGN KEY",
+          "def": "FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE",
+          "table": "public.enrollments",
+          "referenced_table": "public.courses",
+          "columns": [
+            "course_id"
+          ],
+          "referenced_columns": [
+            "course_id"
+          ]
+        },
+        {
+          "name": "enrollments_pkey",
+          "type": "PRIMARY KEY",
+          "def": "PRIMARY KEY (user_id, course_id)",
+          "table": "public.enrollments",
+          "referenced_table": "",
+          "columns": [
+            "user_id",
+            "course_id"
+          ]
+        }
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "table": "public.user_roles",
+      "columns": [
+        "assigned_by"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.users",
+      "parent_columns": [
+        "user_id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (assigned_by) REFERENCES users(user_id) ON DELETE SET NULL"
+    },
+    {
+      "table": "public.user_roles",
+      "columns": [
+        "user_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.users",
+      "parent_columns": [
+        "user_id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE"
+    },
+    {
+      "table": "public.user_roles",
+      "columns": [
+        "role_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.roles",
+      "parent_columns": [
+        "role_id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE"
+    },
+    {
+      "table": "public.email_tokens",
+      "columns": [
+        "user_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.users",
+      "parent_columns": [
+        "user_id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE"
+    },
+    {
+      "table": "public.reset_tokens",
+      "columns": [
+        "user_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.users",
+      "parent_columns": [
+        "user_id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE"
+    },
+    {
+      "table": "public.audit_logs",
+      "columns": [
+        "user_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.users",
+      "parent_columns": [
+        "user_id"
+      ],
+      "parent_cardinality": "zero_or_one",
+      "def": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL"
+    },
+    {
+      "table": "public.courses",
+      "columns": [
+        "instructor_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.users",
+      "parent_columns": [
+        "user_id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (instructor_id) REFERENCES users(user_id) ON DELETE RESTRICT"
+    },
+    {
+      "table": "public.lessons",
+      "columns": [
+        "course_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.courses",
+      "parent_columns": [
+        "course_id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE"
+    },
+    {
+      "table": "public.enrollments",
+      "columns": [
+        "user_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.users",
+      "parent_columns": [
+        "user_id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE"
+    },
+    {
+      "table": "public.enrollments",
+      "columns": [
+        "course_id"
+      ],
+      "cardinality": "zero_or_more",
+      "parent_table": "public.courses",
+      "parent_columns": [
+        "course_id"
+      ],
+      "parent_cardinality": "exactly_one",
+      "def": "FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE"
+    }
+  ],
+  "driver": {
+    "name": "postgres",
+    "database_version": "PostgreSQL 17.10 (Debian 17.10-1.pgdg13+1) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "meta": {
+      "current_schema": "public",
+      "search_paths": [
+        "learndev",
+        "public"
+      ],
+      "dict": {
+        "Functions": "Stored procedures and functions"
+      }
+    }
+  }
+}

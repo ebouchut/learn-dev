@@ -1,0 +1,5 @@
+# tbls configuration (used by `make mpd`): document the application schema
+# only, not Liquibase's bookkeeping tables.
+exclude:
+  - databasechangelog
+  - databasechangeloglock

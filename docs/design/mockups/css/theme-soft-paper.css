@@ -1,0 +1,66 @@
+/*
+  learn-dev theme: Soft Paper (ALTERNATE, generated but not linked)
+  Palette extracted from https://github.com/nickmilo/soft-paper (Obsidian
+  theme): custom warm paper light palette; the dark side is essentially
+  Catppuccin Frappe.
+  Values marked "adjusted" are darkened from upstream to reach WCAG 2.1 AA
+  4.5:1 on every background they sit on as text: --color-bg AND the darker
+  --color-surface (header, flash alerts, cards); ratios documented in
+  docs/design/theme-exploration.md
+  Same token names as theme-catppuccin.css: to activate this theme, point
+  the <link> in the page head at this file instead.
+*/
+
+:root {
+  color-scheme: light dark;
+
+  /* Warm paper (light) */
+  --color-bg: #eee6dd;
+  --color-surface: #e6dbd1;
+  --color-surface-deep: #ddd0c6;
+  --color-border: #dcd3cb;
+  --color-text: #575279;          /* 5.89:1 */
+  --color-text-muted: #525252;    /* 6.32:1 */
+  --color-primary: #256278;       /* adjusted from #286983, 4.98:1 on surface */
+  --color-on-primary: #ffffff;    /* 6.78:1 on primary */
+  --color-link: #256278;          /* adjusted from #286983, 4.98:1 on surface */
+  --color-success: #2f6a4a;       /* adjusted from #3f7d5b, 5.18:1 */
+  --color-warning: #7d570c;       /* adjusted from #96690f, 5.25:1 */
+  --color-error: #94425a;         /* adjusted from #a34e63, 5.34:1 */
+  --color-focus: #286983;
+  --color-primary-soft: #dfe9ec;
+
+  --code-bg: #303446;
+  --code-text: #c6ceef;
+  --code-keyword: #bb93d6;
+  --code-string: #67c48f;
+  --code-function: #8caaee;
+  --code-comment: #838ba7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Frappe (dark), all values pass AA */
+    --color-bg: #303446;
+    --color-surface: #292c3c;
+    --color-surface-deep: #232634;
+    --color-border: #414459;
+    --color-text: #c6ceef;         /* 7.90:1 */
+    --color-text-muted: #b5bddc;   /* 6.61:1 */
+    --color-primary: #8caaee;      /* 5.34:1 */
+    --color-on-primary: #232634;   /* 6.51:1 on primary */
+    --color-link: #8caaee;         /* 5.34:1 */
+    --color-success: #67c48f;      /* 5.79:1 */
+    --color-warning: #c9be3e;      /* 6.40:1 */
+    --color-error: #e78284;        /* 4.65:1 */
+    --color-focus: #8caaee;
+    --color-primary-soft: #3b415c;
+
+    --code-bg: #232634;
+    --code-text: #c6ceef;
+    --code-keyword: #bb93d6;
+    --code-string: #67c48f;
+    --code-function: #8caaee;
+    --code-comment: #838ba7;
+  }
+}

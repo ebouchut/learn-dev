@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Lesson editor — learn-dev')}"></head>
+<body>
+  <th:block th:replace="~{fragments/layout :: header('instructor')}"></th:block>
+
+  <!-- th:object on main puts the form-backing bean in scope for the whole
+       page, so #fields works in the alert ABOVE the form too. -->
+  <main class="site-main" id="main" tabindex="-1" th:object="${form}">
+    <p class="alert alert--error" role="alert" th:if="${#fields.hasAnyErrors()}">
+      The lesson could not be saved. Check the highlighted fields below.
+    </p>
+
+    <p class="course-card__meta">
+      <a th:href="@{/instructor/courses/{id}/edit(id=${course.courseId})}"
+         th:text="${course.title}">Course title</a>
+    </p>
+
+    <h1 class="page-title"
+        th:text="${lesson == null} ? 'Add a lesson' : 'Edit the lesson'">Add a lesson</h1>
+
+    <form th:action="${lesson == null}
+                     ? @{/instructor/courses/{c}/lessons/new(c=${course.courseId})}
+                     : @{/instructor/courses/{c}/lessons/{l}/edit(c=${course.courseId}, l=${lesson.lessonId})}"
+          method="post">
+      <div class="form__group">
+        <label class="form__label" for="title">Title</label>
+        <span class="form__hint" id="title-hint">Up to 255 characters.</span>
+        <input class="form__input" type="text" th:field="*{title}" required
+               th:classappend="${#fields.hasErrors('title')} ? 'form__input--invalid'"
+               th:attr="aria-invalid=${#fields.hasErrors('title')} ? 'true' : null,
+                        aria-describedby=${#fields.hasErrors('title')} ? 'title-hint title-error' : 'title-hint'">
+        <span class="form__error" id="title-error"
+              th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+      </div>
+
+      <div class="form__group">
+        <label class="form__label" for="contentMarkdown">Content (Markdown)</label>
+        <span class="form__hint" id="contentMarkdown-hint">
+          Markdown is rendered and sanitized before students see it.
+          The lesson page already shows the title above the content,
+          so there is no need to repeat it as a first heading.
+          Fenced <code>```mermaid</code> blocks render as diagrams;
+          add an <code>accTitle:</code> line inside so screen readers
+          announce a title for the diagram.
+          Tag other fences with a language (<code>```java</code>)
+          to get syntax coloring.
+        </span>
+        <textarea class="form__input" th:field="*{contentMarkdown}" rows="14"
+                  aria-describedby="contentMarkdown-hint"></textarea>
+      </div>
+
+      <button class="button button--primary" type="submit"
+              th:text="${lesson == null} ? 'Add the lesson' : 'Save the lesson'">Add</button>
+    </form>
+  </main>
+
+  <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+</html>

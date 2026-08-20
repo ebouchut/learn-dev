@@ -1,5 +1,5 @@
 # Ignore existing files with the same name as phony targets
-.PHONY: help diagrams mcd mld mpd clean check-schema-drift test run
+.PHONY: help diagrams mcd mld mpd javadoc clean check-schema-drift test run
 
 # Default make target used if none specified
 .DEFAULT_GOAL := help
@@ -11,6 +11,7 @@ help:
 	@echo "  make mcd       — generate MCD"
 	@echo "  make mld       — generate MLD"
 	@echo "  make mpd       — generate MPD"
+	@echo "  make javadoc   — generate the Java API reference (Javadoc)"
 	@echo "  make clean     — remove generated diagrams"
 	@echo "  make check-schema-drift — fail if a Liquibase column is missing from the MCD"
 	@echo "  make test      — run the test suite via Testcontainers"
@@ -19,6 +20,14 @@ help:
 # Generate all database diagrams (MCD, MLD, MPD)
 diagrams: mcd mld mpd
 	@echo "All diagrams generated (MCD, MLD, MPD)"
+
+# Generate the Java API reference (Javadoc) from the /** */ comments.
+# The plugin is not bound to any lifecycle phase, so this is the only way it
+# runs: a normal build (make test, mvn package) never pays for it.
+javadoc:
+	@echo "Generating the Javadoc..."
+	./mvnw -q -B javadoc:javadoc
+	@echo "Javadoc generated in target/reports/apidocs/index.html"
 
 # Run the test suite. Tests use Testcontainers (a real PostgreSQL), so a
 # container engine must be running. Under Podman, point Testcontainers at the

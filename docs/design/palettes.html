@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>learn-dev : palettes de couleurs</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 2rem; font: 1rem/1.6 system-ui, sans-serif;
+         background: #fafafa; color: #222; }
+  h1 { font-size: 1.6rem; }
+  h2 { font-size: 1.25rem; margin: 2.5rem 0 1rem; }
+  .intro { max-width: 60rem; }
+  .modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr));
+           gap: 1.5rem; }
+  .mode { border-radius: 0.75rem; padding: 1.25rem 1.5rem; border: 1px solid; }
+  .mode h3 { margin: 0 0 1rem; font-size: 1.05rem; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+  td { padding: 0.3rem 0.6rem 0.3rem 0; vertical-align: middle; }
+  .swatch { display: inline-block; width: 2.4rem; height: 1.5rem;
+            border-radius: 0.25rem; border: 1px solid rgba(127,127,127,.55); }
+  .ratio { white-space: nowrap; }
+  .badge { font-size: 0.75rem; font-weight: 700; padding: 0.1rem 0.45rem;
+           border-radius: 0.75rem; white-space: nowrap; }
+  .badge--pass { background: #d9efd7; color: #1d4d12; }
+  .badge--fail { background: #f6d3da; color: #7a1024; }
+  code { font-family: ui-monospace, monospace; font-size: 0.95em; }
+  footer { margin-top: 3rem; font-size: 0.85rem; color: #555; }
+  @media print { body { padding: 0; background: #fff; }
+                 .mode { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<h1>learn-dev : palettes de couleurs</h1>
+<p class="intro">
+  Annexe du dossier projet. Chaque carte ci-dessous est rendue avec les
+  couleurs de sa propre palette (fond, texte et bordure réels) ; chaque
+  jeton indique son ratio de contraste WCAG calculé contre son fond de
+  référence, avec le verdict AA (texte : 4,5:1 ; composant d'interface :
+  3:1). « décor » signale les jetons de surface sans exigence de contraste
+  propre. Les valeurs proviennent directement des feuilles de style du
+  thème ; ce fichier est généré par
+  <code>scripts/generate_palette_diagrams.py --html</code>.
+</p>
+<h2>Catppuccin</h2>
+<div class="modes">
+  <div class="mode" style="background:#eff1f5;color:#4c4f69;border-color:#ccd0da">
+    <h3>Catppuccin Latte (light)</h3>
+    <table>
+      <tr><td><span class="swatch" style="background:#eff1f5"></span></td><td><code>bg</code></td><td><code>#eff1f5</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#e6e9ef"></span></td><td><code>surface</code></td><td><code>#e6e9ef</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#dce0e8"></span></td><td><code>surface-deep</code></td><td><code>#dce0e8</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#ccd0da"></span></td><td><code>border</code></td><td><code>#ccd0da</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#4c4f69"></span></td><td><code>text</code></td><td><code>#4c4f69</code></td><td class="ratio">7.06:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#5c5f77"></span></td><td><code>text-muted</code></td><td><code>#5c5f77</code></td><td class="ratio">5.53:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#8839ef"></span></td><td><code>primary</code></td><td><code>#8839ef</code></td><td class="ratio">4.79:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#ffffff"></span></td><td><code>on-primary</code></td><td><code>#ffffff</code></td><td class="ratio">5.41:1 sur <code>primary</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#1a5cd7"></span></td><td><code>link</code></td><td><code>#1a5cd7</code></td><td class="ratio">5.22:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#2f7a1f"></span></td><td><code>success</code></td><td><code>#2f7a1f</code></td><td class="ratio">4.73:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#8f5b08"></span></td><td><code>warning</code></td><td><code>#8f5b08</code></td><td class="ratio">5.06:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#d20f39"></span></td><td><code>error</code></td><td><code>#d20f39</code></td><td class="ratio">4.80:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#1e66f5"></span></td><td><code>focus</code></td><td><code>#1e66f5</code></td><td class="ratio">4.34:1 sur <code>bg</code></td><td><span class="badge badge--pass">UI 3:1 ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#eadcfd"></span></td><td><code>primary-soft</code></td><td><code>#eadcfd</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#1e1e2e"></span></td><td><code>code-bg</code></td><td><code>#1e1e2e</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#cdd6f4"></span></td><td><code>code-text</code></td><td><code>#cdd6f4</code></td><td class="ratio">11.34:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#cba6f7"></span></td><td><code>code-keyword</code></td><td><code>#cba6f7</code></td><td class="ratio">8.07:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#a6e3a1"></span></td><td><code>code-string</code></td><td><code>#a6e3a1</code></td><td class="ratio">11.03:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#89b4fa"></span></td><td><code>code-function</code></td><td><code>#89b4fa</code></td><td class="ratio">7.79:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#9399b2"></span></td><td><code>code-comment</code></td><td><code>#9399b2</code></td><td class="ratio">5.81:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+    </table>
+  </div>
+  <div class="mode" style="background:#1e1e2e;color:#cdd6f4;border-color:#313244">
+    <h3>Catppuccin Mocha (dark)</h3>
+    <table>
+      <tr><td><span class="swatch" style="background:#1e1e2e"></span></td><td><code>bg</code></td><td><code>#1e1e2e</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#181825"></span></td><td><code>surface</code></td><td><code>#181825</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#11111b"></span></td><td><code>surface-deep</code></td><td><code>#11111b</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#313244"></span></td><td><code>border</code></td><td><code>#313244</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#cdd6f4"></span></td><td><code>text</code></td><td><code>#cdd6f4</code></td><td class="ratio">11.34:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#bac2de"></span></td><td><code>text-muted</code></td><td><code>#bac2de</code></td><td class="ratio">9.26:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#cba6f7"></span></td><td><code>primary</code></td><td><code>#cba6f7</code></td><td class="ratio">8.07:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#11111b"></span></td><td><code>on-primary</code></td><td><code>#11111b</code></td><td class="ratio">9.23:1 sur <code>primary</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#89b4fa"></span></td><td><code>link</code></td><td><code>#89b4fa</code></td><td class="ratio">7.79:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#a6e3a1"></span></td><td><code>success</code></td><td><code>#a6e3a1</code></td><td class="ratio">11.03:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#f9e2af"></span></td><td><code>warning</code></td><td><code>#f9e2af</code></td><td class="ratio">12.91:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#f38ba8"></span></td><td><code>error</code></td><td><code>#f38ba8</code></td><td class="ratio">7.08:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#89b4fa"></span></td><td><code>focus</code></td><td><code>#89b4fa</code></td><td class="ratio">7.79:1 sur <code>bg</code></td><td><span class="badge badge--pass">UI 3:1 ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#2b2440"></span></td><td><code>primary-soft</code></td><td><code>#2b2440</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#11111b"></span></td><td><code>code-bg</code></td><td><code>#11111b</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#cdd6f4"></span></td><td><code>code-text</code></td><td><code>#cdd6f4</code></td><td class="ratio">12.97:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#cba6f7"></span></td><td><code>code-keyword</code></td><td><code>#cba6f7</code></td><td class="ratio">9.23:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#a6e3a1"></span></td><td><code>code-string</code></td><td><code>#a6e3a1</code></td><td class="ratio">12.61:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#89b4fa"></span></td><td><code>code-function</code></td><td><code>#89b4fa</code></td><td class="ratio">8.91:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#9399b2"></span></td><td><code>code-comment</code></td><td><code>#9399b2</code></td><td class="ratio">6.64:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+    </table>
+  </div>
+</div>
+<h2>Soft Paper</h2>
+<div class="modes">
+  <div class="mode" style="background:#eee6dd;color:#575279;border-color:#dcd3cb">
+    <h3>Soft Paper light</h3>
+    <table>
+      <tr><td><span class="swatch" style="background:#eee6dd"></span></td><td><code>bg</code></td><td><code>#eee6dd</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#e6dbd1"></span></td><td><code>surface</code></td><td><code>#e6dbd1</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#ddd0c6"></span></td><td><code>surface-deep</code></td><td><code>#ddd0c6</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#dcd3cb"></span></td><td><code>border</code></td><td><code>#dcd3cb</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#575279"></span></td><td><code>text</code></td><td><code>#575279</code></td><td class="ratio">5.89:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#525252"></span></td><td><code>text-muted</code></td><td><code>#525252</code></td><td class="ratio">6.32:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#286983"></span></td><td><code>primary</code></td><td><code>#286983</code></td><td class="ratio">4.94:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#ffffff"></span></td><td><code>on-primary</code></td><td><code>#ffffff</code></td><td class="ratio">6.11:1 sur <code>primary</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#286983"></span></td><td><code>link</code></td><td><code>#286983</code></td><td class="ratio">4.94:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#2f6a4a"></span></td><td><code>success</code></td><td><code>#2f6a4a</code></td><td class="ratio">5.18:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#7d570c"></span></td><td><code>warning</code></td><td><code>#7d570c</code></td><td class="ratio">5.25:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#94425a"></span></td><td><code>error</code></td><td><code>#94425a</code></td><td class="ratio">5.34:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#286983"></span></td><td><code>focus</code></td><td><code>#286983</code></td><td class="ratio">4.94:1 sur <code>bg</code></td><td><span class="badge badge--pass">UI 3:1 ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#dfe9ec"></span></td><td><code>primary-soft</code></td><td><code>#dfe9ec</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#303446"></span></td><td><code>code-bg</code></td><td><code>#303446</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#c6ceef"></span></td><td><code>code-text</code></td><td><code>#c6ceef</code></td><td class="ratio">7.90:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#bb93d6"></span></td><td><code>code-keyword</code></td><td><code>#bb93d6</code></td><td class="ratio">4.84:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#67c48f"></span></td><td><code>code-string</code></td><td><code>#67c48f</code></td><td class="ratio">5.79:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#8caaee"></span></td><td><code>code-function</code></td><td><code>#8caaee</code></td><td class="ratio">5.34:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#838ba7"></span></td><td><code>code-comment</code></td><td><code>#838ba7</code></td><td class="ratio">3.65:1 sur <code>code-bg</code></td><td><span class="badge badge--fail">AA ✗</span></td></tr>
+    </table>
+  </div>
+  <div class="mode" style="background:#303446;color:#c6ceef;border-color:#414459">
+    <h3>Soft Paper dark</h3>
+    <table>
+      <tr><td><span class="swatch" style="background:#303446"></span></td><td><code>bg</code></td><td><code>#303446</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#292c3c"></span></td><td><code>surface</code></td><td><code>#292c3c</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#232634"></span></td><td><code>surface-deep</code></td><td><code>#232634</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#414459"></span></td><td><code>border</code></td><td><code>#414459</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#c6ceef"></span></td><td><code>text</code></td><td><code>#c6ceef</code></td><td class="ratio">7.90:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#b5bddc"></span></td><td><code>text-muted</code></td><td><code>#b5bddc</code></td><td class="ratio">6.61:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#8caaee"></span></td><td><code>primary</code></td><td><code>#8caaee</code></td><td class="ratio">5.34:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#232634"></span></td><td><code>on-primary</code></td><td><code>#232634</code></td><td class="ratio">6.51:1 sur <code>primary</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#8caaee"></span></td><td><code>link</code></td><td><code>#8caaee</code></td><td class="ratio">5.34:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#67c48f"></span></td><td><code>success</code></td><td><code>#67c48f</code></td><td class="ratio">5.79:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#c9be3e"></span></td><td><code>warning</code></td><td><code>#c9be3e</code></td><td class="ratio">6.40:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#e78284"></span></td><td><code>error</code></td><td><code>#e78284</code></td><td class="ratio">4.65:1 sur <code>bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#8caaee"></span></td><td><code>focus</code></td><td><code>#8caaee</code></td><td class="ratio">5.34:1 sur <code>bg</code></td><td><span class="badge badge--pass">UI 3:1 ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#3b415c"></span></td><td><code>primary-soft</code></td><td><code>#3b415c</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#232634"></span></td><td><code>code-bg</code></td><td><code>#232634</code></td><td class="ratio">décor</td><td></td></tr>
+      <tr><td><span class="swatch" style="background:#c6ceef"></span></td><td><code>code-text</code></td><td><code>#c6ceef</code></td><td class="ratio">9.64:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#bb93d6"></span></td><td><code>code-keyword</code></td><td><code>#bb93d6</code></td><td class="ratio">5.91:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#67c48f"></span></td><td><code>code-string</code></td><td><code>#67c48f</code></td><td class="ratio">7.06:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#8caaee"></span></td><td><code>code-function</code></td><td><code>#8caaee</code></td><td class="ratio">6.51:1 sur <code>code-bg</code></td><td><span class="badge badge--pass">AA ✓</span></td></tr>
+      <tr><td><span class="swatch" style="background:#838ba7"></span></td><td><code>code-comment</code></td><td><code>#838ba7</code></td><td class="ratio">4.45:1 sur <code>code-bg</code></td><td><span class="badge badge--fail">AA ✗</span></td></tr>
+    </table>
+  </div>
+</div>
+<footer>
+  Source : <code>src/main/resources/static/css/theme-*.css</code> ·
+  Étude complète : <a href="theme-exploration.md">theme-exploration.md</a> ·
+  Méthode des ratios : formule de luminance relative WCAG.
+</footer>
+</body>
+</html>

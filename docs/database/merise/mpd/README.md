@@ -1,8 +1,4 @@
-# learn-dev
-
-## Description
-
-Learn-dev MPD (Physical Data Model)
+# learndev
 
 ## Tables
 
@@ -14,6 +10,9 @@ Learn-dev MPD (Physical Data Model)
 | [public.email_tokens](public.email_tokens.md) | 5 |  | BASE TABLE |
 | [public.reset_tokens](public.reset_tokens.md) | 6 |  | BASE TABLE |
 | [public.audit_logs](public.audit_logs.md) | 12 |  | BASE TABLE |
+| [public.courses](public.courses.md) | 8 |  | BASE TABLE |
+| [public.lessons](public.lessons.md) | 8 |  | BASE TABLE |
+| [public.enrollments](public.enrollments.md) | 6 |  | BASE TABLE |
 
 ## Relations
 

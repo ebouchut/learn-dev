@@ -44,8 +44,8 @@ open; this ADR will be updated to `accepted` once that selection is made.
 - Good: the credential authenticates the service, so no user JWT is needed for
   internal calls; `refresh_tokens` remains unnecessary.
 - Trade-off (Tier 1): a static shared secret must be stored securely
-  (1Password/env), transmitted over TLS, and rotated; either side leaking it
-  compromises the pair.
+  (secrets manager/env), transmitted over TLS, and rotated; either side
+  leaking it compromises the pair.
 - Trade-off (Tier 2): introduces RSA key management (private key on the caller,
   public key on the callee) in exchange for token expiry and claims.
 - Open: Tier 1 vs Tier 2 not yet decided; OAuth2 client-credentials remains a

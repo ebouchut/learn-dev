@@ -1,7 +1,9 @@
 package com.ericbouchut.learndev.common.config;
 
+import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,6 +12,8 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+// Enables @PreAuthorize for service-level rules (e.g. course ownership).
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -21,7 +25,16 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/auth/**", "/css/**", "/js/**").permitAll()
+                // The ERROR dispatch renders templates/error/*.html for a
+                // response already authorized (or denied) on its way in.
+                .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+                .requestMatchers("/", "/privacy", "/auth/**", "/css/**", "/js/**", "/fonts/**").permitAll()
+                // Root-level icons: browsers fetch these outside any page
+                // context (tab icon, home-screen bookmark), often anonymously.
+                .requestMatchers("/favicon.svg", "/favicon.ico", "/apple-touch-icon.png").permitAll()
+                .requestMatchers("/instructor/**").hasRole("INSTRUCTOR")
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/courses/**").authenticated()
                 .anyRequest().authenticated())
             .formLogin(form -> form
                 .loginPage("/auth/login")            // GET: show the login form

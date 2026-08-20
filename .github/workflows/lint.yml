@@ -1,0 +1,106 @@
+name: Lint
+
+# Code quality check (Checkstyle, project ruleset) and API reference (Javadoc)
+# on every PR and push.
+# Deliberately non-blocking on day one for an existing codebase:
+#   - checkstyle:checkstyle only generates a report, it never fails on violations
+#   - continue-on-error keeps even setup errors from gating merges
+# Both reports are uploaded as workflow artifacts for review, and on pushes
+# to dev they are also published to GitHub Pages (rendered HTML, no download):
+# the official upload-pages-artifact + deploy-pages flow creates no commits.
+# The Javadoc rides along in this workflow on purpose: GitHub Pages serves a
+# single site artifact, so a second workflow deploying Pages would clobber the
+# Checkstyle report. Each report lives under its own path (/checkstyle/,
+# /javadoc/), so new reports can join without breaking existing URLs.
+# Tighten later: switch the goal to checkstyle:check and set
+# failOnViolation to true in pom.xml, then drop continue-on-error.
+
+on:
+  pull_request:
+    branches: [dev]
+  push:
+    branches: [dev, main]
+
+jobs:
+  checkstyle:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Generate the Checkstyle report
+        run: ./mvnw -B -ntp checkstyle:checkstyle
+      # The artifact ships the browsable HTML report (target/reports/,
+      # with its css/fonts/images assets) plus the raw XML result.
+      - name: Upload the Checkstyle report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: checkstyle-report
+          path: |
+            target/reports/
+            !target/reports/apidocs/
+            target/checkstyle-result.xml
+      # The API reference, rendered from the Javadoc comments. Never blocking:
+      # the job already runs with continue-on-error.
+      - name: Generate the Javadoc
+        run: ./mvnw -B -ntp javadoc:javadoc
+      - name: Upload the Javadoc
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: javadoc
+          path: target/reports/apidocs/
+      # On pushes to dev, publish both HTML reports online via GitHub Pages.
+      # Each one gets its own path so they can be linked (and joined by
+      # future reports) without breaking URLs.
+      - name: Assemble the Pages site
+        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+        run: |
+          mkdir -p _site/checkstyle _site/javadoc
+          cp -R target/reports/apidocs/. _site/javadoc/
+          # Everything in target/reports/ except the Javadoc is Checkstyle's
+          # (checkstyle.html plus its css/fonts/images assets).
+          rm -rf target/reports/apidocs
+          cp -R target/reports/. _site/checkstyle/
+          cat > _site/index.html <<'HTML'
+          <!DOCTYPE html>
+          <html lang="en">
+            <head>
+              <meta charset="UTF-8">
+              <title>learn-dev reports</title>
+            </head>
+            <body>
+              <h1>learn-dev reports</h1>
+              <ul>
+                <li><a href="javadoc/index.html">API reference (Javadoc)</a></li>
+                <li><a href="checkstyle/checkstyle.html">Checkstyle report</a></li>
+              </ul>
+            </body>
+          </html>
+          HTML
+      - name: Upload the Pages artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  # Deploys the assembled site (no commits: Pages serves the artifact).
+  deploy-report:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    needs: checkstyle
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

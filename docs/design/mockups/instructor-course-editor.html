@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Course editor — learn-dev</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Sora:wght@600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme-catppuccin.css">
+  <link rel="stylesheet" href="css/base.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-header__brand" href="home.html"><svg class="site-header__logo"
+            viewBox="0 0 24 24" aria-hidden="true" focusable="false"
+            fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8.5 5.5 2.5 12l6 6.5"/>
+          <path d="M15.5 5.5 21.5 12l-6 6.5"/>
+          <path d="M12 6v12"/>
+        </svg>learn<span class="site-header__brand-mark">-dev</span></a>
+      <nav class="site-header__nav" aria-label="Main">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="dashboard.html">Dashboard</a></li>
+          <li><a class="nav__link" href="courses.html">Courses</a></li>
+          <li><a class="nav__link" href="instructor-courses.html" aria-current="page">Instructor</a></li>
+        </ul>
+      </nav>
+      <div class="site-header__account">
+        <span class="site-header__account-name"><span
+            class="visually-hidden">Signed in as </span>instructor</span>
+        <form action="#" method="post">
+          <button class="button button--ghost" type="submit">Log out</button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <main class="site-main" id="main" tabindex="-1">
+    <p class="alert alert--success" role="status">
+      Lesson published.
+    </p>
+
+    <div class="form-card">
+      <h1 class="form-card__title">Edit the course</h1>
+
+      <p class="course-card__meta">Status: Draft</p>
+
+      <form action="#" method="post">
+        <div class="form__group">
+          <label class="form__label" for="title">Title</label>
+          <span class="form__hint" id="title-hint">Up to 255 characters.</span>
+          <input class="form__input" type="text" id="title" name="title"
+                 value="Python for curious minds" required aria-describedby="title-hint">
+        </div>
+
+        <div class="form__group">
+          <label class="form__label" for="description">Description</label>
+          <span class="form__hint" id="description-hint">
+            Optional. Shown to students in the catalogue.
+          </span>
+          <textarea class="form__input" id="description" name="description" rows="4"
+                    aria-describedby="description-hint">Loops, lists, and a taste of the standard library.</textarea>
+        </div>
+
+        <button class="button button--primary" type="submit">Save the course</button>
+      </form>
+    </div>
+
+    <section aria-labelledby="lifecycle-title">
+      <h2 id="lifecycle-title" class="visually-hidden">Publication actions</h2>
+      <form action="#" method="post">
+        <button class="button button--primary" type="submit">Publish the course</button>
+      </form>
+      <form action="#" method="post">
+        <button class="button button--ghost" type="submit">Archive the course</button>
+      </form>
+    </section>
+
+    <p><a href="instructor-students.html">View the students of this course</a></p>
+
+    <section aria-labelledby="lessons-title">
+      <h2 id="lessons-title">Lessons</h2>
+
+      <p><a class="button button--ghost" href="instructor-lesson-editor.html">Add a lesson</a></p>
+
+      <ol>
+        <li>
+          <a href="instructor-lesson-editor.html">Lists in five minutes</a>
+          <span class="course-card__meta">(Published)</span>
+          <form class="form--inline" action="#" method="post">
+            <button class="button button--ghost" type="submit">Move down
+              <span class="visually-hidden">: Lists in five minutes</span></button>
+          </form>
+          <form class="form--inline" action="#" method="post">
+            <button class="button button--ghost" type="submit">Archive
+              <span class="visually-hidden">: Lists in five minutes</span></button>
+          </form>
+        </li>
+        <li>
+          <a href="instructor-lesson-editor.html">Loops without tears</a>
+          <span class="course-card__meta">(Draft)</span>
+          <form class="form--inline" action="#" method="post">
+            <button class="button button--ghost" type="submit">Move up
+              <span class="visually-hidden">: Loops without tears</span></button>
+          </form>
+          <form class="form--inline" action="#" method="post">
+            <button class="button button--primary" type="submit">Publish
+              <span class="visually-hidden">: Loops without tears</span></button>
+          </form>
+          <form class="form--inline" action="#" method="post">
+            <button class="button button--ghost" type="submit">Archive
+              <span class="visually-hidden">: Loops without tears</span></button>
+          </form>
+        </li>
+      </ol>
+    </section>
+
+    <p><a href="instructor-courses.html">Back to my courses</a></p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <p>learn-dev, an interactive programming learning platform.</p>
+      <p><a href="https://github.com/ebouchut/learn-dev">Source on GitHub</a></p>
+    </div>
+  </footer>
+</body>
+</html>

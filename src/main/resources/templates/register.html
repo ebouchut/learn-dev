@@ -1,20 +1,65 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>Register</title>
-</head>
+<head th:replace="~{fragments/layout :: head('Create an account — learn-dev')}"></head>
 <body>
-  <h1>Create your account</h1>
-  <form th:action="@{/auth/register}" th:object="${form}" method="post">
-    <label>Username <input type="text" th:field="*{username}"></label>
-    <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color:red"></span><br>
-    <label>Email <input type="email" th:field="*{email}"></label>
-    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color:red"></span><br>
-    <label>Password <input type="password" th:field="*{password}"></label>
-    <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color:red"></span><br>
-    <button type="submit">Register</button>
-  </form>
-  <p><a th:href="@{/auth/login}">Already have an account? Log in</a></p>
+  <th:block th:replace="~{fragments/layout :: header('register')}"></th:block>
+
+  <!-- th:object on main puts the form-backing bean in scope for the whole
+       page, so #fields works in the alert ABOVE the form too. -->
+  <main class="site-main site-main--narrow" id="main" tabindex="-1" th:object="${form}">
+    <p class="alert alert--error" role="alert" th:if="${#fields.hasAnyErrors()}">
+      Your registration could not be completed. Check the highlighted fields below.
+    </p>
+
+    <div class="form-card">
+      <h1 class="form-card__title">Create an account</h1>
+
+      <!-- th:field binds against the th:object inherited from main -->
+      <form th:action="@{/auth/register}" method="post">
+        <div class="form__group">
+          <label class="form__label" for="username">Username</label>
+          <span class="form__hint" id="username-hint">3 to 50 characters.</span>
+          <input class="form__input" type="text" th:field="*{username}"
+                 autocomplete="username" required
+                 th:classappend="${#fields.hasErrors('username')} ? 'form__input--invalid'"
+                 th:attr="aria-invalid=${#fields.hasErrors('username')} ? 'true' : null,
+                          aria-describedby=${#fields.hasErrors('username')} ? 'username-hint username-error' : 'username-hint'">
+          <span class="form__error" id="username-error"
+                th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+        </div>
+
+        <div class="form__group">
+          <label class="form__label" for="email">Email</label>
+          <input class="form__input" type="email" th:field="*{email}"
+                 autocomplete="email" required
+                 th:classappend="${#fields.hasErrors('email')} ? 'form__input--invalid'"
+                 th:attr="aria-invalid=${#fields.hasErrors('email')} ? 'true' : null,
+                          aria-describedby=${#fields.hasErrors('email')} ? 'email-error' : null">
+          <span class="form__error" id="email-error"
+                th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+        </div>
+
+        <div class="form__group">
+          <label class="form__label" for="password">Password</label>
+          <span class="form__hint" id="password-hint">8 to 100 characters.</span>
+          <input class="form__input" type="password" th:field="*{password}"
+                 autocomplete="new-password" required
+                 th:classappend="${#fields.hasErrors('password')} ? 'form__input--invalid'"
+                 th:attr="aria-invalid=${#fields.hasErrors('password')} ? 'true' : null,
+                          aria-describedby=${#fields.hasErrors('password')} ? 'password-hint password-error' : 'password-hint'">
+          <span class="form__error" id="password-error"
+                th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+        </div>
+
+        <button class="button button--primary" type="submit">Create my account</button>
+      </form>
+
+      <p class="form__footer">
+        Already registered? <a th:href="@{/auth/login}">Log in</a>.
+      </p>
+    </div>
+  </main>
+
+  <th:block th:replace="~{fragments/layout :: footer}"></th:block>
 </body>
 </html>

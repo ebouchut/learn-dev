@@ -3,6 +3,8 @@ package com.ericbouchut.learndev.auth;
 import com.ericbouchut.learndev.auth.dto.RegisterForm;
 import com.ericbouchut.learndev.auth.exception.DuplicateEmailException;
 import com.ericbouchut.learndev.auth.exception.DuplicateUsernameException;
+import com.ericbouchut.learndev.user.entity.User;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,8 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 /**
  * <b>Web</b> endpoints for authentication pages:
- * home, login and dashboard views, and the registration form
+ * home and login views, and the registration form
  * (display and submission).
+ * The dashboard lives in the course package (it renders enrollments).
  * Spring Security handles the login POST and logout itself.
  * This controller renders the pages around them.
  */
@@ -22,9 +25,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class AuthController {
 
     private final RegistrationService registration;
+    private final EmailVerificationService verification;
 
-    public AuthController(RegistrationService registration) {
+    public AuthController(RegistrationService registration,
+                          EmailVerificationService verification) {
         this.registration = registration;
+        this.verification = verification;
     }
 
     /**
@@ -45,15 +51,6 @@ public class AuthController {
     @GetMapping("/auth/login")
     public String login() {
         return "login";
-    }
-
-    /**
-     * Display the dashboard page.
-     * @return the name of the dashboard template
-     */
-    @GetMapping("/dashboard")
-    public String dashboard() {
-        return "dashboard";
     }
 
     /**
@@ -84,13 +81,15 @@ public class AuthController {
             @ModelAttribute("form")
             RegisterForm form,
 
-            BindingResult binding
+            BindingResult binding,
+            HttpServletRequest request
     ) {
         if (binding.hasErrors()) {
             return "register";
         }
+        User user;
         try {
-            registration.register(form);
+            user = registration.register(form);
         } catch (DuplicateUsernameException e) {
             binding.rejectValue("username", "duplicate", "Username already taken");
             return "register";
@@ -98,6 +97,8 @@ public class AuthController {
             binding.rejectValue("email", "duplicate", "Email already registered");
             return "register";
         }
+        verification.sendVerification(user, request.getRemoteAddr(),
+                EmailVerificationController.verifyUrlBase(request));
         return "redirect:/auth/login?registered";
     }
 }

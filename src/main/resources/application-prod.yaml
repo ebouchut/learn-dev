@@ -1,14 +1,16 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # application-prod.yaml
 #
-# Application configuration file for the dev profile.
+# Application configuration for the prod profile.
 # Properties defined in this file override the ones defined
 #  in application.yaml.
 #
-# To activate the dev profile:
-# - Add SPRING_PROFILES_ACTIVE=dev to your .env file
-# - or set the environment variable SPRING_PROFILES_ACTIVE=dev
-# - or run: mvn spring-boot:run -Dspring-boot.run.profiles=dev
+# To activate the prod profile:
+# - set the environment variable SPRING_PROFILES_ACTIVE=prod
+#   (the container image in the Dockerfile does this by default)
+#
+# The app expects TLS to be terminated by a reverse proxy in front
+#  of it; forwarded headers tell Spring the original scheme/host.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 spring:
 
@@ -18,18 +20,35 @@ spring:
   jpa:
     show-sql: false
 
-  # Generate DDL and write to file
-  #    properties:
-  #      javax.persistence.schema-generation.scripts:
-  #        action: create
-  #        create-target: schema.sql
-  #        create-source: metadata
-
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # Set the execution context for Liquibase changeset
+  # Set the execution context for Liquibase changesets
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   liquibase:
     contexts: prod
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Real SMTP relay (Mailpit is dev-only)
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+
+server:
+  # Behind a TLS-terminating reverse proxy: honor X-Forwarded-* headers so
+  # generated links (password reset, email verification) use https.
+  forward-headers-strategy: framework
+  servlet:
+    session:
+      cookie:
+        # The proxy serves HTTPS only, so the session cookie never travels
+        # over plain HTTP.
+        secure: true
 
 
 # ~~~~~~~~~~~~~~~~~~

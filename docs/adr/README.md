@@ -40,3 +40,12 @@ NNNN-short-title-in-kebab-case.md
 | [0007](0007-use-postgresql-over-mysql.md) | Use PostgreSQL as the relational database, not MySQL | accepted |
 | [0008](0008-share-singleton-testcontainers-postgres.md) | Share one Testcontainers PostgreSQL as a static singleton, not @Container | accepted |
 | [0009](0009-run-tests-under-surefire-not-failsafe.md) | Run all tests under Surefire with the *Test suffix, not Failsafe/*IT | accepted |
+| [0010](0010-structure-ci-as-focused-workflows-per-concern.md) | Structure CI as focused workflows per concern, not a monolithic ci.yml | accepted |
+| [0011](0011-start-ci-quality-checks-as-advisory-reports.md) | Start CI quality checks as advisory reports, gates come later | superseded by ADR-0012 |
+| [0012](0012-publish-test-coverage-to-codecov.md) | Publish test coverage to Codecov | accepted |
+| [0013](0013-render-lesson-markdown-with-commonmark-java.md) | Render lesson Markdown with commonmark-java, sanitized by jsoup | accepted |
+| [0014](0014-demote-markdown-headings-in-lesson-rendering.md) | Demote Markdown headings one level in lesson rendering | accepted |
+| [0015](0015-render-lesson-alerts-with-commonmark-alerts.md) | Render lesson alerts with the commonmark-java alerts extension | accepted |
+| [0016](0016-render-mermaid-diagrams-client-side.md) | Render Mermaid diagrams client-side in lessons | accepted |
+| [0017](0017-highlight-lesson-code-client-side.md) | Highlight lesson code client-side with highlight.js | accepted |
+| [0018](0018-lesson-toc-server-side-with-scroll-spy.md) | Build the lesson TOC server-side with client-side scroll-spy | accepted |

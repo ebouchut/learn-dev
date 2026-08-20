@@ -33,7 +33,12 @@ Read the [Prerequisites section of the README](README.md#prerequisites).
 
 #### Code Documentation
 
-The code reference documentation is not yet available and will be added to this repository in a future update.
+The code reference (Javadoc) is
+[published on GitHub Pages](https://www.ericbouchut.com/learn-dev/javadoc/index.html),
+rebuilt from `dev` on every merge. To read the reference for the branch you
+are working on, build it locally with `make javadoc` and open
+`target/reports/apidocs/index.html` (see
+[Generating the Documentation](#generating-the-documentation)).
 
 #### Architecture Decision Records (ADR)
 
@@ -66,12 +71,14 @@ graph TD
     end
 
     DB[("PostgreSQL Database")]
+    MP["Mailpit (fake SMTP, dev only)"]
 
     U -->|"HTTP GET / form POST"| Security
     Security --> Controllers
     Controllers --> Services
     Services --> Repositories
     Repositories -->|"SQL (Hibernate)"| DB
+    Services -->|"SMTP (password reset email)"| MP
     Controllers -->|"view name + model"| Views
     Views -->|"HTML page"| U
 ```
@@ -113,6 +120,170 @@ Registration (`POST /auth/register`) is handled by `AuthController` and
 `RegistrationService` (server-side bean validation plus duplicate
 username/email detection).
 
+##### Password Reset Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    actor U as User (Browser)
+    participant C as PasswordResetController
+    participant S as PasswordResetService
+    participant DB as PostgreSQL
+    participant M as Mailpit (SMTP, dev)
+
+    U->>C: GET /auth/forgot-password
+    C-->>U: Email form (CSRF token)
+
+    U->>C: POST /auth/forgot-password (email)
+    C->>S: requestReset(email, ip, resetUrlBase)
+    alt Unknown email or rate limit exceeded
+        S->>DB: Record the attempt in audit_logs
+    else Known email, within the rate limit
+        S->>DB: Invalidate the outstanding tokens
+        S->>DB: Store the SHA-256 hash of a new random token
+        S->>M: Email the reset link (raw token in the URL)
+        S->>DB: Record the request in audit_logs
+    end
+    C-->>U: 302 redirect to ?sent (same answer either way)
+
+    U->>C: GET /auth/reset-password?token=...
+    C->>S: findUsableToken(raw)
+    S->>DB: SELECT by SHA-256(token), unused, not expired
+    C-->>U: New password form (or invalid link message)
+
+    U->>C: POST /auth/reset-password (token + new password)
+    C->>S: resetPassword(raw, newPassword, ip)
+    S->>DB: Store the BCrypt hash, consume the token,<br/>invalidate the others, audit
+    C-->>U: 302 redirect to /auth/login?reset
+```
+
+The flow is **enumeration-safe**: whether the email exists or not (or the
+per-user / per-IP rate limit was exceeded), the browser gets the same
+neutral confirmation, so an attacker cannot use the form to discover
+accounts. Only the **SHA-256 hash** of the token is stored; the raw token
+appears once, in the emailed link. A token is **single-use**, only one is
+active per user at a time, and it expires after **30 minutes** (tunable
+under `learndev.password-reset.*` in `application.yaml`). Every request
+and reset attempt is recorded in the `audit_logs` table by `AuditService`.
+In development the email lands in [Mailpit](http://localhost:8025); the
+end-to-end journey (request, email, link, new password) is covered by
+`PasswordResetFlowTest`.
+
+##### Domain Lifecycles
+
+The state diagrams below (designed in issue
+[#42](https://github.com/ebouchut/learn-dev/issues/42)) describe how a
+student progresses through a course, and how a course and a lesson move
+between their editorial states. They drive the `status` columns of the
+`enrollments`, `courses`, and `lessons` tables.
+
+Not every state is persisted in v1:
+
+- *BrowsingCourses* and *ViewingCourseDetails* are plain navigation, not
+  stored state.
+- *EnrollmentPending* / *EnrollmentFailed* (prerequisites) are **future**:
+  v1 has no prerequisites, so enrolling succeeds synchronously and
+  *Enrolled* / *NotStarted* collapse into the `ENROLLED` status.
+- *CourseUpdated* / *LessonUpdated* are transient editing views of
+  `PUBLISHED`, not a stored status.
+- *CourseDeleted* / *LessonDeleted* are **future**: v1 models removal as
+  `ARCHIVED` (nothing destructive), so the stored statuses are `DRAFT`,
+  `PUBLISHED`, and `ARCHIVED`.
+
+###### Student Course Progress Lifecycle
+
+The state diagram below shows the student lifecycle from enrollment to the
+end of the course.
+
+```mermaid
+stateDiagram-v2
+    [*] --> BrowsingCourses
+
+    BrowsingCourses --> ViewingCourseDetails: View course overview
+    ViewingCourseDetails --> EnrollmentPending: Click "Enroll" to sign up
+
+    EnrollmentPending --> Enrolled: Enrollment successful
+    EnrollmentPending --> EnrollmentFailed: Prerequisites missing
+    EnrollmentFailed --> ViewingCourseDetails: Try again / choose another course
+
+    Enrolled --> NotStarted: Course access granted
+
+    NotStarted --> InProgress: Start first lesson
+    InProgress --> InProgress: Complete lesson
+    InProgress --> Completed: All required lessons completed
+    InProgress --> Dropped: Drop/withdraw from course
+
+    NotStarted --> Dropped: Drop/withdraw before starting
+
+    Completed --> [*]
+    Dropped --> [*]
+```
+
+###### Course Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> CourseDraft
+
+    CourseDraft --> CoursePublished: Publish course
+    CourseDraft --> CourseArchived: Archive course
+
+    CoursePublished --> CourseDraft: Unpublish for editing (optional)
+    CoursePublished --> CourseUpdated: Update course
+    CoursePublished --> CourseArchived: Archive course
+
+    CourseUpdated --> CoursePublished: Re-publish course
+    CourseUpdated --> CourseArchived: Archive course
+
+    CourseArchived --> CourseDraft: Restore / re-open (optional)
+    CourseArchived --> CourseDeleted: Delete course
+
+    CourseDeleted --> [*]
+```
+
+###### Lesson Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> LessonDraft
+
+    LessonDraft --> LessonPublished: Publish lesson
+    LessonDraft --> LessonArchived: Archive lesson
+
+    LessonPublished --> LessonDraft: Unpublish for editing (optional)
+    LessonPublished --> LessonUpdated: Update lesson
+    LessonPublished --> LessonArchived: Archive lesson
+
+    LessonUpdated --> LessonPublished: Re-publish lesson
+    LessonUpdated --> LessonArchived: Archive lesson
+
+    LessonArchived --> LessonDraft: Restore / re-open (optional)
+    LessonArchived --> LessonDeleted: Delete lesson
+
+    LessonDeleted --> [*]
+```
+
+#### Design: Mockups and Wireframes
+
+The frontend look and feel is specified before code:
+
+- **[Figma file](https://www.figma.com/design/2q1Rt5NGbQ1w8gRtRGoF4A)**
+  (read-only): low-fidelity wireframes (page structure) and high-fidelity
+  mockups (Catppuccin theme).
+- **[Browsable HTML mockups](docs/design/mockups/index.html)**: the same
+  pages as static HTML/CSS; their markup and BEM classes are the blueprint
+  for the future Thymeleaf templates.
+- **[docs/design/theme-exploration.md](docs/design/theme-exploration.md)**:
+  the design tokens and their WCAG contrast ratios;
+  [mockups-explained.md](docs/design/mockups-explained.md)
+  (FR: [mockups-explained-fr.md](docs/design/mockups-explained-fr.md)) and
+  the per-file docs in [docs/design/mockups/](docs/design/mockups/) explain
+  every tag and CSS rule.
+
+Frontend contributions are expected to follow the mockups, consume colors
+only through the design tokens, use the BEM naming convention (see
+[Code Style and Formatting](#code-style-and-formatting)), and preserve the
+accessibility wiring documented in [docs/rgaa.md](docs/rgaa.md).
+
 #### MonoRepo
 
 We use a **monorepo**, that is a Git repository containing mainly both the **frontend and** the **backend**.
@@ -136,9 +307,14 @@ The Spring Boot application lives at the **repository root** (standard Maven lay
 ```txt
 learn-dev/
 ├── .env.example                                          # Template for the local .env file (see README)
+├── .github/
+│   └── workflows/                                        # CI: one workflow per concern (build, test, lint, schema drift)
 ├── .sdkmanrc                                             # Pins the Java and Maven versions (SDKMAN)
 ├── Makefile                                              # Developer shortcuts (run, test, diagrams, ...)
-├── docker-compose.yaml                                   # PostgreSQL and MongoDB services
+├── config/
+│   └── checkstyle/
+│       └── checkstyle.xml                                # Project Checkstyle ruleset (advisory lint)
+├── docker-compose.yaml                                   # PostgreSQL, MongoDB, and Mailpit services
 ├── mvnw                                                  # Maven wrapper
 ├── pom.xml                                               # Dependencies, build configuration, and metadata
 │
@@ -149,7 +325,9 @@ learn-dev/
 ├── docs/
 │   ├── adr/                                              # Architecture Decision Records (MADR)
 │   ├── database/merise/                                  # MCD, MLD, MPD diagrams and sources
+│   ├── design/                                           # Design tokens study, HTML mockups, Figma links
 │   ├── plans/                                            # Implementation plans
+│   ├── rgaa.md                                           # Accessibility (RGAA) criteria map
 │   └── tech-stacks.md                                    # Catalogue of tools and frameworks
 │
 └── src/
@@ -157,19 +335,66 @@ learn-dev/
     │   ├── java/com/ericbouchut/learndev/
     │   │   ├── LearnDevApplication.java                  # Spring Boot entry point
     │   │   │
-    │   │   ├── auth/                                     # Authentication (registration, login support)
-    │   │   │   ├── AuthController.java                   # Web pages: home, login, dashboard, register
+    │   │   ├── admin/                                    # Administration area (/admin/**, ROLE_ADMIN)
+    │   │   │   ├── AdminController.java                  # Account list/creation, content moderation
+    │   │   │   └── AccountAdminService.java              # Instructor creation, archive/reactivate, guards
+    │   │   │
+    │   │   ├── audit/                                    # Security audit trail (audit_logs table)
+    │   │   │   ├── AuditService.java                     # Records auditable events (reset requests, ...)
+    │   │   │   ├── entity/
+    │   │   │   │   └── AuditLog.java
+    │   │   │   └── repository/
+    │   │   │       └── AuditLogRepository.java
+    │   │   │
+    │   │   ├── auth/                                     # Authentication (registration, login, password reset)
+    │   │   │   ├── AuthController.java                   # Web pages: home, login, register
     │   │   │   ├── CustomUserDetailsService.java         # Loads user + roles from DB for Spring Security
+    │   │   │   ├── PasswordResetController.java          # Forgot password and reset password pages
+    │   │   │   ├── PasswordResetMailer.java              # Sends the reset link over SMTP
+    │   │   │   ├── PasswordResetService.java             # Token issue/consume, rate limit, enumeration safety
     │   │   │   ├── RegistrationService.java              # Creates accounts (hashing, default role, duplicates)
     │   │   │   ├── dto/
-    │   │   │   │   └── RegisterForm.java                 # Registration form backing bean (bean validation)
-    │   │   │   └── exception/
-    │   │   │       ├── DuplicateEmailException.java
-    │   │   │       └── DuplicateUsernameException.java
+    │   │   │   │   ├── ForgotPasswordForm.java
+    │   │   │   │   ├── RegisterForm.java                 # Form backing beans (bean validation)
+    │   │   │   │   └── ResetPasswordForm.java
+    │   │   │   ├── entity/
+    │   │   │   │   └── PasswordResetToken.java           # Maps to the reset_tokens table
+    │   │   │   ├── exception/
+    │   │   │   │   ├── DuplicateEmailException.java
+    │   │   │   │   └── DuplicateUsernameException.java
+    │   │   │   └── repository/
+    │   │   │       └── PasswordResetTokenRepository.java
     │   │   │
     │   │   ├── common/                                   # Concerns shared across features
     │   │   │   └── config/
-    │   │   │       └── SecurityConfig.java               # Spring Security filter chain, form login, PasswordEncoder
+    │   │   │       ├── CacheConfig.java                  # Caffeine cache (rendered lesson Markdown)
+    │   │   │       └── SecurityConfig.java               # Spring Security filter chain, role gates, PasswordEncoder
+    │   │   │
+    │   │   ├── course/                                   # Course domain and its web layers
+    │   │   │   ├── CourseController.java                 # Student catalogue, detail, lessons, enroll/drop
+    │   │   │   ├── CourseService.java                    # Student visibility rules (read side)
+    │   │   │   ├── DashboardController.java              # The student's courses (GET /dashboard)
+    │   │   │   ├── EnrollmentService.java                # Enroll/drop lifecycle (idempotent)
+    │   │   │   ├── InstructorCourseController.java       # Authoring area (/instructor/**, ROLE_INSTRUCTOR)
+    │   │   │   ├── InstructorCourseService.java          # Ownership, publish/archive/restore, reorder, roster
+    │   │   │   ├── MarkdownRenderer.java                 # Lesson Markdown to sanitized HTML (ADR-0013, ADR-0014)
+    │   │   │   ├── dto/
+    │   │   │   │   ├── CourseForm.java
+    │   │   │   │   └── LessonForm.java
+    │   │   │   ├── entity/
+    │   │   │   │   ├── Course.java                       # Maps to the courses table
+    │   │   │   │   ├── Enrollment.java                   # Join entity on the enrollments table
+    │   │   │   │   ├── EnrollmentId.java                 # (user, course) composite key
+    │   │   │   │   ├── EnrollmentStatus.java             # ENROLLED, IN_PROGRESS, COMPLETED, DROPPED
+    │   │   │   │   ├── Lesson.java                       # Maps to the lessons table
+    │   │   │   │   └── PublicationStatus.java            # DRAFT, PUBLISHED, ARCHIVED
+    │   │   │   └── repository/
+    │   │   │       ├── CourseRepository.java
+    │   │   │       ├── EnrollmentRepository.java
+    │   │   │       └── LessonRepository.java
+    │   │   │
+    │   │   ├── legal/                                    # Legal pages
+    │   │   │   └── LegalController.java                  # Privacy policy page (French)
     │   │   │
     │   │   ├── role/                                     # Role management
     │   │   │   ├── entity/
@@ -184,19 +409,42 @@ learn-dev/
     │   │           └── UserRepository.java
     │   │
     │   └── resources/
-    │       ├── application.yaml                          # Main config (datasource, Liquibase, session cookie)
+    │       ├── application.yaml                          # Main config (datasource, Liquibase, mail, session cookie)
     │       ├── application-dev.yaml                      # Dev profile overrides
     │       ├── application-prod.yaml                     # Prod profile overrides
     │       ├── db/
     │       │   └── changelog/                            # Liquibase migrations
     │       │       ├── db.changelog-master.yaml          # Master changelog (includeAll on changes/)
     │       │       └── changes/
-    │       │           └── V20260608161836-create-users-table.sql  # One changeset per file
+    │       │           ├── V20260608161836-create-users-table.sql  # One changeset per file
+    │       │           └── ...                           # Tables, indexes, seeds (applied in filename order)
+    │       ├── static/
+    │       │   ├── css/                                  # Design system: base.css, theme and font stylesheets
+    │       │   └── fonts/                                # Self-hosted webfonts (OFL license files alongside)
     │       └── templates/                                # Thymeleaf views (server-rendered HTML)
+    │           ├── admin/                                # Administration pages (accounts, moderation)
+    │           │   ├── courses.html
+    │           │   ├── user-form.html
+    │           │   └── users.html
+    │           ├── courses/                              # Student course pages
+    │           │   ├── catalog.html
+    │           │   ├── detail.html
+    │           │   └── lesson.html
+    │           ├── error/                                # Styled error pages (403, 404, 500)
+    │           ├── fragments/
+    │           │   └── layout.html                       # Shared head, header (nav), and footer fragments
+    │           ├── instructor/                           # Authoring pages
+    │           │   ├── course-form.html
+    │           │   ├── courses.html
+    │           │   ├── lesson-form.html
+    │           │   └── students.html
     │           ├── dashboard.html
+    │           ├── forgot-password.html
     │           ├── home.html
     │           ├── login.html
-    │           └── register.html
+    │           ├── privacy.html                          # Privacy policy (French)
+    │           ├── register.html
+    │           └── reset-password.html
     │
     └── test/
         └── java/com/ericbouchut/learndev/
@@ -205,7 +453,11 @@ learn-dev/
             ├── auth/
             │   ├── AuthFlowTest.java                     # End-to-end register, login, dashboard flow (MockMvc + Testcontainers)
             │   ├── CustomUserDetailsServiceTest.java
+            │   ├── PasswordResetFlowTest.java            # End-to-end password reset through a real Mailpit container
             │   └── RegistrationServiceTest.java
+            │
+            ├── legal/
+            │   └── PrivacyPageTest.java                  # The public privacy page renders
             │
             ├── role/repository/
             │   └── RoleRepositoryTest.java               # @DataJpaTest with Testcontainers
@@ -222,10 +474,13 @@ The table below explains what each folder entails.
 | Folder                              | Purpose                                                                   |
 |-------------------------------------|---------------------------------------------------------------------------|
 | `src/main/java/.../learndev/`       | Spring Boot application root: entry point and top-level package           |
-| `src/main/java/.../learndev/auth/`  | Authentication: registration flow, login support, auth pages             |
+| `src/main/java/.../learndev/audit/` | Security audit trail: records auditable events in `audit_logs`            |
+| `src/main/java/.../learndev/auth/`  | Authentication: registration, login support, password reset, auth pages  |
 | `src/main/java/.../learndev/common/`| Cross-cutting concerns: Spring Security configuration                    |
+| `src/main/java/.../learndev/legal/` | Legal pages (privacy policy)                                              |
 | `src/main/java/.../learndev/role/`  | Role entity and data access                                               |
 | `src/main/java/.../learndev/user/`  | User entity and data access                                               |
+| `src/main/resources/static/`        | Design system stylesheets and self-hosted webfonts                        |
 | `src/main/resources/templates/`     | Thymeleaf views rendered server-side                                      |
 | `src/main/resources/db/changelog/`  | Liquibase database migrations                                             |
 | `src/test/java/.../learndev/`       | Tests (unit and Testcontainers-backed integration tests, all `*Test`)     |
@@ -412,44 +667,57 @@ physical model (MPD) with all the database details.
 
 ##### MCD Diagram
 
-*MCD* stands for 🇫🇷 **Modèle Conceptuel de Données** (Conceptual Data Model).
-The *MCD diagram* is part of the *Merise* methodology and shows the entities 
-and relationships without the (database) technical details.
+*MCD* stands for 🇫🇷 **Modèle Conceptuel de Données** in French (Conceptual Data Model).
 
-It is a high-level **business-domain** oriented diagram  
-that shows the **data (entities)**, their **relationships** and **cardinalities**,
-with **NO technical and implementation details**.
+It is a high-level **business-domain**-oriented diagram 
+shared with an ideally co-created by domain experts (i.e., the customer)
+and application developers.   
+It shows the entities with their properties and identifiers, 
+as well as the relationships and their cardinalities.  
+However, it does **NOT show technical or implementation database details**. 
+
+- Each **entity** (rectangular box) includes the names of its **properties**.  
+  The property that identifies an entity (**identifier**) is **underlined**.
+- Each **relationship** (rounded box) is linked to the entities it connects, 
+  with the cardinality on each side:
+    - **`1,N`**: one or more,
+    - **`0,N`**: zero or more,
+    - **`1,1`**: exactly one.
+
+In the **MCD** and **MLD**, the **names of entities and relationships** are **UPPERCASED**.
+
 
 > ![MCD](docs/database/merise/learn-dev.svg)
 
 
 ##### MLD Diagram
 
-*MLD* stands for 🇫🇷 **Modèle Logique de Données** (Logical Data Model).
-The **MLD diagram** is part of the _Merise_ methodology and shows 
+*MLD* stands for 🇫🇷 **Modèle Logique de Données** (Logical Data Model).  
+The **MLD diagram** is part of the *Merise* methodology and shows 
 the *Logical Data Model*.
 
-It shows the relational structure in a database-agnostic way.
+It shows the relational structure in a database-agnostic way.  
 It is a transformed version of the MCD where:
 - entities become tables, 
-- `1..N` relationships become foreign keys,
-- `N..N` relationships become junction tables,
-- `1..1` relationships become foreign keys.      
+- `1,N` relationships become foreign keys,
+- `N,N` relationships become junction tables,
+- `1,1` relationships become foreign keys.      
 
-The *MLD* is shared with domain experts and application developers.  
-*Domain experts* can verify that the relational structure accurately reflects 
-the business.       
-*Application developers* can then start creating the entities.
+A **foreign key** is marked by the **`#`** (hash sign) next to a property name (e.g., `#user_id`).
 
 > ![MLD](docs/database/merise/learn-dev_mld.svg)
 
 > [!NOTE]
 > **Regenerating the MLD:** the single source of truth is the conceptual MCD
-> (`learn-dev.mcd`). Run `make mld`: it auto-derives the logical model
-> (`learn-dev_mld.mcd`, via mocodo's `-t diagram`), emits the relational schema
-> as Markdown (`learn-dev_mld.md`, via `-t mld`), and renders the diagram
-> (`learn-dev_mld.svg`). The `learn-dev_mld.*` files are **generated artifacts —
-> do not edit them by hand**; edit only `learn-dev.mcd`.
+> ([`learn-dev.mcd`](https://github.com/ebouchut/learn-dev/blob/dev/docs/database/merise/learn-dev.mcd)).    
+> Run [`make mld`](https://github.com/ebouchut/learn-dev/blob/35eab7bdefa94b280791f15ede8b04aac95064c0/Makefile#L78-L82):
+> - auto-derives the logical model (`learn-dev_mld.mcd`, via mocodo's `-t diagram`),
+> - emits the relational schema as Markdown (`learn-dev_mld.md`, via `-t mld`), 
+> - renders the diagram (`learn-dev_mld.svg`).
+>
+> The `learn-dev_mld.*` files are **generated artifacts —
+> do not edit them by hand**.  
+> Edit only [`learn-dev.mcd`](https://github.com/ebouchut/learn-dev/blob/dev/docs/database/merise/learn-dev.mcd).
 
 
 ##### MPD Diagram
@@ -775,7 +1043,34 @@ chore(git): Ignore IntelliJ IDEA configuration files
 
 ### Code Style and Formatting
 
-: Document the code style and formatting
+- **Java**: standard 4-space indentation. The style is checked by
+  **Checkstyle** against the project ruleset
+  [`config/checkstyle/checkstyle.xml`](config/checkstyle/checkstyle.xml),
+  a copy of the Google ruleset adapted to this project's conventions
+  (4-space indentation, IDE-managed import order; the adaptations are
+  documented in the file header). Checks are **advisory** for now: see
+  [ADR-0012](docs/adr/0012-publish-test-coverage-to-codecov.md), which
+  restates the advisory-lint stance of
+  [ADR-0011](docs/adr/0011-start-ci-quality-checks-as-advisory-reports.md).
+- **HTML/CSS**: 2-space indentation (the convention used by the Thymeleaf
+  templates in `src/main/resources/templates/`).
+
+#### Checkstyle Report
+
+- **Locally**: run the check and open the browsable report:
+  ```bash
+  ./mvnw -B checkstyle:checkstyle
+  open target/reports/checkstyle.html  # macOS
+  ```
+  Violations also print on the console as warnings, and the raw XML result
+  is written to `target/checkstyle-result.xml`.
+- **Online**: the latest report from `dev` is
+  [rendered on GitHub Pages](https://www.ericbouchut.com/learn-dev/checkstyle/checkstyle.html)
+  (republished by the Lint workflow on each merge to `dev`, without any commit).
+- **On CI**: every [Lint workflow run](https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml)
+  uploads both as the **`checkstyle-report`** artifact.
+  Open a run, scroll to its **Artifacts** section, download the archive,
+  and open `reports/checkstyle.html` inside it.
 
 
 ### Reset the Development Database
@@ -862,8 +1157,12 @@ TODO: Explain how to write tests, what naming convention and best practices
 ### Running Tests
 
 Repository and integration tests run against a **real PostgreSQL** started by
-[Testcontainers](https://testcontainers.com/) (see ADR-0006), so a container
-engine must be running. This project uses **Podman**.
+[Testcontainers](https://testcontainers.com/)
+(see [ADR-0006](docs/adr/0006-test-against-real-postgres-testcontainers.md)),
+so a container engine must be running. This project uses **Podman**.
+`PasswordResetFlowTest` also starts a **Mailpit** container the same way, to
+receive the password reset email: no locally running Mailpit is needed to run
+the tests.
 
 #### Run All Tests
 
@@ -899,10 +1198,122 @@ Make sure the Podman machine is started first: `podman machine start`.
 On real Docker (for example in CI) neither variable is needed; `make test`
 falls back to a plain `./mvnw test`.
 
+#### Test Coverage Report (JaCoCo)
+
+Every test run measures code coverage with [JaCoCo](https://www.jacoco.org/jacoco/)
+(see [ADR-0011](docs/adr/0011-start-ci-quality-checks-as-advisory-reports.md):
+coverage is reported, not yet enforced as a threshold).
+
+- **Locally**: `make test` (or `./mvnw test`) writes the report to
+  `target/site/jacoco/index.html`. Open it in a browser:
+  ```bash
+  open target/site/jacoco/index.html  # macOS
+  ```
+- **On CI**: every [Tests workflow run](https://github.com/ebouchut/learn-dev/actions/workflows/test.yml)
+  uploads the report as the **`jacoco-coverage-report`** artifact.
+  Open a run, scroll to its **Artifacts** section, download the archive,
+  and open `index.html` inside it.
+- **On Codecov**: CI also uploads the report to the
+  [Codecov dashboard](https://app.codecov.io/gh/ebouchut/learn-dev)
+  (see [ADR-0012](docs/adr/0012-publish-test-coverage-to-codecov.md)),
+  which powers the README coverage badge and comments on every PR with the
+  project and patch coverage. The Codecov statuses are **informational**
+  (configured in `codecov.yml`): they report, they never block a merge.
+
 
 ### Generating the Documentation
 
-TODO: Explain how to generate the documentation
+Most of the documentation is **hand-written** and lives in the repository as
+Markdown: [README](README.md), [ARCHITECTURE](ARCHITECTURE.md), the
+[ADRs](docs/adr/README.md), the [glossaries](GLOSSARY.md), the
+[accessibility docs](docs/rgaa.md), and the plans and design notes under
+[docs/](docs/). Those you simply edit.
+
+The rest is **generated** from the code or from the database. This section is
+about those:
+
+| Documentation | Generate with | Output |
+|---|---|---|
+| API reference (Javadoc) | `make javadoc` | `target/reports/apidocs/index.html` |
+| Database diagrams (MCD, MLD, MPD) | `make diagrams` | `docs/database/merise/` |
+| Code quality report (Checkstyle) | `./mvnw -B checkstyle:checkstyle` | `target/reports/checkstyle.html` |
+| Test coverage report (JaCoCo) | `make test` | `target/site/jacoco/index.html` |
+
+The Checkstyle and JaCoCo reports have their own sections above
+([Checkstyle Report](#checkstyle-report),
+[Test Coverage Report (JaCoCo)](#test-coverage-report-jacoco)).
+The two below do not.
+
+#### API Reference (Javadoc)
+
+The API reference is the Java documentation rendered from the `/** */`
+comments in `src/main/java`. It holds one page per `public` or `protected`
+type of `com.ericbouchut.learndev` (classes, interfaces, enums, records) with
+its methods, their parameters and return values, plus package summaries, the
+class hierarchy, and a searchable index.
+
+- **Locally**: generate it, then open it:
+  ```bash
+  make javadoc
+  open target/reports/apidocs/index.html  # macOS
+  ```
+  This runs `./mvnw javadoc:javadoc`. The plugin is bound to no build phase,
+  so an ordinary `make test` or `./mvnw package` never pays the cost of
+  building it.
+- **Online**: the reference built from `dev` is
+  [published on GitHub Pages](https://www.ericbouchut.com/learn-dev/javadoc/index.html)
+  (republished by the Lint workflow on each merge to `dev`, without any commit).
+- **On CI**: every [Lint workflow run](https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml)
+  uploads it as the **`javadoc`** artifact.
+  Open a run, scroll to its **Artifacts** section, download the archive,
+  and open `index.html` inside it.
+
+Two things are worth knowing when reading the output:
+
+- **The Lombok accessors are absent.** Javadoc reads the *source*, and the
+  getters and setters of the entities are generated at compile time by Lombok
+  (`@Getter`/`@Setter`), so they never reach it. The fields they expose are
+  documented; the accessors are not.
+- **Javadoc does not police missing documentation.** It runs with
+  `doclint=all,-missing`: it fails on a malformed comment, broken HTML, or a
+  dangling `{@link}`, but says nothing about an absent `@param` or `@return`.
+  Reporting *missing* Javadoc is Checkstyle's job (`MissingJavadocType`,
+  `MissingJavadocMethod`), and per
+  [ADR-0011](docs/adr/0011-start-ci-quality-checks-as-advisory-reports.md)
+  it reports rather than blocks.
+
+#### Database Diagrams (Merise)
+
+The three Merise models are generated: the **MCD** and the **MLD** from the
+Mocodo source `docs/database/merise/learn-dev.mcd`, and the **MPD** from the
+**live database** with [tbls](https://github.com/k1LoW/tbls). What they write
+under `docs/database/merise/` is committed to the repository but remains a
+build artifact: **edit the `.mcd` source, never the generated `.svg`/`.md`.**
+
+Prerequisites (see the
+[Python Setup section of the README](README.md#python-setup)): a Python
+virtual environment with `mocodo >= 4.3.3`, and `tbls` on the `PATH`. The MPD
+additionally needs the database **running** (`docker compose up -d`), because
+tbls reads the real schema; its connection string is built from `.env`.
+
+```bash
+make mcd       # MCD → learn-dev.svg
+make mld       # MLD → learn-dev_mld.svg
+make mpd       # MPD → mpd/ (one page per table, read from the live database)
+make diagrams  # all three
+make clean     # remove the generated MCD/MLD files
+```
+
+After a schema change, regenerate the diagrams and check that the model and
+the migrations still agree:
+
+```bash
+make check-schema-drift  # fails if a Liquibase column is missing from the MCD
+```
+
+CI runs that same check on every change to a migration or to the MCD
+([Schema drift workflow](https://github.com/ebouchut/learn-dev/actions/workflows/schema-drift.yml)),
+so a diagram that has drifted from the schema blocks the merge.
 
 
 ### Running the CI Locally

@@ -1,3 +1,14 @@
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# spring-dotenv (.env loader)
+# The external secrets manager that generates .env prepends a localized
+# header, and some locales wrap the header's documentation URL onto a
+# bare, uncommented line, which dotenv-java rejects as a "Malformed
+# entry" and aborts startup. Tolerate non KEY=VALUE lines: real
+# variables still load, bogus header lines are skipped.
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+springdotenv:
+  ignore-if-malformed: true
+
 spring:
   application:
     name: learn-dev
@@ -25,6 +36,17 @@ spring:
     hibernate:
       ddl-auto: validate # Ensure the database and its schema are in sync
 
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Mail (SMTP)
+  # Default: the local Mailpit catcher (docker compose service).
+  # Setting a host here also makes Spring Boot create the JavaMailSender
+  # bean in every context, including tests. Production overrides this with
+  # a real provider in application-prod.yaml.
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  mail:
+    host: localhost
+    port: 1025
+
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # Database schema change manager
   # See: https://www.liquibase.com/
@@ -45,6 +67,27 @@ server:
         http-only: true   # JS cannot read the cookie (mitigates XSS session theft)
         same-site: lax    # cookie withheld on cross-site requests (CSRF defense in depth)
         # secure: true    # enable once served over HTTPS (cookie sent only over TLS)
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Application settings (learn-dev)
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+learndev:
+  mail:
+    # Sender address for transactional emails (password reset)
+    from: noreply@learn-dev.local
+  lockout:
+    # Consecutive failed logins before the account is locked
+    max-attempts: 5
+  email-verification:
+    # How long a verification link stays valid
+    token-ttl: 24h
+  password-reset:
+    # How long a reset token stays valid
+    token-ttl: 30m
+    # Rate limit: max reset requests per user within the window
+    max-requests: 3
+    window: 15m
 
 
 # ~~~~~~~~~~~~~~~~~~

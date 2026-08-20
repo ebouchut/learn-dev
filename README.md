@@ -1,14 +1,30 @@
-# Learn-dev: An Interactive Programming Learning Platform
+<!-- GitHub Badges -->
+
+[![build status][build-image]][build-url]
+[![test status][test-image]][test-url]
+[![code coverage][coverage-image]][coverage-url]
+[![lint status][lint-image]][lint-url][![lint report][lint-report-image]][lint-report-url]
+[![schema drift status][schema-drift-image]][schema-drift-url]
+[![github issues][github-issues-image]][github-issues-url]
+
+# Learn-dev: Learn programming, one lesson at a time.
 
 ## Presentation
 
-> An interactive programming learning platform.  
+> An accessible, Markdown-first platform for programming courses 
+> where instructors write lessons in plain Markdown, 
+> students follow along lesson by lesson in an interface built to RGAA standards.
 
-This project aims to enable students to learn programming.
+*Learn-dev* is a platform for publishing and following programming courses.   
+**Instructors** author lessons in plain Markdown, and the platform turns them into rich, safe pages: 
+tables, GitHub-style callouts, Mermaid diagrams, and code blocks, all sanitized server-side and rendered 
+in a light or dark theme. 
+**Students** enroll and progress lesson by lesson through an interface 
+designed to be accessible to everyone (RGAA/WCAG AA). 
 
-It is also my capstone project for the [Web and Web Mobile Developer REAC certification](https://www.francecompetences.fr/recherche/rncp/37674/), which I am currently undergoing at [La Plateforme_](https://laplateforme.io).
-
-
+This is also  my capstone project 
+for the [Web and Web Mobile Developer certification](https://www.francecompetences.fr/recherche/rncp/37674/), 
+which I am currently pursuing at [La Plateforme_](https://laplateforme.io).
 
 
 ## Goals
@@ -17,53 +33,58 @@ It is also my capstone project for the [Web and Web Mobile Developer REAC certif
 - Support multiple user roles (such as Student, Instructor, Admin)
 - Demonstrate full-stack development skills using industry standards
 
+Hands-on exercises are next on the roadmap.
 
 ## Tech Stack
 
 This project is built with [Java](https://en.wikipedia.org/wiki/Java_(programming_language))/[Spring Boot](https://spring.io/projects/spring-boot) backend
 and [Thymeleaf](https://en.wikipedia.org/wiki/Thymeleaf) frontend.
-
+PostgreSQL
 
 ### Backend
 
 - Language: Java 21 
-- Frameworks: 
-  - Java Framework used to build (Web) Applications and REST endpoints.
-    - [Spring Boot](https://spring.io/projects/spring-boot) 3.x:
-    - Thymeleaf
--  Authentication and authorization framework:
-  - [Spring Security](https://spring.io/projects/spring-security):
+- [Spring Boot](https://spring.io/projects/spring-boot) 3.5: a Java Framework used to build (Web) Applications (and REST endpoints)
+- [Spring Security](https://spring.io/projects/spring-security) 6.5.x: 
+  an authentication and authorization framework (configured for Role-Based Access-Control)
 - Databases:
   - [PostgreSQL](https://www.postgresql.org/about/) version 17 (relational core)
-  - [MongoDB](https://www.mongodb.com/) version 8, provisioned (Docker) for
-    future content storage; not yet wired to a feature
+  - [MongoDB](https://www.mongodb.com/) version 8, for future content storage; not yet wired to a feature
 - Database schema migrations:
-  - [Liquibase](https://www.liquibase.com/) (migrations applied at application startup)
-- Build and dependency management tool:
-  - [Maven](https://maven.apache.org/what-is-maven.html)
+  - [Liquibase](https://www.liquibase.com/) handles the migrations of the database  and schema 
+    such as changes to the database structure, and insertion of seeds). 
+    Database migrations are applied at application startup.
+- [Maven](https://maven.apache.org/what-is-maven.html) A build and dependency management tool
 - Containerization:
-  - [Podman](https://en.wikipedia.org/wiki/Podman) (preferred over [Docker](https://en.wikipedia.org/wiki/Docker_(software))) 
-    to containerize parts of the application as container images that can run as autonomous containers. 
+  - [Docker](https://en.wikipedia.org/wiki/Docker_(software)) 
+    ([Podman](https://en.wikipedia.org/wiki/Podman) is preferred over Docker and is CLI compatible).
+  - *Docker Compose* helps containerize parts of the application as container images 
+    that can run as autonomous containers. It is used to provision 3 services: the two databases and the mail server.  
 
 
 ### Frontend
 
 The frontend is **server-rendered**: there is no separate frontend application.
 
-- [Thymeleaf](https://www.thymeleaf.org/) templates rendered by the backend
-  (home, login, register, and dashboard pages)
+- [Thymeleaf](https://www.thymeleaf.org/) is a Java library and server-side template rendering engine for Web applications.
+  In other words, it helps build dynamic Web pages with templates rendered by the backend:
+  public pages (home, login, register, privacy), the student area (dashboard,
+  course catalogue, course and lesson pages), the instructor authoring area
+  (courses, lessons, roster), the admin area (accounts, course moderation),
+  and styled error pages.
 - [thymeleaf-extras-springsecurity6](https://github.com/thymeleaf/thymeleaf-extras-springsecurity)
   to display authentication data (such as the logged-in username) in the pages
 - Server-side form handling with bean validation (no JavaScript framework yet)
-- Plain HTML and CSS
+- Plain HTML, CSS, and JavaScript.
 
 
 ### Development Tools
 
 - JetBrains **IntelliJ IDEA**: **IDE** 
 - **Git**: Version control
-- [**Maven**](https://en.wikipedia.org/wiki/Apache_Maven): Build and dependency management
-- **Podman**: Containerization
+- [**Maven**](https://en.wikipedia.org/wiki/Apache_Maven): dependency and software lifecycle-management tool 
+  (meaning it build the app,launch tests, package and deploy the application) 
+- **Docker** and **Docker Compose** (**Podman** and **Podman Compose** are preferred because they are more secure and compatible) 
 
 
 ## Getting Started
@@ -102,7 +123,7 @@ privileged, always-on daemon.
 
 - on macOS:
   ```shell
-  brew install podman docker-compose
+  brew install podman podman-compose podman-desktop
   podman machine init   # Do it once: create the Linux VM
   podman machine start  # Start the VM (needed after each reboot)
   ```
@@ -132,7 +153,7 @@ This is necessary in order to regenerate the MERISE database diagrams
 You will need to install *Python* and:
 - **`mocodo`**: a CLI tool to generate the MCD and MLD database diagrams 
   from a text-file description of the conceptual data model.
-- **`tbls`**: a CLI tool to reverse engineer the live database to generate the MPD. 
+- **`tbls`**: a CLI tool used to generate the MPD. 
 
 Here is the procedure:
 
@@ -208,7 +229,7 @@ The first command starts the Podman machine if it is not already running.
 Then `docker compose up -d`  starts all the application Docker services 
  as declared in [docker-compose.yaml](docker-compose.yaml)
 (the *Docker Compose* configuration file), like this.
-For each service (`postgres` and `mongo`):
+For each service (`postgres`, `mongo`, and `mailpit`):
 
 1. Download the Docker image for this service as specified in `docker-compose.yaml` 
   from the [Docker Hub](https://hub.docker.com/) public registry, only if the Docker
@@ -236,6 +257,29 @@ For each service (`postgres` and `mongo`):
 > behind the scenes.
 > The containers run inside that hidden *VM*, not directly on macOS/Windows.
 
+
+## Package for production (Docker)
+
+The [Dockerfile](Dockerfile) builds a self-contained application image in
+two stages (Maven build, then a minimal JRE runtime running as a non-root
+user, `prod` profile active by default):
+
+```shell
+docker build -t learn-dev .
+docker run --rm -p 8080:8080 --env-file .env.prod learn-dev
+```
+
+The runtime configuration comes entirely from environment variables (see
+[.env.example](.env.example)): the PostgreSQL coordinates and credentials,
+and the SMTP relay (`SMTP_*`) used by the password-reset and
+email-verification emails. The prod profile assumes a TLS-terminating
+reverse proxy in front of the app: it honors `X-Forwarded-*` headers and
+marks the session cookie `Secure`.
+
+> [!NOTE]
+> Packaging is local only: the image is not pushed to a registry, and no
+> Maven artifact is deployed to any public repository (the `pom.xml`
+> deliberately has no `distributionManagement`).
 
 ## Stop the Application
 
@@ -357,6 +401,58 @@ Where:
 - `-v` request Compose to remove the named data volumes created for this service
 
 
+### Mailpit Service (fake SMTP)
+
+**Mailpit** catches every email the application sends in development
+(for example the password-reset email): nothing leaves your machine.
+It starts with the other services (`docker compose up -d`).
+
+- **Web UI (browse the caught emails):** http://localhost:8025
+- SMTP endpoint used by the app (dev profile): `localhost:1025`
+
+See [ADR-0004](docs/adr/0004-use-mailpit-as-local-smtp-catcher.md) for why
+Mailpit was chosen.
+
+#### Stop Mailpit
+
+```shell
+docker compose stop mailpit
+```
+
+This command stops the `mailpit` service container.
+The application keeps running without it, but any email it tries to send
+(for example the password reset email) is lost until Mailpit is started again.
+
+#### Start Mailpit
+
+This command **restarts the existing stopped** `mailpit` service container.
+
+```shell
+docker compose start mailpit
+```
+
+Now, check that `mailpit` is running:
+
+```shell
+docker compose ps | grep mailpit
+```
+
+#### Remove the Mailpit Data
+
+There is **nothing to remove**: unlike `postgres` and `mongo`, the `mailpit`
+service has **no data volume**. Mailpit keeps the caught emails **in memory
+only**, so they disappear as soon as the container stops.
+
+To clear the caught emails without stopping Mailpit:
+
+- delete them from the [Web UI](http://localhost:8025), or
+- restart the service:
+
+```shell
+docker compose restart mailpit
+```
+
+
 ## Project Status
 
 For up-to-date information about the status of the project, 
@@ -365,10 +461,39 @@ visit [this link](https://github.com/users/ebouchut/projects/7/views/3).
 
 ## Documentation
 
+- [API reference (Javadoc)](https://www.ericbouchut.com/learn-dev/javadoc/index.html) —
+  the code reference rendered from the Javadoc comments, republished from `dev` on
+  each merge by the [Lint workflow](https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml);
+  build it locally with `make javadoc` (see
+  [CONTRIBUTING](CONTRIBUTING.md#generating-the-documentation)).
 - [ARCHITECTURE.md](ARCHITECTURE.md) — how the pieces fit together (layers, request flow, authentication, data, testing).
 - [docs/tech-stacks.md](docs/tech-stacks.md) — catalogue of tools, languages, and frameworks with versions used in the project.
-- [GLOSSARY.md](GLOSSARY.md) — definitions of the domain and technical terms used across the project.
+- [GLOSSARY.md](GLOSSARY.md) — definitions of the domain and technical terms used across the project
+  (🇫🇷 French version: [GLOSSAIRE.md](GLOSSAIRE.md)).
 - [Architecture Decision Records](docs/adr/README.md) — A list of design decisions and their trade-offs.
+- [docs/rgaa.md](docs/rgaa.md) — accessibility (RGAA) criteria map: what is expected for the DWWM,
+  how and where each criterion is fulfilled;
+  [docs/rgaa-audit.md](docs/rgaa-audit.md) is the tooled self-audit report
+  (Lighthouse, axe-core, keyboard walkthrough).
+- [Mockups and wireframes (Figma)](https://www.figma.com/design/2q1Rt5NGbQ1w8gRtRGoF4A) —
+  read-only Figma file with the high-fidelity mockups (Catppuccin theme) and the
+  low-fidelity wireframes of the frontend pages; the browsable HTML mockups and
+  their study docs live in [docs/design/](docs/design/theme-exploration.md)
+  (see [mockups-explained.md](docs/design/mockups-explained.md),
+  🇫🇷 [mockups-explained-fr.md](docs/design/mockups-explained-fr.md)).
+- [Test coverage (Codecov)](https://app.codecov.io/gh/ebouchut/learn-dev) —
+  live coverage dashboard fed by CI
+  (see [ADR-0012](docs/adr/0012-publish-test-coverage-to-codecov.md));
+  the raw JaCoCo report is also published as the `jacoco-coverage-report`
+  artifact of each [Tests workflow run](https://github.com/ebouchut/learn-dev/actions/workflows/test.yml),
+  and locally `make test` writes it to `target/site/jacoco/index.html`
+  (see [CONTRIBUTING](CONTRIBUTING.md#test-coverage-report-jacoco) for details).
+- [Code quality report (Checkstyle)](https://www.ericbouchut.com/learn-dev/checkstyle/checkstyle.html) —
+  the latest report, rendered online via GitHub Pages (refreshed on each merge to `dev`);
+  also published as the `checkstyle-report` artifact of each
+  [Lint workflow run](https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml);
+  locally, `./mvnw checkstyle:checkstyle` writes `target/reports/checkstyle.html`
+  (see [CONTRIBUTING](CONTRIBUTING.md#code-style-and-formatting) for the code style).
 
 
 ## Contributing
@@ -430,3 +555,20 @@ See [LICENSE](LICENSE) for details.
   - [Aubry Capitone](https://www.linkedin.com/in/a-capitone/)
   - [Esteban Bare](https://www.linkedin.com/in/esteban-bare-337927284/),
 - [REAC Developpeur Web et Web mobile](https://www.francecompetences.fr/recherche/rncp/37674/)
+
+<!-- GitHub Badges: image and link definitions -->
+
+[build-image]: https://github.com/ebouchut/learn-dev/actions/workflows/build.yml/badge.svg?branch=dev&event=push
+[build-url]:   https://github.com/ebouchut/learn-dev/actions/workflows/build.yml
+[test-image]:  https://github.com/ebouchut/learn-dev/actions/workflows/test.yml/badge.svg?branch=dev&event=push
+[test-url]:    https://github.com/ebouchut/learn-dev/actions/workflows/test.yml
+[coverage-image]: https://codecov.io/gh/ebouchut/learn-dev/branch/dev/graph/badge.svg
+[coverage-url]:   https://app.codecov.io/gh/ebouchut/learn-dev
+[lint-image]:  https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml/badge.svg?branch=dev&event=push
+[lint-url]:    https://github.com/ebouchut/learn-dev/actions/workflows/lint.yml
+[lint-report-image]: https://img.shields.io/badge/-report-blue
+[lint-report-url]:   https://www.ericbouchut.com/learn-dev/checkstyle/checkstyle.html
+[schema-drift-image]: https://github.com/ebouchut/learn-dev/actions/workflows/schema-drift.yml/badge.svg?branch=dev&event=push
+[schema-drift-url]:   https://github.com/ebouchut/learn-dev/actions/workflows/schema-drift.yml
+[github-issues-image]: https://img.shields.io/github/issues/ebouchut/learn-dev
+[github-issues-url]: https://github.com/ebouchut/learn-dev/issues

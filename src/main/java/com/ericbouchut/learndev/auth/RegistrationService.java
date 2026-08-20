@@ -41,20 +41,36 @@ public class RegistrationService {
      */
     @Transactional
     public User register(RegisterForm form) {
+        return register(form, "STUDENT");
+    }
+
+    /**
+     * Registers a new account with the given seeded role (self-registration
+     * uses {@code STUDENT}; the admin area creates {@code INSTRUCTOR}
+     * accounts). Same uniqueness and hashing rules as {@link #register}.
+     *
+     * @param form     the validated registration form
+     * @param roleName the seeded role to assign
+     * @return the saved user, including its generated id
+     * @throws DuplicateUsernameException if the username is already taken
+     * @throws DuplicateEmailException    if the email is already registered
+     */
+    @Transactional
+    public User register(RegisterForm form, String roleName) {
         if (users.existsByUsername(form.username())) {
             throw new DuplicateUsernameException(form.username());
         }
         if (users.existsByEmail(form.email())) {
             throw new DuplicateEmailException(form.email());
         }
-        Role student = roles.findByRoleName("STUDENT")
-                .orElseThrow(() -> new IllegalStateException("STUDENT role not seeded"));
+        Role role = roles.findByRoleName(roleName)
+                .orElseThrow(() -> new IllegalStateException(roleName + " role not seeded"));
 
         User user = new User();
         user.setUsername(form.username());
         user.setEmail(form.email());
         user.setPassword(encoder.encode(form.password()));
-        user.getRoles().add(student);
+        user.getRoles().add(role);
 
         // The existsBy* pre-checks above race under concurrency: two requests can
         // both pass them, and the loser hits the users_username_key/users_email_key

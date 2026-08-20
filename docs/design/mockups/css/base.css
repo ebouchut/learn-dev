@@ -1,0 +1,1031 @@
+/*
+  learn-dev base stylesheet: structural tokens + BEM components.
+  Theme-independent: every color comes from the token names defined by the
+  active theme stylesheet (theme-catppuccin.css by default).
+  Conventions: BEM (block__element--modifier), 2-space indentation.
+  Accessibility: visible focus everywhere, reduced-motion respected,
+  form errors wired for aria-describedby, landmarks styled not created here.
+*/
+
+/* ---------- Structural tokens ---------- */
+
+:root {
+  --font-display: "Sora", ui-sans-serif, sans-serif;
+  --font-body: "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.375rem;
+  --font-size-2xl: 1.75rem;
+  --font-size-3xl: 2.5rem;
+  --line-height: 1.6;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2rem;
+  --space-6: 3rem;
+
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --shadow: 0 1px 3px rgb(0 0 0 / 0.08), 0 4px 14px rgb(0 0 0 / 0.06);
+
+  --content-width: 64rem;
+  --form-width: 26rem;
+}
+
+/* ---------- Reset-lite and typography ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  line-height: 1.2;
+  margin: 0 0 var(--space-3);
+  letter-spacing: -0.015em;
+}
+
+p {
+  margin: 0 0 var(--space-3);
+}
+
+a {
+  color: var(--color-link);
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+img {
+  max-width: 100%;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+/* Visible focus, never removed (WCAG 2.4.7) */
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------- Utilities ---------- */
+
+/* Visually hidden but available to assistive technology */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Skip link ---------- */
+
+.skip-link {
+  position: absolute;
+  left: var(--space-3);
+  top: -3rem;
+  z-index: 10;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-radius: 0 0 var(--radius) var(--radius);
+  text-decoration: none;
+  transition: top 150ms ease;
+}
+
+.skip-link:focus-visible {
+  top: 0;
+}
+
+/* The skip link moves focus onto main (tabindex="-1"); no ring on a
+   non-interactive landmark (WCAG 2.4.7 applies to interactive controls) */
+main:focus {
+  outline: none;
+}
+
+/* ---------- Site header ---------- */
+
+.site-header {
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.site-header__inner {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.site-header__brand {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--font-size-lg);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.site-header__logo {
+  width: 1.35em;
+  height: 1.35em;
+  margin-right: var(--space-2);
+  color: var(--color-primary);
+}
+
+.site-header__brand-mark {
+  color: var(--color-primary);
+}
+
+.site-header__nav {
+  margin-left: auto;
+}
+
+.nav__list {
+  list-style: none;
+  display: flex;
+  /* Without wrap, a crowded row pushes trailing items (the Log out
+     button, when it lived here) off-screen on narrow viewports. */
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.nav__link {
+  text-decoration: none;
+  color: var(--color-text);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.nav__link:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.nav__link[aria-current="page"] {
+  font-weight: 700;
+  color: var(--color-primary);
+  box-shadow: inset 0 -2px 0 var(--color-primary);
+}
+
+/* The account group: status and exit, deliberately outside the nav. The
+   divider separates "where you can go" from "who you are". */
+.site-header__account {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* Usernames are user-typed (50 chars max in the schema): truncate rather
+   than let a long one wrap or stretch the header. */
+.site-header__account-name {
+  display: inline-block;
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 46rem) {
+  .site-header__account-name {
+    max-width: 40vw;
+  }
+}
+
+/* ---------- Layout ---------- */
+
+.site-main {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-6);
+}
+
+.site-main--narrow {
+  max-width: var(--form-width);
+}
+
+.site-footer {
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.site-footer__inner {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-4);
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* ---------- Buttons ---------- */
+
+.button {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  padding: 0.65em 1.4em;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.button--primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.button--ghost {
+  background: transparent;
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.button--ghost:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* ---------- Hero (home) ---------- */
+
+.hero {
+  display: grid;
+  gap: var(--space-5);
+  align-items: center;
+  grid-template-columns: 1.1fr 0.9fr;
+  padding: var(--space-6) 0;
+}
+
+@media (max-width: 46rem) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hero__title {
+  font-size: var(--font-size-3xl);
+}
+
+.hero__title-accent {
+  color: var(--color-primary);
+}
+
+.hero__lead {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+  max-width: 34rem;
+}
+
+.hero__actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-top: var(--space-4);
+}
+
+/* Decorative code card: signature element, hidden from AT */
+.code-card {
+  background: var(--code-bg);
+  color: var(--code-text);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow);
+  rotate: 1.5deg;
+  position: relative;
+}
+
+.code-card::before {
+  content: "";
+  position: absolute;
+  inset: var(--space-3) auto auto var(--space-4);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-error);
+  box-shadow: 18px 0 0 var(--color-warning), 36px 0 0 var(--color-success);
+}
+
+.code-card__code {
+  display: block;
+  margin-top: var(--space-4);
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.code-card__keyword { color: var(--code-keyword); }
+.code-card__string  { color: var(--code-string); }
+.code-card__function { color: var(--code-function); }
+.code-card__comment { color: var(--code-comment); }
+
+/* ---------- Feature cards (home) ---------- */
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--space-4);
+  padding: 0;
+  margin: var(--space-5) 0 0;
+  list-style: none;
+}
+
+.feature-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.feature-card__icon {
+  font-size: var(--font-size-2xl);
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.feature-card__title {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-2);
+}
+
+.feature-card__text {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* ---------- Forms ---------- */
+
+.form-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow);
+}
+
+.form-card__title {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--space-4);
+}
+
+.form__group {
+  margin-bottom: var(--space-4);
+}
+
+.form__label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: var(--space-1);
+}
+
+.form__hint {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.form__input {
+  width: 100%;
+  font: inherit;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.6em 0.8em;
+}
+
+/* Markdown editors and long descriptions */
+textarea.form__input {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+/* Action buttons that sit inside a line of text or a list item */
+.form--inline {
+  display: inline;
+}
+
+/* ---------- Data tables (e.g. the course roster) ---------- */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table th {
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+}
+
+.table tr:last-child td {
+  border-bottom: 0;
+}
+
+.form__input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+  border-color: var(--color-focus);
+}
+
+.form__input--invalid {
+  border-color: var(--color-error);
+}
+
+.form__error {
+  display: block;
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  margin-top: var(--space-1);
+}
+
+.form__footer {
+  margin-top: var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ---------- Alerts ---------- */
+
+.alert {
+  border: 1px solid;
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  background: var(--color-surface);
+}
+
+.alert--success {
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.alert--error {
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
+
+.alert--info {
+  color: var(--color-link);
+  border-color: var(--color-link);
+}
+
+/* ---------- Dashboard ---------- */
+
+.page-title {
+  font-size: var(--font-size-2xl);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-4) 0 var(--space-5);
+  padding: 0;
+  list-style: none;
+}
+
+.stat-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.stat-card__value {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.stat-card__label {
+  color: var(--color-text-muted);
+}
+
+.course-list {
+  list-style: none;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.course-card {
+  display: grid;
+  gap: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.course-card__title {
+  font-size: var(--font-size-lg);
+  margin: 0;
+}
+
+.course-card__meta {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.course-card__progress {
+  accent-color: var(--color-primary);
+  width: 100%;
+  height: 0.6rem;
+}
+
+/* ---------- Page-load reveal (CSS only, reduced-motion safe) ---------- */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.reveal {
+  animation: rise-in 500ms ease both;
+}
+
+.reveal--2 { animation-delay: 100ms; }
+.reveal--3 { animation-delay: 200ms; }
+.reveal--4 { animation-delay: 300ms; }
+
+/* ---------- Lesson content (rendered Markdown) ---------- */
+
+/* The lesson body is instructor Markdown rendered to sanitized HTML
+   (ADR-0013): the sanitizer strips class attributes, so BEM classes can
+   never reach this markup. Element selectors scoped under the wrapper
+   are the only way to style it (deliberate, documented BEM exception). */
+
+.lesson-content h2,
+.lesson-content h3,
+.lesson-content h4 {
+  margin-top: var(--space-5);
+}
+
+/* The global heading rule stops at h3; demoted headings go down to h6. */
+.lesson-content h4,
+.lesson-content h5,
+.lesson-content h6 {
+  font-family: var(--font-display);
+  line-height: 1.2;
+  margin: var(--space-4) 0 var(--space-3);
+  letter-spacing: -0.015em;
+}
+
+.lesson-content ul,
+.lesson-content ol {
+  margin: 0 0 var(--space-3);
+  padding-left: var(--space-5);
+}
+
+.lesson-content li {
+  margin-bottom: var(--space-1);
+}
+
+.lesson-content pre {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  margin: 0 0 var(--space-3);
+  overflow-x: auto; /* long lines scroll inside the block, no page scroll (RGAA 10.11) */
+}
+
+/* Inline code gets a chip; code inside pre relies on the block styling. */
+.lesson-content :not(pre) > code {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.1em 0.35em;
+}
+
+.lesson-content blockquote {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-1) var(--space-4);
+  border-left: 4px solid var(--color-primary);
+  color: var(--color-text-muted);
+}
+
+.lesson-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 var(--space-3);
+}
+
+.lesson-content th,
+.lesson-content td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+}
+
+.lesson-content th {
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+  background: var(--color-surface);
+}
+
+.lesson-content hr {
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  margin: var(--space-5) 0;
+}
+
+/* Alerts (GFM/Obsidian callouts) inside lesson content. Accent colors and
+   title come from CSS; icons are Octicons inlined as mask data URIs so the
+   sanitized HTML never needs to carry SVG markup. */
+
+.lesson-content .markdown-alert {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-left: 4px solid var(--alert-accent, var(--color-border));
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.lesson-content .markdown-alert-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-weight: 600;
+  /* Pulled 30% toward the text color: several raw accents sit just under
+     the 4.5:1 contrast floor (WCAG 1.4.3, RGAA 3.2) on the surface
+     background in the light theme; mixing toward the theme's text color
+     darkens them there and lightens them in the dark theme. */
+  color: color-mix(in srgb,
+      var(--alert-accent, var(--color-text)) 70%, var(--color-text));
+  margin-bottom: var(--space-2);
+}
+
+.lesson-content .markdown-alert-title::before {
+  content: "";
+  width: 1em;
+  height: 1em;
+  flex: none;
+  background-color: currentColor;
+  -webkit-mask: var(--alert-icon) center / contain no-repeat;
+  mask: var(--alert-icon) center / contain no-repeat;
+}
+
+/* Nested alerts sit flush inside their parent. */
+.lesson-content .markdown-alert .markdown-alert {
+  margin-top: var(--space-2);
+  background: var(--color-bg);
+}
+
+.lesson-content .markdown-alert-note {
+  --alert-accent: var(--color-link);
+  --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.lesson-content .markdown-alert-info {
+  --alert-accent: var(--color-link);
+  --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.lesson-content .markdown-alert-todo {
+  --alert-accent: var(--color-link);
+  --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M2.5 1.75v11.5c0 .138.112.25.25.25h3.17a.75.75 0 0 1 0 1.5H2.75A1.75 1.75 0 0 1 1 13.25V1.75C1 .784 1.784 0 2.75 0h8.5C12.216 0 13 .784 13 1.75v7.736a.75.75 0 0 1-1.5 0V1.75a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25Zm13.274 9.537v-.001l-4.557 4.45a.75.75 0 0 1-1.055-.008l-1.943-1.95a.75.75 0 0 1 1.062-1.058l1.419 1.425 4.026-3.932a.75.75 0 1 1 1.048 1.074ZM4.75 4h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM4 7.75A.75.75 0 0 1 4.75 7h2a.75.75 0 0 1 0 1.5h-2A.75.75 0 0 1 4 7.75Z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.lesson-content .markdown-alert-abstract,
+.lesson-content .markdown-alert-summary,
+.lesson-content .markdown-alert-tldr {
+  --alert-accent: var(--color-focus);
+  --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M5.75 2.5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.lesson-content .markdown-alert-tip,
+.lesson-content .markdown-alert-hint {
+  --alert-accent: var(--color-success);
+  --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.lesson-content .markdown-alert-important {
+  --alert-accent: var(--color-primary);
+  --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v9.5A1.75 1.75 0 0 1 14.25 13H8.06l-2.573 2.573A1.458 1.458 0 0 1 3 14.543V13H1.75A1.75 1.75 0 0 1 0 11.25Zm1.75-.25a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h2a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h6.5a.25.25 0 0 0 .25-.25v-9.5a.25.25 0 0 0-.25-.25Zm7 2.25v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.lesson-content .markdown-alert-success,
+.lesson-content .markdown-alert-check,
+.lesson-content .markdown-alert-done {
+  --alert-accent: var(--color-success);
+  --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm1.5 0a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm10.28-1.72-4.5 4.5a.75.75 0 0 1-1.06 0l-2-2a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l1.47 1.47 3.97-3.97a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042Z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.lesson-content .markdown-alert-question,
+.lesson-content .markdown-alert-help,
+.lesson-content .markdown-alert-faq {
+  --alert-accent: var(--color-warning);
+  --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.756 2.756 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6.24 6.24 0 0 0-.26.16.952.952 0 0 0-.276.245.75.75 0 0 1-1.248-.832c.184-.264.42-.489.692-.661.103-.067.207-.132.313-.195l.007-.004c.1-.061.182-.11.258-.161a.969.969 0 0 0 .277-.245C8.96 6.514 9 6.427 9 6.25a.612.612 0 0 0-.262-.525A1.27 1.27 0 0 0 8 5.5c-.369 0-.595.09-.74.187a1.01 1.01 0 0 0-.34.398ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.lesson-content .markdown-alert-warning,
+.lesson-content .markdown-alert-attention {
+  --alert-accent: var(--color-warning);
+  --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.lesson-content .markdown-alert-caution {
+  --alert-accent: var(--color-error);
+  --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M4.47.22A.749.749 0 0 1 5 0h6c.199 0 .389.079.53.22l4.25 4.25c.141.14.22.331.22.53v6a.749.749 0 0 1-.22.53l-4.25 4.25A.749.749 0 0 1 11 16H5a.749.749 0 0 1-.53-.22L.22 11.53A.749.749 0 0 1 0 11V5c0-.199.079-.389.22-.53Zm.84 1.28L1.5 5.31v5.38l3.81 3.81h5.38l3.81-3.81V5.31L10.69 1.5ZM8 4a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.lesson-content .markdown-alert-failure,
+.lesson-content .markdown-alert-fail,
+.lesson-content .markdown-alert-missing {
+  --alert-accent: var(--color-error);
+  --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M2.344 2.343h-.001a8 8 0 0 1 11.314 11.314A8.002 8.002 0 0 1 .234 10.089a8 8 0 0 1 2.11-7.746Zm1.06 10.253a6.5 6.5 0 1 0 9.108-9.275 6.5 6.5 0 0 0-9.108 9.275ZM6.03 4.97 8 6.94l1.97-1.97a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l1.97 1.97a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-1.97 1.97a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L6.94 8 4.97 6.03a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018Z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.lesson-content .markdown-alert-danger,
+.lesson-content .markdown-alert-error {
+  --alert-accent: var(--color-error);
+  --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M9.504.43a1.516 1.516 0 0 1 2.437 1.713L10.415 5.5h2.123c1.57 0 2.346 1.909 1.22 3.004l-7.34 7.142a1.249 1.249 0 0 1-.871.354h-.302a1.25 1.25 0 0 1-1.157-1.723L5.633 10.5H3.462c-1.57 0-2.346-1.909-1.22-3.004L9.503.429Zm1.047 1.074L3.286 8.571A.25.25 0 0 0 3.462 9H6.75a.75.75 0 0 1 .694 1.034l-1.713 4.188 6.982-6.793A.25.25 0 0 0 12.538 7H9.25a.75.75 0 0 1-.683-1.06l2.008-4.418.003-.006a.036.036 0 0 0-.004-.009l-.006-.006-.008-.001c-.003 0-.006.002-.009.004Z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.lesson-content .markdown-alert-bug {
+  --alert-accent: var(--color-error);
+  --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M4.72.22a.75.75 0 0 1 1.06 0l1 .999a3.488 3.488 0 0 1 2.441 0l.999-1a.748.748 0 0 1 1.265.332.75.75 0 0 1-.205.729l-.775.776c.616.63.995 1.493.995 2.444v.327c0 .1-.009.197-.025.292.408.14.764.392 1.029.722l1.968-.787a.75.75 0 0 1 .556 1.392L13 7.258V9h2.25a.75.75 0 0 1 0 1.5H13v.5c0 .409-.049.806-.141 1.186l2.17.868a.75.75 0 0 1-.557 1.392l-2.184-.873A4.997 4.997 0 0 1 8 16a4.997 4.997 0 0 1-4.288-2.427l-2.183.873a.75.75 0 0 1-.558-1.392l2.17-.868A5.036 5.036 0 0 1 3 11v-.5H.75a.75.75 0 0 1 0-1.5H3V7.258L.971 6.446a.75.75 0 0 1 .558-1.392l1.967.787c.265-.33.62-.583 1.03-.722a1.677 1.677 0 0 1-.026-.292V4.5c0-.951.38-1.814.995-2.444L4.72 1.28a.75.75 0 0 1 0-1.06Zm.53 6.28a.75.75 0 0 0-.75.75V11a3.5 3.5 0 1 0 7 0V7.25a.75.75 0 0 0-.75-.75ZM6.173 5h3.654A.172.172 0 0 0 10 4.827V4.5a2 2 0 1 0-4 0v.327c0 .096.077.173.173.173Z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.lesson-content .markdown-alert-example {
+  --alert-accent: var(--color-primary);
+  --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M5 5.782V2.5h-.25a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 0 1.5H11v3.282l3.666 5.76C15.619 13.04 14.543 15 12.767 15H3.233c-1.776 0-2.852-1.96-1.899-3.458Zm-2.4 6.565a.75.75 0 0 0 .633 1.153h9.534a.75.75 0 0 0 .633-1.153L12.225 10.5h-8.45ZM9.5 2.5h-3V6c0 .143-.04.283-.117.403L4.73 9h6.54L9.617 6.403A.746.746 0 0 1 9.5 6Z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.lesson-content .markdown-alert-quote,
+.lesson-content .markdown-alert-cite {
+  --alert-accent: var(--color-text-muted);
+  --alert-icon: url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2216%22 height%3D%2216%22 viewBox%3D%220 0 16 16%22%3E%3Cpath d%3D%22M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z%22%2F%3E%3C%2Fsvg%3E");
+}
+
+/* Mermaid diagrams (ADR-0016): the figure and toggle are injected
+   client-side by lesson-mermaid.js, so BEM classes are fine here,
+   unlike the sanitized Markdown output styled above. */
+.lesson-content .lesson-mermaid {
+  margin: 0 0 var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow-x: auto; /* wide diagrams scroll here, never the page (RGAA 10.11) */
+  text-align: center;
+}
+
+.lesson-content .lesson-mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.lesson-content .lesson-mermaid__toggle {
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-sm);
+}
+
+/* Syntax highlighting tokens (ADR-0017): spans injected client-side by
+   lesson-highlight.js. Colors reuse the accent tokens proven to clear
+   4.5:1 on the surface background in both themes, so highlighted code
+   inherits the theme's contrast guarantees and follows token retuning
+   for free. */
+.lesson-content .hljs-keyword,
+.lesson-content .hljs-built_in,
+.lesson-content .hljs-type,
+.lesson-content .hljs-selector-tag {
+  color: var(--color-primary);
+}
+
+.lesson-content .hljs-string,
+.lesson-content .hljs-regexp,
+.lesson-content .hljs-addition {
+  color: var(--color-success);
+}
+
+.lesson-content .hljs-number,
+.lesson-content .hljs-literal,
+.lesson-content .hljs-symbol,
+.lesson-content .hljs-attribute {
+  color: var(--color-warning);
+}
+
+.lesson-content .hljs-comment,
+.lesson-content .hljs-quote {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.lesson-content .hljs-title,
+.lesson-content .hljs-attr,
+.lesson-content .hljs-selector-class,
+.lesson-content .hljs-selector-id,
+.lesson-content .hljs-variable {
+  color: var(--color-link);
+}
+
+.lesson-content .hljs-meta,
+.lesson-content .hljs-deletion {
+  color: var(--color-error);
+}
+
+/* Lesson layout with a sticky table of contents (ADR-0018). A sticky
+   element can only travel inside its parent box, so each breakpoint
+   pins a different element: on small screens the ASIDE pins at the
+   viewport top (its parent is the whole layout, article included, so
+   it has the full lesson height to travel); from 46rem a two-column
+   grid puts the TOC in a right rail, where the aside stretches to the
+   full row height (the grid default) and the panel INSIDE it pins.
+   minmax(0, 1fr) keeps wide code blocks from blowing the grid (they
+   scroll internally instead). */
+.lesson-layout__toc {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin-bottom: var(--space-4);
+}
+
+/* The panel scrolls internally when taller than its cap: the whole
+   TOC stays reachable while pinned. */
+.lesson-toc {
+  max-height: 60vh;
+  overflow-y: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+@media (min-width: 46rem) {
+  .lesson-layout {
+    display: grid;
+    grid-template-areas: "content toc";
+    grid-template-columns: minmax(0, 1fr) 16rem;
+    gap: var(--space-5);
+  }
+
+  .lesson-layout__toc {
+    grid-area: toc;
+    position: static;
+    z-index: auto;
+    margin-bottom: 0;
+  }
+
+  .lesson-layout__content {
+    grid-area: content;
+    min-width: 0;
+  }
+
+  .lesson-toc {
+    position: sticky;
+    top: var(--space-3);
+    max-height: calc(100vh - 2 * var(--space-3));
+    border-radius: var(--radius);
+  }
+}
+
+.lesson-toc__summary {
+  cursor: pointer;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.lesson-toc__list {
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--space-3) var(--space-3);
+  font-size: var(--font-size-sm);
+}
+
+.lesson-toc__item {
+  margin: var(--space-1) 0;
+}
+
+.lesson-toc__item[data-level="3"] {
+  padding-left: var(--space-3);
+}
+
+.lesson-toc__item[data-level="4"] {
+  padding-left: var(--space-5);
+}
+
+.lesson-toc__link {
+  text-decoration: none;
+  color: var(--color-link);
+}
+
+.lesson-toc__link:hover {
+  text-decoration: underline;
+}
+
+
+/* Scroll-spy state (written by lesson-toc.js as aria-current, styled
+   only off the attribute so visual and assistive state cannot drift). */
+.lesson-toc__link[aria-current] {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* Jumped-to headings breathe below the viewport edge; on small screens
+   they also clear the pinned TOC bar. */
+.lesson-content h2,
+.lesson-content h3,
+.lesson-content h4 {
+  scroll-margin-top: var(--space-4);
+}
+
+@media (max-width: 46rem) {
+  .lesson-content h2,
+  .lesson-content h3,
+  .lesson-content h4 {
+    scroll-margin-top: 3.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

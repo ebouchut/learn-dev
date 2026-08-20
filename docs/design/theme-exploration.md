@@ -1,0 +1,251 @@
+# Theme Exploration
+
+Candidate visual themes for the learn-dev frontend, with design tokens and
+WCAG-checked color pairs.
+
+
+## Decision
+
+- **Default theme: Catppuccin** (Catppuccin palette: Latte flavor in light
+  mode, Mocha in dark mode).
+- **Alternate: Soft Paper** (warm paper palette; its dark side is
+  Catppuccin Frappe). Its stylesheet is generated and kept in the repo.
+- **No runtime theme switching in v1** to keep things simple: both themes
+  define the **same token names**, so switching means changing a single
+  `<link>` element. Dark mode follows the OS preference
+  (`prefers-color-scheme`), which is not a "switcher".
+
+## Constraints
+
+- **WCAG 2.1 AA / RGAA**: body text needs a contrast ratio of at least
+  **4.5:1** against its background; large text and UI components need
+  **3:1**. Every color pair below carries its computed ratio (see the
+  Method appendix); values adjusted from the upstream palette to reach
+  compliance are marked **(adjusted)**.
+- Colors are consumed exclusively through **CSS custom properties (design
+  tokens)**; BEM components never hardcode a color.
+- Both light and dark variants are defined for each candidate.
+
+## Candidate A (default): Catppuccin
+
+Upstream palette: the official [Catppuccin palette](https://github.com/catppuccin/palette)
+(Latte and Mocha flavors, MIT licensed). Initially considered through
+AnuPpuccin, an Obsidian skin of Catppuccin (GPL-3.0); no AnuPpuccin code or
+values are used, only the official Catppuccin palette, so the theme is named
+after its real upstream. Pastel accents are designed for dark backgrounds,
+so five light-mode values are darkened to pass 4.5:1. Accent tokens render
+as text not only on `--color-bg` but also on the slightly darker
+`--color-surface` (site header, flash alerts, cards); the surface is the
+binding constraint, so "adjusted" values are tuned to clear 4.5:1 there
+(the ratio noted in parentheses is what the replaced value scored on its
+binding background).
+
+| Token | Light (Latte) | Ratio on bg | Dark (Mocha) | Ratio on bg |
+|---|---|---|---|---|
+| `--color-bg` | `#eff1f5` (base) | | `#1e1e2e` (base) | |
+| `--color-surface` | `#e6e9ef` (mantle) | | `#181825` (mantle) | |
+| `--color-border` | `#ccd0da` (surface0) | | `#313244` (surface0) | |
+| `--color-text` | `#4c4f69` (text) | 7.06:1 | `#cdd6f4` (text) | 11.34:1 |
+| `--color-text-muted` | `#5c5f77` (subtext1) | 5.53:1 | `#bac2de` (subtext1) | 9.26:1 |
+| `--color-primary` | `#8230e8` **(adjusted** from mauve `#8839ef`, 4.45:1 on surface**)** | 5.25:1 | `#cba6f7` (mauve) | 8.07:1 |
+| `--color-link` | `#1a5cd7` **(adjusted** from blue `#1e66f5`, 4.34:1**)** | 5.22:1 | `#89b4fa` (blue) | 7.79:1 |
+| `--color-success` | `#2c721d` **(adjusted** from green `#40a02b`, 2.96:1**)** | 5.26:1 | `#a6e3a1` (green) | 11.03:1 |
+| `--color-warning` | `#8f5b08` **(adjusted** from yellow `#df8e1d`, 2.31:1**)** | 5.06:1 | `#f9e2af` (yellow) | 12.91:1 |
+| `--color-error` | `#c80e37` **(adjusted** from red `#d20f39`, 4.46:1 on surface**)** | 5.20:1 | `#f38ba8` (red) | 7.08:1 |
+| `--color-on-primary` (button text) | `#ffffff` | 5.94:1 on primary | `#11111b` (crust) | 9.23:1 on primary |
+| `--color-focus` | `#1e66f5` (blue, 3:1 UI requirement) | | `#89b4fa` (blue) | |
+
+Character: fresh, slightly playful pastels; the mauve primary gives the
+learning platform a distinctive identity without feeling corporate.
+
+## Candidate B (alternate): Soft Paper
+
+Upstream: [nickmilo/soft-paper](https://github.com/nickmilo/soft-paper)
+(Obsidian theme). Interesting finding: Soft Paper is itself built on
+Catppuccin variables; its light palette is a custom warm paper set and its
+dark palette is essentially **Catppuccin Frappe**. Five light-mode
+semantic colors are darkened to pass 4.5:1, with the same surface
+constraint as Candidate A (the primary doubles as the link color here,
+so one adjustment covers both tokens).
+
+| Token | Light (paper) | Ratio on bg | Dark (Frappe) | Ratio on bg |
+|---|---|---|---|---|
+| `--color-bg` | `#eee6dd` | | `#303446` | |
+| `--color-surface` | `#e6dbd1` | | `#292c3c` | |
+| `--color-border` | `#dcd3cb` | | `#414459` | |
+| `--color-text` | `#575279` | 5.89:1 | `#c6ceef` | 7.90:1 |
+| `--color-text-muted` | `#525252` | 6.32:1 | `#b5bddc` | 6.61:1 |
+| `--color-primary` | `#256278` **(adjusted** from `#286983`, 4.48:1 on surface**)** | 5.49:1 | `#8caaee` | 5.34:1 |
+| `--color-link` | `#256278` **(adjusted** from `#286983`, 4.48:1 on surface**)** | 5.49:1 | `#8caaee` | 5.34:1 |
+| `--color-success` | `#2f6a4a` **(adjusted** from `#3f7d5b`, 3.96:1**)** | 5.18:1 | `#67c48f` | 5.79:1 |
+| `--color-warning` | `#7d570c` **(adjusted** from `#96690f`, 3.93:1**)** | 5.25:1 | `#c9be3e` | 6.40:1 |
+| `--color-error` | `#94425a` **(adjusted** from `#a34e63`, 4.44:1**)** | 5.34:1 | `#e78284` | 4.65:1 |
+| `--color-on-primary` (button text) | `#ffffff` | 6.11:1 on primary | `#232634` (crust) | 6.51:1 on primary |
+| `--color-focus` | `#286983` | | `#8caaee` | |
+
+Character: calm, warm, reflective; reads like paper. Lower-key than
+Catppuccin, closer to a reading environment than an interactive app.
+
+## Color palettes
+
+<!-- Generated by scripts/generate_palette_diagrams.py from the
+     theme stylesheets. Regenerate after any token change. -->
+
+Every swatch below comes straight from the theme stylesheets;
+GitHub renders these Mermaid blocks with the real colors, so no
+image is committed. Values are the shipped (contrast-adjusted)
+tokens, not the upstream palettes. A standalone HTML version for
+the dossier, with each token's computed contrast ratio and AA
+verdict, lives in [palettes.html](palettes.html) (same generator,
+`--html` flag).
+
+### Catppuccin Latte (light)
+
+```mermaid
+flowchart LR
+  t0["bg<br/>#eff1f5"] ~~~ t1["surface<br/>#e6e9ef"] ~~~ t2["surface-deep<br/>#dce0e8"] ~~~ t3["border<br/>#ccd0da"] ~~~ t4["text<br/>#4c4f69"]
+  t5["text-muted<br/>#5c5f77"] ~~~ t6["primary<br/>#8230e8"] ~~~ t7["on-primary<br/>#ffffff"] ~~~ t8["link<br/>#1a5cd7"] ~~~ t9["success<br/>#2c721d"]
+  t10["warning<br/>#8f5b08"] ~~~ t11["error<br/>#c80e37"] ~~~ t12["focus<br/>#1e66f5"] ~~~ t13["primary-soft<br/>#eadcfd"] ~~~ t14["code-bg<br/>#1e1e2e"]
+  t15["code-text<br/>#cdd6f4"] ~~~ t16["code-keyword<br/>#cba6f7"] ~~~ t17["code-string<br/>#a6e3a1"] ~~~ t18["code-function<br/>#89b4fa"] ~~~ t19["code-comment<br/>#9399b2"]
+  style t0 fill:#eff1f5,stroke:#7f7f7f,color:#11111b
+  style t1 fill:#e6e9ef,stroke:#7f7f7f,color:#11111b
+  style t2 fill:#dce0e8,stroke:#7f7f7f,color:#11111b
+  style t3 fill:#ccd0da,stroke:#7f7f7f,color:#11111b
+  style t4 fill:#4c4f69,stroke:#7f7f7f,color:#f8f8f8
+  style t5 fill:#5c5f77,stroke:#7f7f7f,color:#f8f8f8
+  style t6 fill:#8230e8,stroke:#7f7f7f,color:#f8f8f8
+  style t7 fill:#ffffff,stroke:#7f7f7f,color:#11111b
+  style t8 fill:#1a5cd7,stroke:#7f7f7f,color:#f8f8f8
+  style t9 fill:#2c721d,stroke:#7f7f7f,color:#f8f8f8
+  style t10 fill:#8f5b08,stroke:#7f7f7f,color:#f8f8f8
+  style t11 fill:#c80e37,stroke:#7f7f7f,color:#f8f8f8
+  style t12 fill:#1e66f5,stroke:#7f7f7f,color:#f8f8f8
+  style t13 fill:#eadcfd,stroke:#7f7f7f,color:#11111b
+  style t14 fill:#1e1e2e,stroke:#7f7f7f,color:#f8f8f8
+  style t15 fill:#cdd6f4,stroke:#7f7f7f,color:#11111b
+  style t16 fill:#cba6f7,stroke:#7f7f7f,color:#11111b
+  style t17 fill:#a6e3a1,stroke:#7f7f7f,color:#11111b
+  style t18 fill:#89b4fa,stroke:#7f7f7f,color:#11111b
+  style t19 fill:#9399b2,stroke:#7f7f7f,color:#f8f8f8
+```
+
+### Catppuccin Mocha (dark)
+
+```mermaid
+flowchart LR
+  t0["bg<br/>#1e1e2e"] ~~~ t1["surface<br/>#181825"] ~~~ t2["surface-deep<br/>#11111b"] ~~~ t3["border<br/>#313244"] ~~~ t4["text<br/>#cdd6f4"]
+  t5["text-muted<br/>#bac2de"] ~~~ t6["primary<br/>#cba6f7"] ~~~ t7["on-primary<br/>#11111b"] ~~~ t8["link<br/>#89b4fa"] ~~~ t9["success<br/>#a6e3a1"]
+  t10["warning<br/>#f9e2af"] ~~~ t11["error<br/>#f38ba8"] ~~~ t12["focus<br/>#89b4fa"] ~~~ t13["primary-soft<br/>#2b2440"] ~~~ t14["code-bg<br/>#11111b"]
+  t15["code-text<br/>#cdd6f4"] ~~~ t16["code-keyword<br/>#cba6f7"] ~~~ t17["code-string<br/>#a6e3a1"] ~~~ t18["code-function<br/>#89b4fa"] ~~~ t19["code-comment<br/>#9399b2"]
+  style t0 fill:#1e1e2e,stroke:#7f7f7f,color:#f8f8f8
+  style t1 fill:#181825,stroke:#7f7f7f,color:#f8f8f8
+  style t2 fill:#11111b,stroke:#7f7f7f,color:#f8f8f8
+  style t3 fill:#313244,stroke:#7f7f7f,color:#f8f8f8
+  style t4 fill:#cdd6f4,stroke:#7f7f7f,color:#11111b
+  style t5 fill:#bac2de,stroke:#7f7f7f,color:#11111b
+  style t6 fill:#cba6f7,stroke:#7f7f7f,color:#11111b
+  style t7 fill:#11111b,stroke:#7f7f7f,color:#f8f8f8
+  style t8 fill:#89b4fa,stroke:#7f7f7f,color:#11111b
+  style t9 fill:#a6e3a1,stroke:#7f7f7f,color:#11111b
+  style t10 fill:#f9e2af,stroke:#7f7f7f,color:#11111b
+  style t11 fill:#f38ba8,stroke:#7f7f7f,color:#11111b
+  style t12 fill:#89b4fa,stroke:#7f7f7f,color:#11111b
+  style t13 fill:#2b2440,stroke:#7f7f7f,color:#f8f8f8
+  style t14 fill:#11111b,stroke:#7f7f7f,color:#f8f8f8
+  style t15 fill:#cdd6f4,stroke:#7f7f7f,color:#11111b
+  style t16 fill:#cba6f7,stroke:#7f7f7f,color:#11111b
+  style t17 fill:#a6e3a1,stroke:#7f7f7f,color:#11111b
+  style t18 fill:#89b4fa,stroke:#7f7f7f,color:#11111b
+  style t19 fill:#9399b2,stroke:#7f7f7f,color:#f8f8f8
+```
+
+### Soft Paper light
+
+```mermaid
+flowchart LR
+  t0["bg<br/>#eee6dd"] ~~~ t1["surface<br/>#e6dbd1"] ~~~ t2["surface-deep<br/>#ddd0c6"] ~~~ t3["border<br/>#dcd3cb"] ~~~ t4["text<br/>#575279"]
+  t5["text-muted<br/>#525252"] ~~~ t6["primary<br/>#256278"] ~~~ t7["on-primary<br/>#ffffff"] ~~~ t8["link<br/>#256278"] ~~~ t9["success<br/>#2f6a4a"]
+  t10["warning<br/>#7d570c"] ~~~ t11["error<br/>#94425a"] ~~~ t12["focus<br/>#286983"] ~~~ t13["primary-soft<br/>#dfe9ec"] ~~~ t14["code-bg<br/>#303446"]
+  t15["code-text<br/>#c6ceef"] ~~~ t16["code-keyword<br/>#bb93d6"] ~~~ t17["code-string<br/>#67c48f"] ~~~ t18["code-function<br/>#8caaee"] ~~~ t19["code-comment<br/>#838ba7"]
+  style t0 fill:#eee6dd,stroke:#7f7f7f,color:#11111b
+  style t1 fill:#e6dbd1,stroke:#7f7f7f,color:#11111b
+  style t2 fill:#ddd0c6,stroke:#7f7f7f,color:#11111b
+  style t3 fill:#dcd3cb,stroke:#7f7f7f,color:#11111b
+  style t4 fill:#575279,stroke:#7f7f7f,color:#f8f8f8
+  style t5 fill:#525252,stroke:#7f7f7f,color:#f8f8f8
+  style t6 fill:#256278,stroke:#7f7f7f,color:#f8f8f8
+  style t7 fill:#ffffff,stroke:#7f7f7f,color:#11111b
+  style t8 fill:#256278,stroke:#7f7f7f,color:#f8f8f8
+  style t9 fill:#2f6a4a,stroke:#7f7f7f,color:#f8f8f8
+  style t10 fill:#7d570c,stroke:#7f7f7f,color:#f8f8f8
+  style t11 fill:#94425a,stroke:#7f7f7f,color:#f8f8f8
+  style t12 fill:#286983,stroke:#7f7f7f,color:#f8f8f8
+  style t13 fill:#dfe9ec,stroke:#7f7f7f,color:#11111b
+  style t14 fill:#303446,stroke:#7f7f7f,color:#f8f8f8
+  style t15 fill:#c6ceef,stroke:#7f7f7f,color:#11111b
+  style t16 fill:#bb93d6,stroke:#7f7f7f,color:#11111b
+  style t17 fill:#67c48f,stroke:#7f7f7f,color:#11111b
+  style t18 fill:#8caaee,stroke:#7f7f7f,color:#11111b
+  style t19 fill:#838ba7,stroke:#7f7f7f,color:#f8f8f8
+```
+
+### Soft Paper dark
+
+```mermaid
+flowchart LR
+  t0["bg<br/>#303446"] ~~~ t1["surface<br/>#292c3c"] ~~~ t2["surface-deep<br/>#232634"] ~~~ t3["border<br/>#414459"] ~~~ t4["text<br/>#c6ceef"]
+  t5["text-muted<br/>#b5bddc"] ~~~ t6["primary<br/>#8caaee"] ~~~ t7["on-primary<br/>#232634"] ~~~ t8["link<br/>#8caaee"] ~~~ t9["success<br/>#67c48f"]
+  t10["warning<br/>#c9be3e"] ~~~ t11["error<br/>#e78284"] ~~~ t12["focus<br/>#8caaee"] ~~~ t13["primary-soft<br/>#3b415c"] ~~~ t14["code-bg<br/>#232634"]
+  t15["code-text<br/>#c6ceef"] ~~~ t16["code-keyword<br/>#bb93d6"] ~~~ t17["code-string<br/>#67c48f"] ~~~ t18["code-function<br/>#8caaee"] ~~~ t19["code-comment<br/>#838ba7"]
+  style t0 fill:#303446,stroke:#7f7f7f,color:#f8f8f8
+  style t1 fill:#292c3c,stroke:#7f7f7f,color:#f8f8f8
+  style t2 fill:#232634,stroke:#7f7f7f,color:#f8f8f8
+  style t3 fill:#414459,stroke:#7f7f7f,color:#f8f8f8
+  style t4 fill:#c6ceef,stroke:#7f7f7f,color:#11111b
+  style t5 fill:#b5bddc,stroke:#7f7f7f,color:#11111b
+  style t6 fill:#8caaee,stroke:#7f7f7f,color:#11111b
+  style t7 fill:#232634,stroke:#7f7f7f,color:#f8f8f8
+  style t8 fill:#8caaee,stroke:#7f7f7f,color:#11111b
+  style t9 fill:#67c48f,stroke:#7f7f7f,color:#11111b
+  style t10 fill:#c9be3e,stroke:#7f7f7f,color:#11111b
+  style t11 fill:#e78284,stroke:#7f7f7f,color:#f8f8f8
+  style t12 fill:#8caaee,stroke:#7f7f7f,color:#11111b
+  style t13 fill:#3b415c,stroke:#7f7f7f,color:#f8f8f8
+  style t14 fill:#232634,stroke:#7f7f7f,color:#f8f8f8
+  style t15 fill:#c6ceef,stroke:#7f7f7f,color:#11111b
+  style t16 fill:#bb93d6,stroke:#7f7f7f,color:#11111b
+  style t17 fill:#67c48f,stroke:#7f7f7f,color:#11111b
+  style t18 fill:#8caaee,stroke:#7f7f7f,color:#11111b
+  style t19 fill:#838ba7,stroke:#7f7f7f,color:#f8f8f8
+```
+
+## Structural tokens (theme-independent)
+
+Defined once in `base.css`, identical for both themes:
+
+| Group | Tokens |
+|---|---|
+| Typography | `--font-body`: system-ui stack; `--font-size-{sm,base,lg,xl,2xl}`: 0.875 / 1 / 1.125 / 1.375 / 1.75 rem; `--line-height`: 1.6 |
+| Spacing | `--space-{1..6}`: 0.25 / 0.5 / 1 / 1.5 / 2 / 3 rem |
+| Shape | `--radius-sm`: 4px; `--radius`: 8px; `--shadow`: soft single-layer |
+| Focus | 2px solid `--color-focus` outline with 2px offset, never removed |
+
+## How the tokens are consumed
+
+- Each theme is one stylesheet defining the same custom property names on
+  `:root` (light values) and inside `@media (prefers-color-scheme: dark)`
+  (dark values).
+- `base.css` holds resets, typography, and all BEM components
+  (`.site-header`, `.form__field`, `.button--primary`, `.alert--error`, ...)
+  written only against token names.
+- The active theme is the one `<link>` in the page head:
+  `css/theme-catppuccin.css` (default). Switching to Soft Paper = replacing
+  that one href with `css/theme-soft-paper.css`.
+
+## Appendix: method
+
+Ratios computed with the WCAG 2.x relative-luminance formula
+(`(L1 + 0.05) / (L2 + 0.05)` over linearized sRGB), by a Python script run
+against the upstream palettes fetched from their repositories. Thresholds:
+4.5:1 for normal text, 3:1 for large text and UI components. All values in
+the tables above are script outputs, not estimates.
